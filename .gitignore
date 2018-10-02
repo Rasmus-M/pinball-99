@@ -1,0 +1,11 @@
+/.idea/
+/JavaTest/.idea/
+/JavaTest/out/
+/PD/.idea/
+/PD/out/
+*.iml
+*.bin
+*.obj
+*.log
+*.lst
+*.dsk

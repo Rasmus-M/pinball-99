@@ -1,0 +1,1816 @@
+****************************************
+* Original Character Patterns           
+****************************************
+PAT0   DATA >FFFF,>FFFF,>FFFF,>FFFF    ; 
+PAT1   DATA >FFFF,>FFFF,>FCF0,>C000    ; 
+PAT2   DATA >FFFF,>E000,>0000,>0000    ; 
+PAT3   DATA >FFFF,>0000,>0000,>0000    ; 
+PAT4   DATA >FFFF,>1F03,>0000,>0000    ; 
+PAT5   DATA >FFFF,>FFFF,>FF3F,>0F03    ; 
+PAT6   DATA >FFFF,>FFFF,>FFFF,>FFFE    ; 
+PAT7   DATA >FCF8,>F0E0,>C080,>0000    ; 
+PAT8   DATA >0000,>0000,>0000,>0001    ; 
+PAT9   DATA >0000,>0000,>007C,>FEFF    ; 
+PAT10  DATA >0000,>0000,>0000,>0000    ; 
+PAT11  DATA >0000,>0000,>043F,>3F3F    ; 
+PAT12  DATA >0000,>0000,>0000,>80C0    ; 
+PAT13  DATA >FF7F,>3F1F,>0F07,>0301    ; 
+PAT14  DATA >0307,>0F1F,>3F7F,>FFFE    ; 
+PAT15  DATA >FF80,>0000,>0000,>0000    ; 
+PAT16  DATA >FFFE,>3000,>0000,>0000    ; 
+PAT17  DATA >0101,>0101,>0100,>0000    ; 
+PAT18  DATA >FFFF,>FFFF,>FFFF,>7E00    ; 
+PAT19  DATA >8080,>8080,>8080,>0000    ; 
+PAT20  DATA >C0C0,>C0C0,>C0C0,>C0C0    ; 
+PAT21  DATA >7F7F,>7F7F,>7F3F,>1F00    ; 
+PAT22  DATA >E0E0,>E0E0,>E0E0,>8000    ; 
+PAT23  DATA >3F3F,>3F07,>0000,>0000    ; 
+PAT24  DATA >FFFF,>FFFF,>3F1F,>1F1F    ; 
+PAT25  DATA >C0E0,>F0F0,>F8FC,>FCFE    ; 
+PAT26  DATA >FFFF,>FF7F,>7F7F,>3F3F    ; 
+PAT27  DATA >FCF8,>F0E0,>C0C0,>8080    ; 
+PAT28  DATA >0307,>0F1F,>3F7F,>FFFC    ; 
+PAT29  DATA >0000,>0000,>0000,>0003    ; 
+PAT30  DATA >0000,>0000,>0000,>0080    ; 
+PAT31  DATA >0707,>0303,>0303,>0101    ; 
+PAT32  DATA >E0E0,>F0F0,>F8F8,>F8F8    ; 
+PAT33  DATA >0707,>0707,>0707,>0707    ; 
+PAT34  DATA >F8F8,>F8F8,>F0F0,>F0F0    ; 
+PAT35  DATA >0000,>0000,>0001,>0101    ; 
+PAT36  DATA >7F7F,>FFFF,>FFFF,>FFF0    ; 
+PAT37  DATA >80C0,>E0F0,>F0F8,>F87C    ; 
+PAT38  DATA >0101,>0000,>0000,>0000    ; 
+PAT39  DATA >FFFF,>FFFF,>7F3F,>0F03    ; 
+PAT40  DATA >FFFF,>FFFE,>FCF0,>E080    ; 
+PAT41  DATA >7878,>3838,>3838,>1C1F    ; 
+PAT42  DATA >0000,>0000,>0000,>00FF    ; 
+PAT43  DATA >0303,>0303,>0303,>07FF    ; 
+PAT44  DATA >F0F0,>F0F0,>F0F0,>F0F0    ; 
+PAT45  DATA >F070,>7838,>3C1C,>1E0E    ; 
+PAT46  DATA >0303,>0101,>0000,>0000    ; 
+PAT47  DATA >C0E0,>E0F0,>F078,>783C    ; 
+PAT48  DATA >0003,>070F,>0F1F,>1F1F    ; 
+PAT49  DATA >FEFF,>FFFF,>FFFF,>FFFF    ; 
+PAT50  DATA >0080,>80C0,>E0F0,>F0F0    ; 
+PAT51  DATA >F0F0,>F0F0,>F8FC,>FEFE    ; 
+PAT52  DATA >F0F0,>7878,>3C3C,>1E1E    ; 
+PAT53  DATA >0300,>0000,>0000,>0000    ; 
+PAT54  DATA >0000,>000F,>0F1F,>1F1F    ; 
+PAT55  DATA >0000,>0080,>E0F8,>FEFF    ; 
+PAT56  DATA >0F0F,>0F0F,>0F0F,>0F0F    ; 
+PAT57  DATA >FEFE,>FEFE,>FEFE,>FEFE    ; 
+PAT58  DATA >FFFF,>3F0F,>0300,>0000    ; 
+PAT59  DATA >FFFF,>FFFF,>FFFF,>3C08    ; 
+PAT60  DATA >C0E0,>E0C0,>8000,>0000    ; 
+PAT61  DATA >1F3F,>3F7F,>7FFF,>FFFF    ; 
+PAT62  DATA >E0E0,>E0C0,>C080,>8000    ; 
+PAT63  DATA >0F0F,>0F0F,>1F1F,>3F3F    ; 
+PAT64  DATA >1F3F,>3F1F,>0F00,>0000    ; 
+PAT65  DATA >F0E0,>E0C0,>0000,>0000    ; 
+PAT66  DATA >0707,>0F0F,>1F1F,>3F3F    ; 
+PAT67  DATA >0707,>0F0F,>1F1F,>1F1F    ; 
+PAT68  DATA >C0E0,>F0F8,>F8FC,>FCFC    ; 
+PAT69  DATA >0F07,>0301,>0000,>0000    ; 
+PAT70  DATA >FFFF,>FFFF,>FF7F,>3F1F    ; 
+PAT71  DATA >FCF8,>F0F0,>F0F0,>F0F0    ; 
+PAT72  DATA >0000,>0000,>0000,>1C1E    ; 
+PAT73  DATA >0101,>0303,>0303,>0303    ; 
+PAT74  DATA >F8F8,>FCFC,>FCFE,>FEFF    ; 
+PAT75  DATA >0000,>0000,>0001,>0103    ; 
+PAT76  DATA >7E7F,>FFFF,>FFFF,>FFFF    ; 
+PAT77  DATA >0000,>8080,>C0C0,>C0C0    ; 
+PAT78  DATA >0000,>0000,>0000,>7878    ; 
+PAT79  DATA >1E1E,>1E1E,>1E1E,>1E1E    ; 
+PAT80  DATA >0303,>0303,>0303,>0303    ; 
+PAT81  DATA >E0E0,>F0F0,>F8F8,>F8FC    ; 
+PAT82  DATA >1F1F,>3F3F,>7F7F,>7FFF    ; 
+PAT83  DATA >7878,>7878,>7878,>7878    ; 
+PAT84  DATA >1E1E,>1F0F,>0F03,>0000    ; 
+PAT85  DATA >0000,>0080,>E0FC,>FF3F    ; 
+PAT86  DATA >0000,>0000,>0000,>80F0    ; 
+PAT87  DATA >0000,>0000,>0003,>1FFF    ; 
+PAT88  DATA >0000,>010F,>7FFC,>F0C0    ; 
+PAT89  DATA >78F8,>F0C0,>0000,>0000    ; 
+PAT90  DATA >C0F0,>FCFF,>FFFF,>FFFF    ; 
+PAT91  DATA >0000,>0000,>C0F0,>FCFF    ; 
+PAT92  DATA >0F03,>0000,>0000,>0000    ; 
+PAT93  DATA >F8F8,>F838,>1808,>0000    ; 
+PAT94  DATA >0303,>0303,>0301,>0000    ; 
+PAT95  DATA >FFFC,>F0C0,>8000,>0000    ; 
+PAT96  DATA >0000,>0000,>0000,>0107    ; 
+PAT97  DATA >0000,>0107,>1F7F,>FFFF    ; 
+PAT98  DATA >1F7F,>FFFF,>FFFF,>FFFF    ; 
+PAT99  DATA >0000,>0000,>C0E0,>E0E0    ; 
+PAT100 DATA >2070,>2000,>0000,>0000    ; 
+PAT101 DATA >0000,>0107,>1F1F,>1F1F    ; 
+PAT102 DATA >0307,>0F1F,>3F7F,>FFFF    ; 
+PAT103 DATA >0000,>0001,>0101,>0101    ; 
+PAT104 DATA >007C,>FEFF,>FFFF,>FFFF    ; 
+PAT105 DATA >0000,>0000,>8080,>8080    ; 
+PAT106 DATA >0000,>0008,>7FFF,>FFFF    ; 
+PAT107 DATA >0000,>0000,>0080,>80C0    ; 
+PAT108 DATA >001F,>3F7F,>7F7F,>7F7F    ; 
+PAT109 DATA >0000,>80C0,>E0E0,>E0E0    ; 
+PAT110 DATA >3F3F,>3F3F,>3F3F,>3F3F    ; 
+PAT111 DATA >E0F0,>F8FC,>FEFF,>FFFF    ; 
+PAT112 DATA >7F3E,>0000,>0000,>0000    ; 
+PAT113 DATA >8000,>0000,>0000,>0000    ; 
+PAT114 DATA >1F1F,>0F0F,>0F0F,>0707    ; 
+PAT115 DATA >0000,>0000,>8080,>C0C0    ; 
+PAT116 DATA >1F1F,>1F0F,>0F0F,>0F0F    ; 
+PAT117 DATA >FFFF,>FEFE,>FEFC,>FCFC    ; 
+PAT118 DATA >0307,>0F0F,>1F3F,>3F7F    ; 
+PAT119 DATA >C080,>0000,>0000,>0000    ; 
+PAT120 DATA >0F3F,>7FFF,>FFFF,>FFFF    ; 
+PAT121 DATA >E0F8,>F8FC,>FEFF,>FFFF    ; 
+PAT122 DATA >FFFF,>FFFF,>FFFF,>7C78    ; 
+PAT123 DATA >F8F8,>FCFC,>FCFC,>0000    ; 
+PAT124 DATA >0303,>0303,>0301,>0100    ; 
+PAT125 DATA >E0C0,>C0C0,>C0C0,>E0E0    ; 
+PAT126 DATA >3C3E,>1E1F,>0F0F,>0707    ; 
+PAT127 DATA >0000,>0000,>0000,>0038    ; 
+PAT128 DATA >0F07,>0703,>0303,>0101    ; 
+PAT129 DATA >0000,>8080,>C0C0,>E0E0    ; 
+PAT130 DATA >3C1E,>1E0F,>0F07,>0703    ; 
+PAT131 DATA >1F1F,>0F0F,>0703,>0000    ; 
+PAT132 DATA >FFFF,>FFFF,>FFFF,>FE38    ; 
+PAT133 DATA >F0F0,>F0E0,>C000,>0000    ; 
+PAT134 DATA >FFFF,>FFFF,>FF1F,>0F0F    ; 
+PAT135 DATA >0F0F,>0707,>0300,>0000    ; 
+PAT136 DATA >0000,>8080,>0000,>0000    ; 
+PAT137 DATA >3F3F,>3F0F,>0300,>0000    ; 
+PAT138 DATA >FFFF,>FFFF,>FFFF,>3F0F    ; 
+PAT139 DATA >E0F8,>FEFF,>FFFF,>FFFF    ; 
+PAT140 DATA >0000,>0000,>0003,>0F1F    ; 
+PAT141 DATA >0000,>0000,>0080,>E0E0    ; 
+PAT142 DATA >0103,>0307,>070F,>0F1F    ; 
+PAT143 DATA >FFFE,>FEFC,>FCF8,>F8F0    ; 
+PAT144 DATA >0000,>0000,>0101,>0303    ; 
+PAT145 DATA >7F7F,>FFFF,>FFFF,>FFFF    ; 
+PAT146 DATA >FEFE,>FEFE,>FEFE,>FFFF    ; 
+PAT147 DATA >1F1F,>1F1F,>1F1F,>1F1F    ; 
+PAT148 DATA >0000,>8080,>C0C0,>C0E0    ; 
+PAT149 DATA >0303,>0707,>0F0F,>0F1F    ; 
+PAT150 DATA >0303,>0303,>0000,>0000    ; 
+PAT151 DATA >FFFF,>FFFF,>FF1F,>0300    ; 
+PAT152 DATA >FCFE,>FEFE,>FFFF,>FF7F    ; 
+PAT153 DATA >0001,>0101,>0303,>0303    ; 
+PAT154 DATA >FFFF,>FFFF,>FFFF,>FFF8    ; 
+PAT155 DATA >FFFF,>FFFE,>F8E0,>0000    ; 
+PAT156 DATA >C0C0,>8000,>0000,>0000    ; 
+PAT157 DATA >F0F0,>F0F0,>F0F8,>FCFF    ; 
+PAT158 DATA >FEFF,>FF3F,>0F03,>0000    ; 
+PAT159 DATA >00C0,>F8FF,>FFFF,>FF3F    ; 
+PAT160 DATA >0000,>0000,>E0F8,>F8F8    ; 
+PAT161 DATA >0000,>0000,>0001,>0303    ; 
+PAT162 DATA >0000,>0007,>3FFF,>FFFF    ; 
+PAT163 DATA >031F,>FFFF,>FFFC,>F0C0    ; 
+PAT164 DATA >FFFC,>F0C0,>0000,>0000    ; 
+PAT165 DATA >0F0F,>0F1F,>3F7F,>FFFF    ; 
+PAT166 DATA >E0E0,>E0E0,>E0E0,>E0E0    ; 
+****************************************
+* Colorset Definitions                  
+****************************************
+CLRNUM DATA 32                         ;
+CLRSET BYTE >1F,>1F,>1F,>1F            ;
+       BYTE >1F,>1F,>1F,>1F            ;
+       BYTE >1F,>1F,>1F,>1F            ;
+       BYTE >1F,>1F,>1F,>1F            ;
+       BYTE >1F,>1F,>1F,>1F            ;
+       BYTE >1F,>1F,>1F,>1F            ;
+       BYTE >1F,>1F,>1F,>1F            ;
+       BYTE >1F,>1F,>1F,>1F            ;
+****************************************
+* Transition Character Pairs (from, to) 
+****************************************
+TCHNUM DATA 249                        ;
+TCHARS BYTE >00,>00                    ; #00 color 1/F
+       BYTE >06,>00                    ; #01 color 1/F
+       BYTE >07,>00                    ; #02 color 1/F
+       BYTE >0A,>01                    ; #03 color 1/F
+       BYTE >0A,>02                    ; #04 color 1/F
+       BYTE >0A,>03                    ; #05 color 1/F
+       BYTE >0A,>04                    ; #06 color 1/F
+       BYTE >0A,>05                    ; #07 color 1/F
+       BYTE >0D,>00                    ; #08 color 1/F
+       BYTE >07,>06                    ; #09 color 1/F
+       BYTE >08,>07                    ; #0A color 1/F
+       BYTE >09,>0A                    ; #0B color 1/F
+       BYTE >0A,>0A                    ; #0C color 1/F
+       BYTE >0B,>0A                    ; #0D color 1/F
+       BYTE >0C,>0D                    ; #0E color 1/F
+       BYTE >66,>08                    ; #0F color 1/F
+       BYTE >00,>09                    ; #10 color 1/F
+       BYTE >67,>0A                    ; #11 color 1/F
+       BYTE >68,>0A                    ; #12 color 1/F
+       BYTE >69,>0A                    ; #13 color 1/F
+       BYTE >6A,>0A                    ; #14 color 1/F
+       BYTE >6B,>0A                    ; #15 color 1/F
+       BYTE >6C,>0A                    ; #16 color 1/F
+       BYTE >6D,>0A                    ; #17 color 1/F
+       BYTE >6E,>0B                    ; #18 color 1/F
+       BYTE >6F,>0C                    ; #19 color 1/F
+       BYTE >0E,>08                    ; #1A color 1/F
+       BYTE >0F,>66                    ; #1B color 1/F
+       BYTE >10,>00                    ; #1C color 1/F
+       BYTE >11,>67                    ; #1D color 1/F
+       BYTE >12,>68                    ; #1E color 1/F
+       BYTE >13,>69                    ; #1F color 1/F
+       BYTE >00,>6A                    ; #20 color 1/F
+       BYTE >14,>6B                    ; #21 color 1/F
+       BYTE >15,>6C                    ; #22 color 1/F
+       BYTE >16,>6D                    ; #23 color 1/F
+       BYTE >17,>6E                    ; #24 color 1/F
+       BYTE >18,>6F                    ; #25 color 1/F
+       BYTE >19,>0C                    ; #26 color 1/F
+       BYTE >0A,>0D                    ; #27 color 1/F
+       BYTE >1A,>00                    ; #28 color 1/F
+       BYTE >07,>0E                    ; #29 color 1/F
+       BYTE >0A,>0F                    ; #2A color 1/F
+       BYTE >0A,>10                    ; #2B color 1/F
+       BYTE >0A,>11                    ; #2C color 1/F
+       BYTE >0A,>12                    ; #2D color 1/F
+       BYTE >0A,>13                    ; #2E color 1/F
+       BYTE >70,>00                    ; #2F color 1/F
+       BYTE >71,>14                    ; #30 color 1/F
+       BYTE >0A,>15                    ; #31 color 1/F
+       BYTE >0A,>16                    ; #32 color 1/F
+       BYTE >0A,>17                    ; #33 color 1/F
+       BYTE >72,>18                    ; #34 color 1/F
+       BYTE >31,>19                    ; #35 color 1/F
+       BYTE >73,>0A                    ; #36 color 1/F
+       BYTE >74,>1A                    ; #37 color 1/F
+       BYTE >1B,>06                    ; #38 color 1/F
+       BYTE >1C,>08                    ; #39 color 1/F
+       BYTE >0A,>07                    ; #3A color 1/F
+       BYTE >1D,>0A                    ; #3B color 1/F
+       BYTE >1E,>0A                    ; #3C color 1/F
+       BYTE >0A,>70                    ; #3D color 1/F
+       BYTE >0A,>71                    ; #3E color 1/F
+       BYTE >1F,>72                    ; #3F color 1/F
+       BYTE >00,>31                    ; #40 color 1/F
+       BYTE >20,>73                    ; #41 color 1/F
+       BYTE >21,>74                    ; #42 color 1/F
+       BYTE >75,>00                    ; #43 color 1/F
+       BYTE >0A,>1B                    ; #44 color 1/F
+       BYTE >76,>08                    ; #45 color 1/F
+       BYTE >77,>1C                    ; #46 color 1/F
+       BYTE >23,>0A                    ; #47 color 1/F
+       BYTE >78,>1D                    ; #48 color 1/F
+       BYTE >79,>1E                    ; #49 color 1/F
+       BYTE >26,>1F                    ; #4A color 1/F
+       BYTE >7A,>00                    ; #4B color 1/F
+       BYTE >7B,>20                    ; #4C color 1/F
+       BYTE >50,>21                    ; #4D color 1/F
+       BYTE >22,>75                    ; #4E color 1/F
+       BYTE >24,>76                    ; #4F color 1/F
+       BYTE >25,>77                    ; #50 color 1/F
+       BYTE >26,>23                    ; #51 color 1/F
+       BYTE >27,>78                    ; #52 color 1/F
+       BYTE >28,>79                    ; #53 color 1/F
+       BYTE >0A,>26                    ; #54 color 1/F
+       BYTE >29,>7A                    ; #55 color 1/F
+       BYTE >2A,>7B                    ; #56 color 1/F
+       BYTE >2B,>50                    ; #57 color 1/F
+       BYTE >2C,>22                    ; #58 color 1/F
+       BYTE >7C,>23                    ; #59 color 1/F
+       BYTE >7D,>24                    ; #5A color 1/F
+       BYTE >7E,>25                    ; #5B color 1/F
+       BYTE >0A,>27                    ; #5C color 1/F
+       BYTE >0A,>28                    ; #5D color 1/F
+       BYTE >7F,>0A                    ; #5E color 1/F
+       BYTE >72,>29                    ; #5F color 1/F
+       BYTE >00,>2A                    ; #60 color 1/F
+       BYTE >00,>2B                    ; #61 color 1/F
+       BYTE >2C,>2C                    ; #62 color 1/F
+       BYTE >0A,>7C                    ; #63 color 1/F
+       BYTE >2D,>7D                    ; #64 color 1/F
+       BYTE >2E,>7E                    ; #65 color 1/F
+       BYTE >2F,>6B                    ; #66 color 1/F
+       BYTE >30,>0A                    ; #67 color 1/F
+       BYTE >31,>7F                    ; #68 color 1/F
+       BYTE >32,>0A                    ; #69 color 1/F
+       BYTE >80,>2D                    ; #6A color 1/F
+       BYTE >81,>2E                    ; #6B color 1/F
+       BYTE >82,>2F                    ; #6C color 1/F
+       BYTE >83,>30                    ; #6D color 1/F
+       BYTE >84,>31                    ; #6E color 1/F
+       BYTE >85,>32                    ; #6F color 1/F
+       BYTE >86,>00                    ; #70 color 1/F
+       BYTE >33,>2C                    ; #71 color 1/F
+       BYTE >0A,>80                    ; #72 color 1/F
+       BYTE >34,>81                    ; #73 color 1/F
+       BYTE >35,>82                    ; #74 color 1/F
+       BYTE >0A,>6B                    ; #75 color 1/F
+       BYTE >36,>0A                    ; #76 color 1/F
+       BYTE >37,>0A                    ; #77 color 1/F
+       BYTE >1E,>83                    ; #78 color 1/F
+       BYTE >0A,>84                    ; #79 color 1/F
+       BYTE >0A,>85                    ; #7A color 1/F
+       BYTE >38,>86                    ; #7B color 1/F
+       BYTE >39,>33                    ; #7C color 1/F
+       BYTE >87,>34                    ; #7D color 1/F
+       BYTE >88,>35                    ; #7E color 1/F
+       BYTE >89,>36                    ; #7F color 1/F
+       BYTE >8A,>37                    ; #80 color 1/F
+       BYTE >8B,>1E                    ; #81 color 1/F
+       BYTE >8C,>0A                    ; #82 color 1/F
+       BYTE >8D,>0A                    ; #83 color 1/F
+       BYTE >38,>38                    ; #84 color 1/F
+       BYTE >39,>39                    ; #85 color 1/F
+       BYTE >0A,>87                    ; #86 color 1/F
+       BYTE >0A,>88                    ; #87 color 1/F
+       BYTE >0A,>89                    ; #88 color 1/F
+       BYTE >35,>8A                    ; #89 color 1/F
+       BYTE >3A,>8B                    ; #8A color 1/F
+       BYTE >3B,>37                    ; #8B color 1/F
+       BYTE >3C,>1E                    ; #8C color 1/F
+       BYTE >08,>0A                    ; #8D color 1/F
+       BYTE >3D,>8C                    ; #8E color 1/F
+       BYTE >3E,>8D                    ; #8F color 1/F
+       BYTE >3F,>38                    ; #90 color 1/F
+       BYTE >0A,>35                    ; #91 color 1/F
+       BYTE >0A,>3A                    ; #92 color 1/F
+       BYTE >0A,>3B                    ; #93 color 1/F
+       BYTE >0A,>3C                    ; #94 color 1/F
+       BYTE >8E,>08                    ; #95 color 1/F
+       BYTE >8F,>3D                    ; #96 color 1/F
+       BYTE >90,>3E                    ; #97 color 1/F
+       BYTE >91,>3F                    ; #98 color 1/F
+       BYTE >40,>8E                    ; #99 color 1/F
+       BYTE >41,>8F                    ; #9A color 1/F
+       BYTE >42,>90                    ; #9B color 1/F
+       BYTE >00,>91                    ; #9C color 1/F
+       BYTE >0A,>40                    ; #9D color 1/F
+       BYTE >90,>41                    ; #9E color 1/F
+       BYTE >91,>42                    ; #9F color 1/F
+       BYTE >43,>90                    ; #A0 color 1/F
+       BYTE >92,>39                    ; #A1 color 1/F
+       BYTE >93,>43                    ; #A2 color 1/F
+       BYTE >00,>92                    ; #A3 color 1/F
+       BYTE >44,>1E                    ; #A4 color 1/F
+       BYTE >45,>93                    ; #A5 color 1/F
+       BYTE >46,>00                    ; #A6 color 1/F
+       BYTE >07,>44                    ; #A7 color 1/F
+       BYTE >0A,>45                    ; #A8 color 1/F
+       BYTE >45,>46                    ; #A9 color 1/F
+       BYTE >47,>06                    ; #AA color 1/F
+       BYTE >48,>07                    ; #AB color 1/F
+       BYTE >49,>0A                    ; #AC color 1/F
+       BYTE >4A,>0A                    ; #AD color 1/F
+       BYTE >4B,>0A                    ; #AE color 1/F
+       BYTE >4C,>0A                    ; #AF color 1/F
+       BYTE >4D,>0A                    ; #B0 color 1/F
+       BYTE >4E,>45                    ; #B1 color 1/F
+       BYTE >38,>46                    ; #B2 color 1/F
+       BYTE >2C,>47                    ; #B3 color 1/F
+       BYTE >4F,>48                    ; #B4 color 1/F
+       BYTE >50,>49                    ; #B5 color 1/F
+       BYTE >00,>4A                    ; #B6 color 1/F
+       BYTE >94,>0A                    ; #B7 color 1/F
+       BYTE >95,>4B                    ; #B8 color 1/F
+       BYTE >00,>4C                    ; #B9 color 1/F
+       BYTE >14,>4D                    ; #BA color 1/F
+       BYTE >53,>4E                    ; #BB color 1/F
+       BYTE >4F,>4F                    ; #BC color 1/F
+       BYTE >50,>50                    ; #BD color 1/F
+       BYTE >51,>94                    ; #BE color 1/F
+       BYTE >52,>95                    ; #BF color 1/F
+       BYTE >14,>14                    ; #C0 color 1/F
+       BYTE >53,>53                    ; #C1 color 1/F
+       BYTE >96,>50                    ; #C2 color 1/F
+       BYTE >97,>00                    ; #C3 color 1/F
+       BYTE >98,>51                    ; #C4 color 1/F
+       BYTE >99,>0A                    ; #C5 color 1/F
+       BYTE >9A,>52                    ; #C6 color 1/F
+       BYTE >9B,>00                    ; #C7 color 1/F
+       BYTE >9C,>14                    ; #C8 color 1/F
+       BYTE >54,>4F                    ; #C9 color 1/F
+       BYTE >55,>96                    ; #CA color 1/F
+       BYTE >56,>97                    ; #CB color 1/F
+       BYTE >0A,>98                    ; #CC color 1/F
+       BYTE >0A,>99                    ; #CD color 1/F
+       BYTE >0A,>9A                    ; #CE color 1/F
+       BYTE >57,>9B                    ; #CF color 1/F
+       BYTE >58,>9C                    ; #D0 color 1/F
+       BYTE >59,>53                    ; #D1 color 1/F
+       BYTE >9D,>2C                    ; #D2 color 1/F
+       BYTE >0A,>54                    ; #D3 color 1/F
+       BYTE >5C,>55                    ; #D4 color 1/F
+       BYTE >9E,>56                    ; #D5 color 1/F
+       BYTE >9F,>0A                    ; #D6 color 1/F
+       BYTE >A0,>0A                    ; #D7 color 1/F
+       BYTE >A1,>0A                    ; #D8 color 1/F
+       BYTE >A2,>0A                    ; #D9 color 1/F
+       BYTE >A3,>0A                    ; #DA color 1/F
+       BYTE >A4,>57                    ; #DB color 1/F
+       BYTE >0A,>58                    ; #DC color 1/F
+       BYTE >60,>59                    ; #DD color 1/F
+       BYTE >A5,>38                    ; #DE color 1/F
+       BYTE >00,>9D                    ; #DF color 1/F
+       BYTE >5A,>0A                    ; #E0 color 1/F
+       BYTE >5B,>5C                    ; #E1 color 1/F
+       BYTE >0A,>9E                    ; #E2 color 1/F
+       BYTE >5C,>9F                    ; #E3 color 1/F
+       BYTE >5D,>A0                    ; #E4 color 1/F
+       BYTE >5E,>A1                    ; #E5 color 1/F
+       BYTE >5F,>A2                    ; #E6 color 1/F
+       BYTE >0A,>A3                    ; #E7 color 1/F
+       BYTE >60,>A4                    ; #E8 color 1/F
+       BYTE >61,>0A                    ; #E9 color 1/F
+       BYTE >62,>60                    ; #EA color 1/F
+       BYTE >00,>A5                    ; #EB color 1/F
+       BYTE >00,>5A                    ; #EC color 1/F
+       BYTE >00,>5B                    ; #ED color 1/F
+       BYTE >0A,>5D                    ; #EE color 1/F
+       BYTE >0A,>5E                    ; #EF color 1/F
+       BYTE >60,>5F                    ; #F0 color 1/F
+       BYTE >00,>61                    ; #F1 color 1/F
+       BYTE >00,>62                    ; #F2 color 1/F
+       BYTE >63,>0A                    ; #F3 color 1/F
+       BYTE >64,>0A                    ; #F4 color 1/F
+       BYTE >65,>0A                    ; #F5 color 1/F
+       BYTE >A6,>63                    ; #F6 color 1/F
+       BYTE >0A,>64                    ; #F7 color 1/F
+       BYTE >93,>65                    ; #F8 color 1/F
+*************************************************
+* Transition chars with inverted 'to' characters 
+*************************************************
+ICHARS BYTE >00                        ; #00
+       BYTE >00                        ; #01
+       BYTE >00                        ; #02
+       BYTE >00                        ; #03
+       BYTE >00                        ; #04
+       BYTE >00                        ; #05
+       BYTE >00                        ; #06
+       BYTE >00                        ; #07
+       BYTE >00                        ; #08
+       BYTE >00                        ; #09
+       BYTE >00                        ; #0A
+       BYTE >00                        ; #0B
+       BYTE >00                        ; #0C
+       BYTE >00                        ; #0D
+       BYTE >00                        ; #0E
+       BYTE >00                        ; #0F
+       BYTE >00                        ; #10
+       BYTE >00                        ; #11
+       BYTE >00                        ; #12
+       BYTE >00                        ; #13
+       BYTE >00                        ; #14
+       BYTE >00                        ; #15
+       BYTE >00                        ; #16
+       BYTE >00                        ; #17
+       BYTE >00                        ; #18
+       BYTE >00                        ; #19
+       BYTE >00                        ; #1A
+       BYTE >00                        ; #1B
+       BYTE >00                        ; #1C
+       BYTE >00                        ; #1D
+       BYTE >00                        ; #1E
+       BYTE >00                        ; #1F
+       BYTE >00                        ; #20
+       BYTE >00                        ; #21
+       BYTE >00                        ; #22
+       BYTE >00                        ; #23
+       BYTE >00                        ; #24
+       BYTE >00                        ; #25
+       BYTE >00                        ; #26
+       BYTE >00                        ; #27
+       BYTE >00                        ; #28
+       BYTE >00                        ; #29
+       BYTE >00                        ; #2A
+       BYTE >00                        ; #2B
+       BYTE >00                        ; #2C
+       BYTE >00                        ; #2D
+       BYTE >00                        ; #2E
+       BYTE >00                        ; #2F
+       BYTE >00                        ; #30
+       BYTE >00                        ; #31
+       BYTE >00                        ; #32
+       BYTE >00                        ; #33
+       BYTE >00                        ; #34
+       BYTE >00                        ; #35
+       BYTE >00                        ; #36
+       BYTE >00                        ; #37
+       BYTE >00                        ; #38
+       BYTE >00                        ; #39
+       BYTE >00                        ; #3A
+       BYTE >00                        ; #3B
+       BYTE >00                        ; #3C
+       BYTE >00                        ; #3D
+       BYTE >00                        ; #3E
+       BYTE >00                        ; #3F
+       BYTE >00                        ; #40
+       BYTE >00                        ; #41
+       BYTE >00                        ; #42
+       BYTE >00                        ; #43
+       BYTE >00                        ; #44
+       BYTE >00                        ; #45
+       BYTE >00                        ; #46
+       BYTE >00                        ; #47
+       BYTE >00                        ; #48
+       BYTE >00                        ; #49
+       BYTE >00                        ; #4A
+       BYTE >00                        ; #4B
+       BYTE >00                        ; #4C
+       BYTE >00                        ; #4D
+       BYTE >00                        ; #4E
+       BYTE >00                        ; #4F
+       BYTE >00                        ; #50
+       BYTE >00                        ; #51
+       BYTE >00                        ; #52
+       BYTE >00                        ; #53
+       BYTE >00                        ; #54
+       BYTE >00                        ; #55
+       BYTE >00                        ; #56
+       BYTE >00                        ; #57
+       BYTE >00                        ; #58
+       BYTE >00                        ; #59
+       BYTE >00                        ; #5A
+       BYTE >00                        ; #5B
+       BYTE >00                        ; #5C
+       BYTE >00                        ; #5D
+       BYTE >00                        ; #5E
+       BYTE >00                        ; #5F
+       BYTE >00                        ; #60
+       BYTE >00                        ; #61
+       BYTE >00                        ; #62
+       BYTE >00                        ; #63
+       BYTE >00                        ; #64
+       BYTE >00                        ; #65
+       BYTE >00                        ; #66
+       BYTE >00                        ; #67
+       BYTE >00                        ; #68
+       BYTE >00                        ; #69
+       BYTE >00                        ; #6A
+       BYTE >00                        ; #6B
+       BYTE >00                        ; #6C
+       BYTE >00                        ; #6D
+       BYTE >00                        ; #6E
+       BYTE >00                        ; #6F
+       BYTE >00                        ; #70
+       BYTE >00                        ; #71
+       BYTE >00                        ; #72
+       BYTE >00                        ; #73
+       BYTE >00                        ; #74
+       BYTE >00                        ; #75
+       BYTE >00                        ; #76
+       BYTE >00                        ; #77
+       BYTE >00                        ; #78
+       BYTE >00                        ; #79
+       BYTE >00                        ; #7A
+       BYTE >00                        ; #7B
+       BYTE >00                        ; #7C
+       BYTE >00                        ; #7D
+       BYTE >00                        ; #7E
+       BYTE >00                        ; #7F
+       BYTE >00                        ; #80
+       BYTE >00                        ; #81
+       BYTE >00                        ; #82
+       BYTE >00                        ; #83
+       BYTE >00                        ; #84
+       BYTE >00                        ; #85
+       BYTE >00                        ; #86
+       BYTE >00                        ; #87
+       BYTE >00                        ; #88
+       BYTE >00                        ; #89
+       BYTE >00                        ; #8A
+       BYTE >00                        ; #8B
+       BYTE >00                        ; #8C
+       BYTE >00                        ; #8D
+       BYTE >00                        ; #8E
+       BYTE >00                        ; #8F
+       BYTE >00                        ; #90
+       BYTE >00                        ; #91
+       BYTE >00                        ; #92
+       BYTE >00                        ; #93
+       BYTE >00                        ; #94
+       BYTE >00                        ; #95
+       BYTE >00                        ; #96
+       BYTE >00                        ; #97
+       BYTE >00                        ; #98
+       BYTE >00                        ; #99
+       BYTE >00                        ; #9A
+       BYTE >00                        ; #9B
+       BYTE >00                        ; #9C
+       BYTE >00                        ; #9D
+       BYTE >00                        ; #9E
+       BYTE >00                        ; #9F
+       BYTE >00                        ; #A0
+       BYTE >00                        ; #A1
+       BYTE >00                        ; #A2
+       BYTE >00                        ; #A3
+       BYTE >00                        ; #A4
+       BYTE >00                        ; #A5
+       BYTE >00                        ; #A6
+       BYTE >00                        ; #A7
+       BYTE >00                        ; #A8
+       BYTE >00                        ; #A9
+       BYTE >00                        ; #AA
+       BYTE >00                        ; #AB
+       BYTE >00                        ; #AC
+       BYTE >00                        ; #AD
+       BYTE >00                        ; #AE
+       BYTE >00                        ; #AF
+       BYTE >00                        ; #B0
+       BYTE >00                        ; #B1
+       BYTE >00                        ; #B2
+       BYTE >00                        ; #B3
+       BYTE >00                        ; #B4
+       BYTE >00                        ; #B5
+       BYTE >00                        ; #B6
+       BYTE >00                        ; #B7
+       BYTE >00                        ; #B8
+       BYTE >00                        ; #B9
+       BYTE >00                        ; #BA
+       BYTE >00                        ; #BB
+       BYTE >00                        ; #BC
+       BYTE >00                        ; #BD
+       BYTE >00                        ; #BE
+       BYTE >00                        ; #BF
+       BYTE >00                        ; #C0
+       BYTE >00                        ; #C1
+       BYTE >00                        ; #C2
+       BYTE >00                        ; #C3
+       BYTE >00                        ; #C4
+       BYTE >00                        ; #C5
+       BYTE >00                        ; #C6
+       BYTE >00                        ; #C7
+       BYTE >00                        ; #C8
+       BYTE >00                        ; #C9
+       BYTE >00                        ; #CA
+       BYTE >00                        ; #CB
+       BYTE >00                        ; #CC
+       BYTE >00                        ; #CD
+       BYTE >00                        ; #CE
+       BYTE >00                        ; #CF
+       BYTE >00                        ; #D0
+       BYTE >00                        ; #D1
+       BYTE >00                        ; #D2
+       BYTE >00                        ; #D3
+       BYTE >00                        ; #D4
+       BYTE >00                        ; #D5
+       BYTE >00                        ; #D6
+       BYTE >00                        ; #D7
+       BYTE >00                        ; #D8
+       BYTE >00                        ; #D9
+       BYTE >00                        ; #DA
+       BYTE >00                        ; #DB
+       BYTE >00                        ; #DC
+       BYTE >00                        ; #DD
+       BYTE >00                        ; #DE
+       BYTE >00                        ; #DF
+       BYTE >00                        ; #E0
+       BYTE >00                        ; #E1
+       BYTE >00                        ; #E2
+       BYTE >00                        ; #E3
+       BYTE >00                        ; #E4
+       BYTE >00                        ; #E5
+       BYTE >00                        ; #E6
+       BYTE >00                        ; #E7
+       BYTE >00                        ; #E8
+       BYTE >00                        ; #E9
+       BYTE >00                        ; #EA
+       BYTE >00                        ; #EB
+       BYTE >00                        ; #EC
+       BYTE >00                        ; #ED
+       BYTE >00                        ; #EE
+       BYTE >00                        ; #EF
+       BYTE >00                        ; #F0
+       BYTE >00                        ; #F1
+       BYTE >00                        ; #F2
+       BYTE >00                        ; #F3
+       BYTE >00                        ; #F4
+       BYTE >00                        ; #F5
+       BYTE >00                        ; #F6
+       BYTE >00                        ; #F7
+       BYTE >00                        ; #F8
+****************************************
+* Transition Map Data                   
+****************************************
+* == Map #0 ==                          
+MC0    DATA 15                         ;
+MS0    DATA >0014,>001F,>026C          ; Width, Height, Size
+* -- Map Row 0 --                       
+MD0    DATA >0000,>0000,>0001,>0203    ;
+       DATA >0405,>0505,>0505,>0607    ;
+       DATA >0800,>0000                ;
+* -- Map Row 1 --                       
+       DATA >0000,>0000,>0109,>0A0B    ;
+       DATA >0C0C,>0C0C,>0C0C,>0C0D    ;
+       DATA >0E08,>0000                ;
+* -- Map Row 2 --                       
+       DATA >0000,>0001,>090A,>0F10    ;
+       DATA >1112,>1314,>1516,>1718    ;
+       DATA >190E,>0800                ;
+* -- Map Row 3 --                       
+       DATA >0000,>0109,>0A1A,>1B1C    ;
+       DATA >1D1E,>1F20,>2122,>2324    ;
+       DATA >2526,>2728                ;
+* -- Map Row 4 --                       
+       DATA >0001,>090A,>1A29,>2A2B    ;
+       DATA >2C2D,>2E2F,>3031,>3233    ;
+       DATA >3435,>3637                ;
+* -- Map Row 5 --                       
+       DATA >0038,>0A39,>293A,>0C3B    ;
+       DATA >3C0C,>0C3D,>3E0C,>0C0C    ;
+       DATA >3F40,>4142                ;
+* -- Map Row 6 --                       
+       DATA >4344,>4546,>3A0C,>4748    ;
+       DATA >490C,>0C0C,>0C0C,>0C0C    ;
+       DATA >4A4B,>4C4D                ;
+* -- Map Row 7 --                       
+       DATA >4E47,>4F50,>0C0C,>5152    ;
+       DATA >530C,>0C0C,>0C0C,>0C0C    ;
+       DATA >5455,>5657                ;
+* -- Map Row 8 --                       
+       DATA >5859,>5A5B,>150C,>545C    ;
+       DATA >5D0C,>0C5E,>0C0C,>0C0C    ;
+       DATA >0C5F,>6061                ;
+* -- Map Row 9 --                       
+       DATA >6263,>6465,>660C,>0C0C    ;
+       DATA >0C0C,>6768,>690C,>0C0C    ;
+       DATA >0C3F,>0000                ;
+* -- Map Row 10 --                      
+       DATA >620C,>6A6B,>6C15,>0C0C    ;
+       DATA >0C0C,>6D6E,>6F0C,>0C0C    ;
+       DATA >0C4A,>7000                ;
+* -- Map Row 11 --                      
+       DATA >710C,>7273,>7475,>0C0C    ;
+       DATA >7677,>7879,>7A0C,>0C0C    ;
+       DATA >0C54,>7B00                ;
+* -- Map Row 12 --                      
+       DATA >7C0C,>0C7D,>7E0C,>0C0C    ;
+       DATA >7F80,>8177,>3C0C,>0C0C    ;
+       DATA >8283,>8400                ;
+* -- Map Row 13 --                      
+       DATA >850C,>0C86,>870C,>0C0C    ;
+       DATA >8889,>8A8B,>8C0C,>0C8D    ;
+       DATA >8E8F,>9000                ;
+* -- Map Row 14 --                      
+       DATA >850C,>0C0C,>0C0C,>0C0C    ;
+       DATA >0C91,>9293,>940C,>0C95    ;
+       DATA >9697,>9800                ;
+* -- Map Row 15 --                      
+       DATA >850C,>0C0C,>0C0C,>0C0C    ;
+       DATA >0C0C,>0C0C,>0C0C,>0C99    ;
+       DATA >9A9B,>9C00                ;
+* -- Map Row 16 --                      
+       DATA >850C,>0C0C,>0C0C,>0C0C    ;
+       DATA >0C0C,>0C0C,>0C0C,>0C9D    ;
+       DATA >9E9F,>0000                ;
+* -- Map Row 17 --                      
+       DATA >850C,>0C0C,>0C0C,>0C0C    ;
+       DATA >0C0C,>0C0C,>0C0C,>0C0C    ;
+       DATA >A09C,>0000                ;
+* -- Map Row 18 --                      
+       DATA >A13C,>0C0C,>0C0C,>0C0C    ;
+       DATA >0C0C,>0C0C,>0C0C,>0C0C    ;
+       DATA >A200,>0000                ;
+* -- Map Row 19 --                      
+       DATA >A3A4,>0C0C,>0C0C,>0C0C    ;
+       DATA >0C0C,>0C0C,>0C0C,>0C0C    ;
+       DATA >A5A6,>0000                ;
+* -- Map Row 20 --                      
+       DATA >01A7,>0C0C,>0C0C,>0C0C    ;
+       DATA >0C0C,>0C0C,>0C0C,>0C0C    ;
+       DATA >A8A9,>A600                ;
+* -- Map Row 21 --                      
+       DATA >AAAB,>ACAD,>0C0C,>0C0C    ;
+       DATA >0C0C,>0C0C,>0C0C,>AEAF    ;
+       DATA >B0B1,>B200                ;
+* -- Map Row 22 --                      
+       DATA >B3B4,>B5B6,>B70C,>0C0C    ;
+       DATA >0C0C,>0C0C,>0C0C,>B8B9    ;
+       DATA >BABB,>8400                ;
+* -- Map Row 23 --                      
+       DATA >62BC,>BD00,>BE0C,>0C0C    ;
+       DATA >0C0C,>0C0C,>0C0C,>BF00    ;
+       DATA >C0C1,>8400                ;
+* -- Map Row 24 --                      
+       DATA >62BC,>C2C3,>C40C,>0C0C    ;
+       DATA >0C0C,>0C0C,>0CC5,>C6C7    ;
+       DATA >C8C1,>8400                ;
+* -- Map Row 25 --                      
+       DATA >62C9,>CACB,>CC0C,>0C0C    ;
+       DATA >0C0C,>0C0C,>0CCD,>CECF    ;
+       DATA >D0D1,>8400                ;
+* -- Map Row 26 --                      
+       DATA >D2D3,>D4D5,>D6D7,>0C0C    ;
+       DATA >0C0C,>0C0C,>D8D9,>DADB    ;
+       DATA >DCDD,>DE00                ;
+* -- Map Row 27 --                      
+       DATA >DFE0,>E1E2,>E3E4,>0C0C    ;
+       DATA >0C0C,>0C0C,>E5E6,>E7E8    ;
+       DATA >E9EA,>EB00                ;
+* -- Map Row 28 --                      
+       DATA >00EC,>EDE0,>E1EE,>0C0C    ;
+       DATA >0C0C,>0C0C,>EFF0,>E9EA    ;
+       DATA >F1F2,>0000                ;
+* -- Map Row 29 --                      
+       DATA >0000,>00EC,>EDE0,>F30C    ;
+       DATA >0CF4,>0C0C,>F5EA,>F1F2    ;
+       DATA >0000,>0000                ;
+* -- Map Row 30 --                      
+       DATA >0000,>0000,>00EC,>F60C    ;
+       DATA >0CF7,>0C0C,>F8F2,>0000    ;
+       DATA >0000,>0000                ;
+****************************************
+* Scrolled Character Patterns           
+****************************************
+VPFRM0 DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #00
+       DATA >FFFF,>FFFF,>FFFF,>FFFE    ; #01
+       DATA >FCF8,>F0E0,>C080,>0000    ; #02
+       DATA >0000,>0000,>0000,>0000    ; #03
+       DATA >0000,>0000,>0000,>0000    ; #04
+       DATA >0000,>0000,>0000,>0000    ; #05
+       DATA >0000,>0000,>0000,>0000    ; #06
+       DATA >0000,>0000,>0000,>0000    ; #07
+       DATA >FF7F,>3F1F,>0F07,>0301    ; #08
+       DATA >FCF8,>F0E0,>C080,>0000    ; #09
+       DATA >0000,>0000,>0000,>0001    ; #0A
+       DATA >0000,>0000,>007C,>FEFF    ; #0B
+       DATA >0000,>0000,>0000,>0000    ; #0C
+       DATA >0000,>0000,>043F,>3F3F    ; #0D
+       DATA >0000,>0000,>0000,>80C0    ; #0E
+       DATA >0307,>0F1F,>3F7F,>FFFF    ; #0F
+       DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #10
+       DATA >0000,>0001,>0101,>0101    ; #11
+       DATA >007C,>FEFF,>FFFF,>FFFF    ; #12
+       DATA >0000,>0000,>8080,>8080    ; #13
+       DATA >0000,>0008,>7FFF,>FFFF    ; #14
+       DATA >0000,>0000,>0080,>80C0    ; #15
+       DATA >001F,>3F7F,>7F7F,>7F7F    ; #16
+       DATA >0000,>80C0,>E0E0,>E0E0    ; #17
+       DATA >3F3F,>3F3F,>3F3F,>3F3F    ; #18
+       DATA >E0F0,>F8FC,>FEFF,>FFFF    ; #19
+       DATA >0307,>0F1F,>3F7F,>FFFE    ; #1A
+       DATA >FF80,>0000,>0000,>0000    ; #1B
+       DATA >FFFE,>3000,>0000,>0000    ; #1C
+       DATA >0101,>0101,>0100,>0000    ; #1D
+       DATA >FFFF,>FFFF,>FFFF,>7E00    ; #1E
+       DATA >8080,>8080,>8080,>0000    ; #1F
+       DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #20
+       DATA >C0C0,>C0C0,>C0C0,>C0C0    ; #21
+       DATA >7F7F,>7F7F,>7F3F,>1F00    ; #22
+       DATA >E0E0,>E0E0,>E0E0,>8000    ; #23
+       DATA >3F3F,>3F07,>0000,>0000    ; #24
+       DATA >FFFF,>FFFF,>3F1F,>1F1F    ; #25
+       DATA >C0E0,>F0F0,>F8FC,>FCFE    ; #26
+       DATA >0000,>0000,>0000,>0000    ; #27
+       DATA >FFFF,>FF7F,>7F7F,>3F3F    ; #28
+       DATA >FCF8,>F0E0,>C080,>0000    ; #29
+       DATA >0000,>0000,>0000,>0000    ; #2A
+       DATA >0000,>0000,>0000,>0000    ; #2B
+       DATA >0000,>0000,>0000,>0000    ; #2C
+       DATA >0000,>0000,>0000,>0000    ; #2D
+       DATA >0000,>0000,>0000,>0000    ; #2E
+       DATA >7F3E,>0000,>0000,>0000    ; #2F
+       DATA >8000,>0000,>0000,>0000    ; #30
+       DATA >0000,>0000,>0000,>0000    ; #31
+       DATA >0000,>0000,>0000,>0000    ; #32
+       DATA >0000,>0000,>0000,>0000    ; #33
+       DATA >1F1F,>0F0F,>0F0F,>0707    ; #34
+       DATA >FEFF,>FFFF,>FFFF,>FFFF    ; #35
+       DATA >0000,>0000,>8080,>C0C0    ; #36
+       DATA >1F1F,>1F0F,>0F0F,>0F0F    ; #37
+       DATA >FCF8,>F0E0,>C0C0,>8080    ; #38
+       DATA >0307,>0F1F,>3F7F,>FFFC    ; #39
+       DATA >0000,>0000,>0000,>0000    ; #3A
+       DATA >0000,>0000,>0000,>0003    ; #3B
+       DATA >0000,>0000,>0000,>0080    ; #3C
+       DATA >0000,>0000,>0000,>0000    ; #3D
+       DATA >0000,>0000,>0000,>0000    ; #3E
+       DATA >0707,>0303,>0303,>0101    ; #3F
+       DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #40
+       DATA >E0E0,>F0F0,>F8F8,>F8F8    ; #41
+       DATA >0707,>0707,>0707,>0707    ; #42
+       DATA >FFFF,>FEFE,>FEFC,>FCFC    ; #43
+       DATA >0000,>0000,>0000,>0000    ; #44
+       DATA >0307,>0F0F,>1F3F,>3F7F    ; #45
+       DATA >C080,>0000,>0000,>0000    ; #46
+       DATA >0000,>0000,>0001,>0101    ; #47
+       DATA >0F3F,>7FFF,>FFFF,>FFFF    ; #48
+       DATA >E0F8,>F8FC,>FEFF,>FFFF    ; #49
+       DATA >0101,>0000,>0000,>0000    ; #4A
+       DATA >FFFF,>FFFF,>FFFF,>7C78    ; #4B
+       DATA >F8F8,>FCFC,>FCFC,>0000    ; #4C
+       DATA >0303,>0303,>0303,>0303    ; #4D
+       DATA >F8F8,>F8F8,>F0F0,>F0F0    ; #4E
+       DATA >7F7F,>FFFF,>FFFF,>FFF0    ; #4F
+       DATA >80C0,>E0F0,>F0F8,>F87C    ; #50
+       DATA >0101,>0000,>0000,>0000    ; #51
+       DATA >FFFF,>FFFF,>7F3F,>0F03    ; #52
+       DATA >FFFF,>FFFE,>FCF0,>E080    ; #53
+       DATA >0000,>0000,>0000,>0000    ; #54
+       DATA >7878,>3838,>3838,>1C1F    ; #55
+       DATA >0000,>0000,>0000,>00FF    ; #56
+       DATA >0303,>0303,>0303,>07FF    ; #57
+       DATA >F0F0,>F0F0,>F0F0,>F0F0    ; #58
+       DATA >0303,>0303,>0301,>0100    ; #59
+       DATA >E0C0,>C0C0,>C0C0,>E0E0    ; #5A
+       DATA >3C3E,>1E1F,>0F0F,>0707    ; #5B
+       DATA >0000,>0000,>0000,>0000    ; #5C
+       DATA >0000,>0000,>0000,>0000    ; #5D
+       DATA >0000,>0000,>0000,>0038    ; #5E
+       DATA >1F1F,>0F0F,>0F0F,>0707    ; #5F
+       DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #60
+       DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #61
+       DATA >F0F0,>F0F0,>F0F0,>F0F0    ; #62
+       DATA >0000,>0000,>0000,>0000    ; #63
+       DATA >F070,>7838,>3C1C,>1E0E    ; #64
+       DATA >0303,>0101,>0000,>0000    ; #65
+       DATA >C0E0,>E0F0,>F078,>783C    ; #66
+       DATA >0003,>070F,>0F1F,>1F1F    ; #67
+       DATA >FEFF,>FFFF,>FFFF,>FFFF    ; #68
+       DATA >0080,>80C0,>E0F0,>F0F0    ; #69
+       DATA >0F07,>0703,>0303,>0101    ; #6A
+       DATA >0000,>8080,>C0C0,>E0E0    ; #6B
+       DATA >3C1E,>1E0F,>0F07,>0703    ; #6C
+       DATA >1F1F,>0F0F,>0703,>0000    ; #6D
+       DATA >FFFF,>FFFF,>FFFF,>FE38    ; #6E
+       DATA >F0F0,>F0E0,>C000,>0000    ; #6F
+       DATA >FFFF,>FFFF,>FF1F,>0F0F    ; #70
+       DATA >F0F0,>F0F0,>F8FC,>FEFE    ; #71
+       DATA >0000,>0000,>0000,>0000    ; #72
+       DATA >F0F0,>7878,>3C3C,>1E1E    ; #73
+       DATA >0300,>0000,>0000,>0000    ; #74
+       DATA >0000,>0000,>0000,>0000    ; #75
+       DATA >0000,>000F,>0F1F,>1F1F    ; #76
+       DATA >0000,>0080,>E0F8,>FEFF    ; #77
+       DATA >0000,>0000,>0000,>0080    ; #78
+       DATA >0000,>0000,>0000,>0000    ; #79
+       DATA >0000,>0000,>0000,>0000    ; #7A
+       DATA >0F0F,>0F0F,>0F0F,>0F0F    ; #7B
+       DATA >FEFE,>FEFE,>FEFE,>FEFE    ; #7C
+       DATA >0F0F,>0707,>0300,>0000    ; #7D
+       DATA >0000,>8080,>0000,>0000    ; #7E
+       DATA >3F3F,>3F0F,>0300,>0000    ; #7F
+       DATA >FFFF,>FFFF,>FFFF,>3F0F    ; #80
+       DATA >E0F8,>FEFF,>FFFF,>FFFF    ; #81
+       DATA >0000,>0000,>0003,>0F1F    ; #82
+       DATA >0000,>0000,>0080,>E0E0    ; #83
+       DATA >0F0F,>0F0F,>0F0F,>0F0F    ; #84
+       DATA >FEFE,>FEFE,>FEFE,>FEFE    ; #85
+       DATA >0000,>0000,>0000,>0000    ; #86
+       DATA >0000,>0000,>0000,>0000    ; #87
+       DATA >0000,>0000,>0000,>0000    ; #88
+       DATA >0300,>0000,>0000,>0000    ; #89
+       DATA >FFFF,>3F0F,>0300,>0000    ; #8A
+       DATA >FFFF,>FFFF,>FFFF,>3C08    ; #8B
+       DATA >C0E0,>E0C0,>8000,>0000    ; #8C
+       DATA >0000,>0000,>0000,>0001    ; #8D
+       DATA >1F3F,>3F7F,>7FFF,>FFFF    ; #8E
+       DATA >E0E0,>E0C0,>C080,>8000    ; #8F
+       DATA >0F0F,>0F0F,>1F1F,>3F3F    ; #90
+       DATA >0000,>0000,>0000,>0000    ; #91
+       DATA >0000,>0000,>0000,>0000    ; #92
+       DATA >0000,>0000,>0000,>0000    ; #93
+       DATA >0000,>0000,>0000,>0000    ; #94
+       DATA >0103,>0307,>070F,>0F1F    ; #95
+       DATA >FFFE,>FEFC,>FCF8,>F8F0    ; #96
+       DATA >0000,>0000,>0101,>0303    ; #97
+       DATA >7F7F,>FFFF,>FFFF,>FFFF    ; #98
+       DATA >1F3F,>3F1F,>0F00,>0000    ; #99
+       DATA >F0E0,>E0C0,>0000,>0000    ; #9A
+       DATA >0707,>0F0F,>1F1F,>3F3F    ; #9B
+       DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #9C
+       DATA >0000,>0000,>0000,>0000    ; #9D
+       DATA >0000,>0000,>0101,>0303    ; #9E
+       DATA >7F7F,>FFFF,>FFFF,>FFFF    ; #9F
+       DATA >0707,>0F0F,>1F1F,>1F1F    ; #A0
+       DATA >FEFE,>FEFE,>FEFE,>FFFF    ; #A1
+       DATA >1F1F,>1F1F,>1F1F,>1F1F    ; #A2
+       DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #A3
+       DATA >C0E0,>F0F8,>F8FC,>FCFC    ; #A4
+       DATA >0F07,>0301,>0000,>0000    ; #A5
+       DATA >FFFF,>FFFF,>FF7F,>3F1F    ; #A6
+       DATA >FCF8,>F0E0,>C080,>0000    ; #A7
+       DATA >0000,>0000,>0000,>0000    ; #A8
+       DATA >0F07,>0301,>0000,>0000    ; #A9
+       DATA >FCF8,>F0F0,>F0F0,>F0F0    ; #AA
+       DATA >0000,>0000,>0000,>1C1E    ; #AB
+       DATA >0101,>0303,>0303,>0303    ; #AC
+       DATA >F8F8,>FCFC,>FCFE,>FEFF    ; #AD
+       DATA >0000,>0000,>0001,>0103    ; #AE
+       DATA >7E7F,>FFFF,>FFFF,>FFFF    ; #AF
+       DATA >0000,>8080,>C0C0,>C0C0    ; #B0
+       DATA >0000,>0000,>0000,>7878    ; #B1
+       DATA >0F0F,>0F0F,>0F0F,>0F0F    ; #B2
+       DATA >F0F0,>F0F0,>F0F0,>F0F0    ; #B3
+       DATA >1E1E,>1E1E,>1E1E,>1E1E    ; #B4
+       DATA >0303,>0303,>0303,>0303    ; #B5
+       DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #B6
+       DATA >0000,>8080,>C0C0,>C0E0    ; #B7
+       DATA >0303,>0707,>0F0F,>0F1F    ; #B8
+       DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #B9
+       DATA >C0C0,>C0C0,>C0C0,>C0C0    ; #BA
+       DATA >7878,>7878,>7878,>7878    ; #BB
+       DATA >1E1E,>1E1E,>1E1E,>1E1E    ; #BC
+       DATA >0303,>0303,>0303,>0303    ; #BD
+       DATA >E0E0,>F0F0,>F8F8,>F8FC    ; #BE
+       DATA >1F1F,>3F3F,>7F7F,>7FFF    ; #BF
+       DATA >C0C0,>C0C0,>C0C0,>C0C0    ; #C0
+       DATA >7878,>7878,>7878,>7878    ; #C1
+       DATA >0303,>0303,>0000,>0000    ; #C2
+       DATA >FFFF,>FFFF,>FF1F,>0300    ; #C3
+       DATA >FCFE,>FEFE,>FFFF,>FF7F    ; #C4
+       DATA >0001,>0101,>0303,>0303    ; #C5
+       DATA >FFFF,>FFFF,>FFFF,>FFF8    ; #C6
+       DATA >FFFF,>FFFE,>F8E0,>0000    ; #C7
+       DATA >C0C0,>8000,>0000,>0000    ; #C8
+       DATA >1E1E,>1F0F,>0F03,>0000    ; #C9
+       DATA >0000,>0080,>E0FC,>FF3F    ; #CA
+       DATA >0000,>0000,>0000,>80F0    ; #CB
+       DATA >0000,>0000,>0000,>0000    ; #CC
+       DATA >0000,>0000,>0000,>0000    ; #CD
+       DATA >0000,>0000,>0000,>0000    ; #CE
+       DATA >0000,>0000,>0003,>1FFF    ; #CF
+       DATA >0000,>010F,>7FFC,>F0C0    ; #D0
+       DATA >78F8,>F0C0,>0000,>0000    ; #D1
+       DATA >F0F0,>F0F0,>F0F8,>FCFF    ; #D2
+       DATA >0000,>0000,>0000,>0000    ; #D3
+       DATA >0F03,>0000,>0000,>0000    ; #D4
+       DATA >FEFF,>FF3F,>0F03,>0000    ; #D5
+       DATA >00C0,>F8FF,>FFFF,>FF3F    ; #D6
+       DATA >0000,>0000,>E0F8,>F8F8    ; #D7
+       DATA >0000,>0000,>0001,>0303    ; #D8
+       DATA >0000,>0007,>3FFF,>FFFF    ; #D9
+       DATA >031F,>FFFF,>FFFC,>F0C0    ; #DA
+       DATA >FFFC,>F0C0,>0000,>0000    ; #DB
+       DATA >0000,>0000,>0000,>0000    ; #DC
+       DATA >0000,>0000,>0000,>0107    ; #DD
+       DATA >0F0F,>0F1F,>3F7F,>FFFF    ; #DE
+       DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #DF
+       DATA >C0F0,>FCFF,>FFFF,>FFFF    ; #E0
+       DATA >0000,>0000,>C0F0,>FCFF    ; #E1
+       DATA >0000,>0000,>0000,>0000    ; #E2
+       DATA >0F03,>0000,>0000,>0000    ; #E3
+       DATA >F8F8,>F838,>1808,>0000    ; #E4
+       DATA >0303,>0303,>0301,>0000    ; #E5
+       DATA >FFFC,>F0C0,>8000,>0000    ; #E6
+       DATA >0000,>0000,>0000,>0000    ; #E7
+       DATA >0000,>0000,>0000,>0107    ; #E8
+       DATA >0000,>0107,>1F7F,>FFFF    ; #E9
+       DATA >1F7F,>FFFF,>FFFF,>FFFF    ; #EA
+       DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #EB
+       DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #EC
+       DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #ED
+       DATA >0000,>0000,>0000,>0000    ; #EE
+       DATA >0000,>0000,>0000,>0000    ; #EF
+       DATA >0000,>0000,>0000,>0107    ; #F0
+       DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #F1
+       DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #F2
+       DATA >0000,>0000,>C0E0,>E0E0    ; #F3
+       DATA >2070,>2000,>0000,>0000    ; #F4
+       DATA >0000,>0107,>1F1F,>1F1F    ; #F5
+       DATA >E0E0,>E0E0,>E0E0,>E0E0    ; #F6
+       DATA >0000,>0000,>0000,>0000    ; #F7
+       DATA >1F1F,>1F1F,>1F1F,>1F1F    ; #F8
+VPFRM1 DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #00
+       DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #01
+       DATA >FFFF,>FCF8,>F0E0,>C080    ; #02
+       DATA >C000,>0000,>0000,>0000    ; #03
+       DATA >0000,>0000,>0000,>0000    ; #04
+       DATA >0000,>0000,>0000,>0000    ; #05
+       DATA >0000,>0000,>0000,>0000    ; #06
+       DATA >0F03,>0000,>0000,>0000    ; #07
+       DATA >FFFF,>FF7F,>3F1F,>0F07    ; #08
+       DATA >FFFE,>FCF8,>F0E0,>C080    ; #09
+       DATA >0000,>0000,>0000,>0000    ; #0A
+       DATA >0000,>0000,>0000,>007C    ; #0B
+       DATA >0000,>0000,>0000,>0000    ; #0C
+       DATA >0000,>0000,>0000,>043F    ; #0D
+       DATA >0301,>0000,>0000,>0000    ; #0E
+       DATA >0001,>0307,>0F1F,>3F7F    ; #0F
+       DATA >FEFF,>FFFF,>FFFF,>FFFF    ; #10
+       DATA >0000,>0000,>0001,>0101    ; #11
+       DATA >0000,>007C,>FEFF,>FFFF    ; #12
+       DATA >0000,>0000,>0000,>8080    ; #13
+       DATA >0000,>0000,>0008,>7FFF    ; #14
+       DATA >0000,>0000,>0000,>0080    ; #15
+       DATA >0000,>001F,>3F7F,>7F7F    ; #16
+       DATA >0000,>0000,>80C0,>E0E0    ; #17
+       DATA >3F3F,>3F3F,>3F3F,>3F3F    ; #18
+       DATA >80C0,>E0F0,>F8FC,>FEFF    ; #19
+       DATA >0001,>0307,>0F1F,>3F7F    ; #1A
+       DATA >FFFF,>FF80,>0000,>0000    ; #1B
+       DATA >FFFF,>FFFE,>3000,>0000    ; #1C
+       DATA >0101,>0101,>0101,>0100    ; #1D
+       DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #1E
+       DATA >8080,>8080,>8080,>8080    ; #1F
+       DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #20
+       DATA >80C0,>C0C0,>C0C0,>C0C0    ; #21
+       DATA >7F7F,>7F7F,>7F7F,>7F3F    ; #22
+       DATA >E0E0,>E0E0,>E0E0,>E0E0    ; #23
+       DATA >3F3F,>3F3F,>3F07,>0000    ; #24
+       DATA >FFFF,>FFFF,>FFFF,>3F1F    ; #25
+       DATA >80C0,>C0E0,>F0F0,>F8FC    ; #26
+       DATA >0301,>0000,>0000,>0000    ; #27
+       DATA >FFFF,>FFFF,>FF7F,>7F7F    ; #28
+       DATA >FFFE,>FCF8,>F0E0,>C080    ; #29
+       DATA >0000,>0000,>0000,>0000    ; #2A
+       DATA >0000,>0000,>0000,>0000    ; #2B
+       DATA >0000,>0000,>0000,>0000    ; #2C
+       DATA >7E00,>0000,>0000,>0000    ; #2D
+       DATA >0000,>0000,>0000,>0000    ; #2E
+       DATA >FFFF,>7F3E,>0000,>0000    ; #2F
+       DATA >C0C0,>8000,>0000,>0000    ; #30
+       DATA >1F00,>0000,>0000,>0000    ; #31
+       DATA >8000,>0000,>0000,>0000    ; #32
+       DATA >0000,>0000,>0000,>0000    ; #33
+       DATA >1F1F,>1F1F,>0F0F,>0F0F    ; #34
+       DATA >FCFE,>FEFF,>FFFF,>FFFF    ; #35
+       DATA >0000,>0000,>0000,>8080    ; #36
+       DATA >3F3F,>1F1F,>1F0F,>0F0F    ; #37
+       DATA >FFFE,>FCF8,>F0E0,>C0C0    ; #38
+       DATA >0001,>0307,>0F1F,>3F7F    ; #39
+       DATA >0000,>0000,>0000,>0000    ; #3A
+       DATA >0000,>0000,>0000,>0000    ; #3B
+       DATA >0000,>0000,>0000,>0000    ; #3C
+       DATA >0000,>0000,>0000,>0000    ; #3D
+       DATA >0000,>0000,>0000,>0000    ; #3E
+       DATA >0707,>0707,>0303,>0303    ; #3F
+       DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #40
+       DATA >C0C0,>E0E0,>F0F0,>F8F8    ; #41
+       DATA >0F0F,>0707,>0707,>0707    ; #42
+       DATA >FFFF,>FFFF,>FEFE,>FEFC    ; #43
+       DATA >8080,>0000,>0000,>0000    ; #44
+       DATA >0001,>0307,>0F0F,>1F3F    ; #45
+       DATA >FFFC,>C080,>0000,>0000    ; #46
+       DATA >0000,>0000,>0000,>0001    ; #47
+       DATA >0003,>0F3F,>7FFF,>FFFF    ; #48
+       DATA >0080,>E0F8,>F8FC,>FEFF    ; #49
+       DATA >0101,>0101,>0000,>0000    ; #4A
+       DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #4B
+       DATA >F8F8,>F8F8,>FCFC,>FCFC    ; #4C
+       DATA >0707,>0303,>0303,>0303    ; #4D
+       DATA >FCFC,>F8F8,>F8F8,>F0F0    ; #4E
+       DATA >3F7F,>7F7F,>FFFF,>FFFF    ; #4F
+       DATA >0000,>80C0,>E0F0,>F0F8    ; #50
+       DATA >0101,>0101,>0000,>0000    ; #51
+       DATA >FFFF,>FFFF,>FFFF,>7F3F    ; #52
+       DATA >FFFF,>FFFF,>FFFE,>FCF0    ; #53
+       DATA >0000,>0000,>0000,>0000    ; #54
+       DATA >7C78,>7878,>3838,>3838    ; #55
+       DATA >0000,>0000,>0000,>0000    ; #56
+       DATA >0303,>0303,>0303,>0303    ; #57
+       DATA >F0F0,>F0F0,>F0F0,>F0F0    ; #58
+       DATA >0101,>0303,>0303,>0301    ; #59
+       DATA >FFF0,>E0C0,>C0C0,>C0C0    ; #5A
+       DATA >F87C,>3C3E,>1E1F,>0F0F    ; #5B
+       DATA >0F03,>0000,>0000,>0000    ; #5C
+       DATA >E080,>0000,>0000,>0000    ; #5D
+       DATA >0000,>0000,>0000,>0000    ; #5E
+       DATA >1C1F,>1F1F,>0F0F,>0F0F    ; #5F
+       DATA >00FF,>FFFF,>FFFF,>FFFF    ; #60
+       DATA >07FF,>FFFF,>FFFF,>FFFF    ; #61
+       DATA >F0F0,>F0F0,>F0F0,>F0F0    ; #62
+       DATA >0100,>0000,>0000,>0000    ; #63
+       DATA >E0E0,>F070,>7838,>3C1C    ; #64
+       DATA >0707,>0303,>0101,>0000    ; #65
+       DATA >80C0,>C0E0,>E0F0,>F078    ; #66
+       DATA >0000,>0003,>070F,>0F1F    ; #67
+       DATA >0038,>FEFF,>FFFF,>FFFF    ; #68
+       DATA >0000,>0080,>80C0,>E0F0    ; #69
+       DATA >1E0E,>0F07,>0703,>0303    ; #6A
+       DATA >0000,>0000,>8080,>C0C0    ; #6B
+       DATA >783C,>3C1E,>1E0F,>0F07    ; #6C
+       DATA >1F1F,>1F1F,>0F0F,>0703    ; #6D
+       DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #6E
+       DATA >F0F0,>F0F0,>F0E0,>C000    ; #6F
+       DATA >FFFF,>FFFF,>FFFF,>FF1F    ; #70
+       DATA >F0F0,>F0F0,>F0F0,>F8FC    ; #71
+       DATA >0101,>0000,>0000,>0000    ; #72
+       DATA >E0E0,>F0F0,>7878,>3C3C    ; #73
+       DATA >0703,>0300,>0000,>0000    ; #74
+       DATA >80C0,>0000,>0000,>0000    ; #75
+       DATA >0000,>0000,>000F,>0F1F    ; #76
+       DATA >0000,>0000,>0080,>E0F8    ; #77
+       DATA >0000,>0000,>0000,>0000    ; #78
+       DATA >FE38,>0000,>0000,>0000    ; #79
+       DATA >0000,>0000,>0000,>0000    ; #7A
+       DATA >0F0F,>0F0F,>0F0F,>0F0F    ; #7B
+       DATA >FEFE,>FEFE,>FEFE,>FEFE    ; #7C
+       DATA >1E1E,>0F0F,>0707,>0300    ; #7D
+       DATA >0000,>0000,>8080,>0000    ; #7E
+       DATA >1F1F,>3F3F,>3F0F,>0300    ; #7F
+       DATA >FEFF,>FFFF,>FFFF,>FFFF    ; #80
+       DATA >0080,>E0F8,>FEFF,>FFFF    ; #81
+       DATA >0000,>0000,>0000,>0003    ; #82
+       DATA >0000,>0000,>0000,>0080    ; #83
+       DATA >0F0F,>0F0F,>0F0F,>0F0F    ; #84
+       DATA >FEFE,>FEFE,>FEFE,>FEFE    ; #85
+       DATA >0000,>0000,>0000,>0000    ; #86
+       DATA >0000,>0000,>0000,>0000    ; #87
+       DATA >0000,>0000,>0000,>0000    ; #88
+       DATA >3F0F,>0300,>0000,>0000    ; #89
+       DATA >FFFF,>FFFF,>3F0F,>0300    ; #8A
+       DATA >FEFF,>FFFF,>FFFF,>FFFF    ; #8B
+       DATA >0080,>C0E0,>E0C0,>8000    ; #8C
+       DATA >0000,>0000,>0000,>0000    ; #8D
+       DATA >0F1F,>1F3F,>3F7F,>7FFF    ; #8E
+       DATA >E0E0,>E0E0,>E0C0,>C080    ; #8F
+       DATA >0F0F,>0F0F,>0F0F,>1F1F    ; #90
+       DATA >0000,>0000,>0000,>0000    ; #91
+       DATA >0000,>0000,>0000,>0000    ; #92
+       DATA >3C08,>0000,>0000,>0000    ; #93
+       DATA >0000,>0000,>0000,>0000    ; #94
+       DATA >0001,>0103,>0307,>070F    ; #95
+       DATA >FFFF,>FFFE,>FEFC,>FCF8    ; #96
+       DATA >8000,>0000,>0000,>0101    ; #97
+       DATA >3F3F,>7F7F,>FFFF,>FFFF    ; #98
+       DATA >0F1F,>1F3F,>3F1F,>0F00    ; #99
+       DATA >F8F0,>F0E0,>E0C0,>0000    ; #9A
+       DATA >0303,>0707,>0F0F,>1F1F    ; #9B
+       DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #9C
+       DATA >0000,>0000,>0000,>0000    ; #9D
+       DATA >0000,>0000,>0000,>0101    ; #9E
+       DATA >3F3F,>7F7F,>FFFF,>FFFF    ; #9F
+       DATA >0303,>0707,>0F0F,>1F1F    ; #A0
+       DATA >FEFE,>FEFE,>FEFE,>FEFE    ; #A1
+       DATA >1F1F,>1F1F,>1F1F,>1F1F    ; #A2
+       DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #A3
+       DATA >0080,>C0E0,>F0F8,>F8FC    ; #A4
+       DATA >1F1F,>0F07,>0301,>0000    ; #A5
+       DATA >FFFF,>FFFF,>FFFF,>FF7F    ; #A6
+       DATA >FCFC,>FCF8,>F0E0,>C080    ; #A7
+       DATA >0000,>0000,>0000,>0000    ; #A8
+       DATA >3F1F,>0F07,>0301,>0000    ; #A9
+       DATA >FFFE,>FCF8,>F0F0,>F0F0    ; #AA
+       DATA >0000,>0000,>0000,>0000    ; #AB
+       DATA >0000,>0101,>0303,>0303    ; #AC
+       DATA >0000,>F8F8,>FCFC,>FCFE    ; #AD
+       DATA >0000,>0000,>0000,>0001    ; #AE
+       DATA >0000,>7E7F,>FFFF,>FFFF    ; #AF
+       DATA >0000,>0000,>8080,>C0C0    ; #B0
+       DATA >0000,>0000,>0000,>0000    ; #B1
+       DATA >3F1F,>0F0F,>0F0F,>0F0F    ; #B2
+       DATA >F0F0,>F0F0,>F0F0,>F0F0    ; #B3
+       DATA >1C1E,>1E1E,>1E1E,>1E1E    ; #B4
+       DATA >0303,>0303,>0303,>0303    ; #B5
+       DATA >FEFF,>FFFF,>FFFF,>FFFF    ; #B6
+       DATA >0000,>0000,>8080,>C0C0    ; #B7
+       DATA >0103,>0303,>0707,>0F0F    ; #B8
+       DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #B9
+       DATA >C0C0,>C0C0,>C0C0,>C0C0    ; #BA
+       DATA >7878,>7878,>7878,>7878    ; #BB
+       DATA >1E1E,>1E1E,>1E1E,>1E1E    ; #BC
+       DATA >0303,>0303,>0303,>0303    ; #BD
+       DATA >C0E0,>E0E0,>F0F0,>F8F8    ; #BE
+       DATA >0F1F,>1F1F,>3F3F,>7F7F    ; #BF
+       DATA >C0C0,>C0C0,>C0C0,>C0C0    ; #C0
+       DATA >7878,>7878,>7878,>7878    ; #C1
+       DATA >0303,>0303,>0303,>0000    ; #C2
+       DATA >FFFF,>FFFF,>FFFF,>FF1F    ; #C3
+       DATA >F8FC,>FCFE,>FEFE,>FFFF    ; #C4
+       DATA >0000,>0001,>0101,>0303    ; #C5
+       DATA >7FFF,>FFFF,>FFFF,>FFFF    ; #C6
+       DATA >FFFF,>FFFF,>FFFE,>F8E0    ; #C7
+       DATA >C0C0,>C0C0,>8000,>0000    ; #C8
+       DATA >1E1E,>1E1E,>1F0F,>0F03    ; #C9
+       DATA >0000,>0000,>0080,>E0FC    ; #CA
+       DATA >0300,>0000,>0000,>0000    ; #CB
+       DATA >FF7F,>0000,>0000,>0000    ; #CC
+       DATA >0303,>0000,>0000,>0000    ; #CD
+       DATA >FFF8,>0000,>0000,>0000    ; #CE
+       DATA >0000,>0000,>0000,>0003    ; #CF
+       DATA >0000,>0000,>010F,>7FFC    ; #D0
+       DATA >7878,>78F8,>F0C0,>0000    ; #D1
+       DATA >F0F0,>F0F0,>F0F0,>F0F8    ; #D2
+       DATA >0000,>0000,>0000,>0000    ; #D3
+       DATA >FF3F,>0F03,>0000,>0000    ; #D4
+       DATA >80F0,>FEFF,>FF3F,>0F03    ; #D5
+       DATA >0000,>00C0,>F8FF,>FFFF    ; #D6
+       DATA >0000,>0000,>0000,>E0F8    ; #D7
+       DATA >0000,>0000,>0000,>0001    ; #D8
+       DATA >0000,>0000,>0007,>3FFF    ; #D9
+       DATA >0000,>031F,>FFFF,>FFFC    ; #DA
+       DATA >1FFF,>FFFC,>F0C0,>0000    ; #DB
+       DATA >F0C0,>0000,>0000,>0000    ; #DC
+       DATA >0000,>0000,>0000,>0000    ; #DD
+       DATA >0F0F,>0F0F,>0F1F,>3F7F    ; #DE
+       DATA >FCFF,>FFFF,>FFFF,>FFFF    ; #DF
+       DATA >0000,>C0F0,>FCFF,>FFFF    ; #E0
+       DATA >0000,>0000,>0000,>C0F0    ; #E1
+       DATA >0000,>0000,>0000,>0000    ; #E2
+       DATA >FF3F,>0F03,>0000,>0000    ; #E3
+       DATA >F8F8,>F8F8,>F838,>1808    ; #E4
+       DATA >0303,>0303,>0303,>0301    ; #E5
+       DATA >FFFF,>FFFC,>F0C0,>8000    ; #E6
+       DATA >F0C0,>0000,>0000,>0000    ; #E7
+       DATA >0000,>0000,>0000,>0000    ; #E8
+       DATA >0000,>0000,>0107,>1F7F    ; #E9
+       DATA >0107,>1F7F,>FFFF,>FFFF    ; #EA
+       DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #EB
+       DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #EC
+       DATA >FCFF,>FFFF,>FFFF,>FFFF    ; #ED
+       DATA >0000,>0000,>0000,>0000    ; #EE
+       DATA >0000,>0000,>0000,>0000    ; #EF
+       DATA >0000,>0000,>0000,>0000    ; #F0
+       DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #F1
+       DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #F2
+       DATA >0000,>0000,>0000,>C0E0    ; #F3
+       DATA >0000,>2070,>2000,>0000    ; #F4
+       DATA >0000,>0000,>0107,>1F1F    ; #F5
+       DATA >E0E0,>E0E0,>E0E0,>E0E0    ; #F6
+       DATA >0000,>0000,>0000,>0000    ; #F7
+       DATA >1F1F,>1F1F,>1F1F,>1F1F    ; #F8
+VPFRM2 DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #00
+       DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #01
+       DATA >FFFF,>FFFF,>FCF8,>F0E0    ; #02
+       DATA >FCF0,>C000,>0000,>0000    ; #03
+       DATA >0000,>0000,>0000,>0000    ; #04
+       DATA >0000,>0000,>0000,>0000    ; #05
+       DATA >0000,>0000,>0000,>0000    ; #06
+       DATA >FF3F,>0F03,>0000,>0000    ; #07
+       DATA >FFFF,>FFFF,>FF7F,>3F1F    ; #08
+       DATA >FFFF,>FFFE,>FCF8,>F0E0    ; #09
+       DATA >C080,>0000,>0000,>0000    ; #0A
+       DATA >0000,>0000,>0000,>0000    ; #0B
+       DATA >0000,>0000,>0000,>0000    ; #0C
+       DATA >0000,>0000,>0000,>0000    ; #0D
+       DATA >0F07,>0301,>0000,>0000    ; #0E
+       DATA >0000,>0001,>0307,>0F1F    ; #0F
+       DATA >007C,>FEFF,>FFFF,>FFFF    ; #10
+       DATA >0000,>0000,>0000,>0001    ; #11
+       DATA >0000,>0000,>007C,>FEFF    ; #12
+       DATA >0000,>0000,>0000,>0000    ; #13
+       DATA >0000,>0000,>0000,>0008    ; #14
+       DATA >0000,>0000,>0000,>0000    ; #15
+       DATA >0000,>0000,>001F,>3F7F    ; #16
+       DATA >0000,>0000,>0000,>80C0    ; #17
+       DATA >043F,>3F3F,>3F3F,>3F3F    ; #18
+       DATA >0000,>80C0,>E0F0,>F8FC    ; #19
+       DATA >0000,>0001,>0307,>0F1F    ; #1A
+       DATA >3F7F,>FFFF,>FF80,>0000    ; #1B
+       DATA >FFFF,>FFFF,>FFFE,>3000    ; #1C
+       DATA >0101,>0101,>0101,>0101    ; #1D
+       DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #1E
+       DATA >8080,>8080,>8080,>8080    ; #1F
+       DATA >7FFF,>FFFF,>FFFF,>FFFF    ; #20
+       DATA >0080,>80C0,>C0C0,>C0C0    ; #21
+       DATA >7F7F,>7F7F,>7F7F,>7F7F    ; #22
+       DATA >E0E0,>E0E0,>E0E0,>E0E0    ; #23
+       DATA >3F3F,>3F3F,>3F3F,>3F07    ; #24
+       DATA >FEFF,>FFFF,>FFFF,>FFFF    ; #25
+       DATA >0000,>80C0,>C0E0,>F0F0    ; #26
+       DATA >0F07,>0301,>0000,>0000    ; #27
+       DATA >FFFF,>FFFF,>FFFF,>FF7F    ; #28
+       DATA >3F7F,>FFFE,>FCF8,>F0E0    ; #29
+       DATA >0000,>0000,>0000,>0000    ; #2A
+       DATA >0000,>0000,>0000,>0000    ; #2B
+       DATA >0100,>0000,>0000,>0000    ; #2C
+       DATA >FFFF,>7E00,>0000,>0000    ; #2D
+       DATA >8080,>0000,>0000,>0000    ; #2E
+       DATA >FFFF,>FFFF,>7F3E,>0000    ; #2F
+       DATA >C0C0,>C0C0,>8000,>0000    ; #30
+       DATA >7F3F,>1F00,>0000,>0000    ; #31
+       DATA >E0E0,>8000,>0000,>0000    ; #32
+       DATA >0000,>0000,>0000,>0000    ; #33
+       DATA >3F1F,>1F1F,>1F1F,>0F0F    ; #34
+       DATA >F8FC,>FCFE,>FEFF,>FFFF    ; #35
+       DATA >0000,>0000,>0000,>0000    ; #36
+       DATA >7F7F,>3F3F,>1F1F,>1F0F    ; #37
+       DATA >FFFF,>FFFE,>FCF8,>F0E0    ; #38
+       DATA >0000,>0001,>0307,>0F1F    ; #39
+       DATA >C080,>0000,>0000,>0000    ; #3A
+       DATA >0000,>0000,>0000,>0000    ; #3B
+       DATA >0000,>0000,>0000,>0000    ; #3C
+       DATA >0000,>0000,>0000,>0000    ; #3D
+       DATA >0000,>0000,>0000,>0000    ; #3E
+       DATA >0F0F,>0707,>0707,>0303    ; #3F
+       DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #40
+       DATA >8080,>C0C0,>E0E0,>F0F0    ; #41
+       DATA >0F0F,>0F0F,>0707,>0707    ; #42
+       DATA >FFFF,>FFFF,>FFFF,>FEFE    ; #43
+       DATA >C0C0,>8080,>0000,>0000    ; #44
+       DATA >0000,>0001,>0307,>0F0F    ; #45
+       DATA >3F7F,>FFFC,>C080,>0000    ; #46
+       DATA >0000,>0000,>0000,>0000    ; #47
+       DATA >0000,>0003,>0F3F,>7FFF    ; #48
+       DATA >0000,>0080,>E0F8,>F8FC    ; #49
+       DATA >0303,>0101,>0101,>0000    ; #4A
+       DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #4B
+       DATA >F8F8,>F8F8,>F8F8,>FCFC    ; #4C
+       DATA >0707,>0707,>0303,>0303    ; #4D
+       DATA >FEFC,>FCFC,>F8F8,>F8F8    ; #4E
+       DATA >1F3F,>3F7F,>7F7F,>FFFF    ; #4F
+       DATA >0000,>0000,>80C0,>E0F0    ; #50
+       DATA >0001,>0101,>0101,>0000    ; #51
+       DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #52
+       DATA >FEFF,>FFFF,>FFFF,>FFFE    ; #53
+       DATA >0000,>0000,>0000,>0000    ; #54
+       DATA >FFFF,>7C78,>7878,>3838    ; #55
+       DATA >FCFC,>0000,>0000,>0000    ; #56
+       DATA >0303,>0303,>0303,>0303    ; #57
+       DATA >F0F0,>F0F0,>F0F0,>F0F0    ; #58
+       DATA >0001,>0101,>0303,>0303    ; #59
+       DATA >FFFF,>FFF0,>E0C0,>C0C0    ; #5A
+       DATA >F0F8,>F87C,>3C3E,>1E1F    ; #5B
+       DATA >7F3F,>0F03,>0000,>0000    ; #5C
+       DATA >FCF0,>E080,>0000,>0000    ; #5D
+       DATA >0000,>0000,>0000,>0000    ; #5E
+       DATA >3838,>1C1F,>1F1F,>0F0F    ; #5F
+       DATA >0000,>00FF,>FFFF,>FFFF    ; #60
+       DATA >0303,>07FF,>FFFF,>FFFF    ; #61
+       DATA >F0F0,>F0F0,>F0F0,>F0F0    ; #62
+       DATA >0301,>0100,>0000,>0000    ; #63
+       DATA >C0C0,>E0E0,>F070,>7838    ; #64
+       DATA >0F0F,>0707,>0303,>0101    ; #65
+       DATA >0080,>80C0,>C0E0,>E0F0    ; #66
+       DATA >0000,>0000,>0003,>070F    ; #67
+       DATA >0000,>0038,>FEFF,>FFFF    ; #68
+       DATA >0000,>0000,>0080,>80C0    ; #69
+       DATA >3C1C,>1E0E,>0F07,>0703    ; #6A
+       DATA >0000,>0000,>0000,>8080    ; #6B
+       DATA >F078,>783C,>3C1E,>1E0F    ; #6C
+       DATA >0F1F,>1F1F,>1F1F,>0F0F    ; #6D
+       DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #6E
+       DATA >E0F0,>F0F0,>F0F0,>F0E0    ; #6F
+       DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #70
+       DATA >F0F0,>F0F0,>F0F0,>F0F0    ; #71
+       DATA >0303,>0101,>0000,>0000    ; #72
+       DATA >C0C0,>E0E0,>F0F0,>7878    ; #73
+       DATA >0F07,>0703,>0300,>0000    ; #74
+       DATA >0080,>80C0,>0000,>0000    ; #75
+       DATA >0000,>0000,>0000,>000F    ; #76
+       DATA >0000,>0000,>0000,>0080    ; #77
+       DATA >0703,>0000,>0000,>0000    ; #78
+       DATA >FFFF,>FE38,>0000,>0000    ; #79
+       DATA >C000,>0000,>0000,>0000    ; #7A
+       DATA >FF1F,>0F0F,>0F0F,>0F0F    ; #7B
+       DATA >F8FC,>FEFE,>FEFE,>FEFE    ; #7C
+       DATA >3C3C,>1E1E,>0F0F,>0707    ; #7D
+       DATA >0000,>0000,>0000,>8080    ; #7E
+       DATA >0F1F,>1F1F,>3F3F,>3F0F    ; #7F
+       DATA >E0F8,>FEFF,>FFFF,>FFFF    ; #80
+       DATA >0000,>0080,>E0F8,>FEFF    ; #81
+       DATA >0000,>0000,>0000,>0000    ; #82
+       DATA >0000,>0000,>0000,>0000    ; #83
+       DATA >0F0F,>0F0F,>0F0F,>0F0F    ; #84
+       DATA >FEFE,>FEFE,>FEFE,>FEFE    ; #85
+       DATA >0300,>0000,>0000,>0000    ; #86
+       DATA >0000,>0000,>0000,>0000    ; #87
+       DATA >0300,>0000,>0000,>0000    ; #88
+       DATA >FFFF,>3F0F,>0300,>0000    ; #89
+       DATA >FFFF,>FFFF,>FFFF,>3F0F    ; #8A
+       DATA >E0F8,>FEFF,>FFFF,>FFFF    ; #8B
+       DATA >0000,>0080,>C0E0,>E0C0    ; #8C
+       DATA >0000,>0000,>0000,>0000    ; #8D
+       DATA >0003,>0F1F,>1F3F,>3F7F    ; #8E
+       DATA >0080,>E0E0,>E0E0,>E0C0    ; #8F
+       DATA >0F0F,>0F0F,>0F0F,>0F0F    ; #90
+       DATA >0000,>0000,>0000,>0000    ; #91
+       DATA >0300,>0000,>0000,>0000    ; #92
+       DATA >FFFF,>3C08,>0000,>0000    ; #93
+       DATA >8000,>0000,>0000,>0000    ; #94
+       DATA >0000,>0001,>0103,>0307    ; #95
+       DATA >7FFF,>FFFF,>FFFE,>FEFC    ; #96
+       DATA >C080,>8000,>0000,>0000    ; #97
+       DATA >1F1F,>3F3F,>7F7F,>FFFF    ; #98
+       DATA >070F,>0F1F,>1F3F,>3F1F    ; #99
+       DATA >FCF8,>F8F0,>F0E0,>E0C0    ; #9A
+       DATA >0101,>0303,>0707,>0F0F    ; #9B
+       DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #9C
+       DATA >0F00,>0000,>0000,>0000    ; #9D
+       DATA >0000,>0000,>0000,>0000    ; #9E
+       DATA >1F1F,>3F3F,>7F7F,>FFFF    ; #9F
+       DATA >0101,>0303,>0707,>0F0F    ; #A0
+       DATA >FEFE,>FEFE,>FEFE,>FEFE    ; #A1
+       DATA >1F1F,>1F1F,>1F1F,>1F1F    ; #A2
+       DATA >FEFE,>FFFF,>FFFF,>FFFF    ; #A3
+       DATA >0000,>0080,>C0E0,>F0F8    ; #A4
+       DATA >1F1F,>1F1F,>0F07,>0301    ; #A5
+       DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #A6
+       DATA >F8FC,>FCFC,>FCF8,>F0E0    ; #A7
+       DATA >0000,>0000,>0000,>0000    ; #A8
+       DATA >FF7F,>3F1F,>0F07,>0301    ; #A9
+       DATA >FFFF,>FFFE,>FCF8,>F0F0    ; #AA
+       DATA >C080,>0000,>0000,>0000    ; #AB
+       DATA >0000,>0000,>0101,>0303    ; #AC
+       DATA >0000,>0000,>F8F8,>FCFC    ; #AD
+       DATA >0000,>0000,>0000,>0000    ; #AE
+       DATA >0000,>0000,>7E7F,>FFFF    ; #AF
+       DATA >0000,>0000,>0000,>8080    ; #B0
+       DATA >0000,>0000,>0000,>0000    ; #B1
+       DATA >FF7F,>3F1F,>0F0F,>0F0F    ; #B2
+       DATA >F0F0,>F0F0,>F0F0,>F0F0    ; #B3
+       DATA >0000,>1C1E,>1E1E,>1E1E    ; #B4
+       DATA >0303,>0303,>0303,>0303    ; #B5
+       DATA >FCFE,>FEFF,>FFFF,>FFFF    ; #B6
+       DATA >0000,>0000,>0000,>8080    ; #B7
+       DATA >0001,>0103,>0303,>0707    ; #B8
+       DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #B9
+       DATA >C0C0,>C0C0,>C0C0,>C0C0    ; #BA
+       DATA >0000,>7878,>7878,>7878    ; #BB
+       DATA >1E1E,>1E1E,>1E1E,>1E1E    ; #BC
+       DATA >0303,>0303,>0303,>0303    ; #BD
+       DATA >C0C0,>C0E0,>E0E0,>F0F0    ; #BE
+       DATA >0F0F,>0F1F,>1F1F,>3F3F    ; #BF
+       DATA >C0C0,>C0C0,>C0C0,>C0C0    ; #C0
+       DATA >7878,>7878,>7878,>7878    ; #C1
+       DATA >0303,>0303,>0303,>0303    ; #C2
+       DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #C3
+       DATA >F8F8,>F8FC,>FCFE,>FEFE    ; #C4
+       DATA >0000,>0000,>0001,>0101    ; #C5
+       DATA >7F7F,>7FFF,>FFFF,>FFFF    ; #C6
+       DATA >FFFF,>FFFF,>FFFF,>FFFE    ; #C7
+       DATA >C0C0,>C0C0,>C0C0,>8000    ; #C8
+       DATA >1E1E,>1E1E,>1E1E,>1F0F    ; #C9
+       DATA >0000,>0000,>0000,>0080    ; #CA
+       DATA >FF1F,>0300,>0000,>0000    ; #CB
+       DATA >FFFF,>FF7F,>0000,>0000    ; #CC
+       DATA >0303,>0303,>0000,>0000    ; #CD
+       DATA >FFFF,>FFF8,>0000,>0000    ; #CE
+       DATA >F8E0,>0000,>0000,>0000    ; #CF
+       DATA >0000,>0000,>0000,>010F    ; #D0
+       DATA >7878,>7878,>78F8,>F0C0    ; #D1
+       DATA >F0F0,>F0F0,>F0F0,>F0F0    ; #D2
+       DATA >0F03,>0000,>0000,>0000    ; #D3
+       DATA >E0FC,>FF3F,>0F03,>0000    ; #D4
+       DATA >0000,>80F0,>FEFF,>FF3F    ; #D5
+       DATA >0000,>0000,>00C0,>F8FF    ; #D6
+       DATA >0000,>0000,>0000,>0000    ; #D7
+       DATA >0000,>0000,>0000,>0000    ; #D8
+       DATA >0000,>0000,>0000,>0007    ; #D9
+       DATA >0000,>0000,>031F,>FFFF    ; #DA
+       DATA >0003,>1FFF,>FFFC,>F0C0    ; #DB
+       DATA >7FFC,>F0C0,>0000,>0000    ; #DC
+       DATA >0000,>0000,>0000,>0000    ; #DD
+       DATA >0F0F,>0F0F,>0F0F,>0F1F    ; #DE
+       DATA >F0F8,>FCFF,>FFFF,>FFFF    ; #DF
+       DATA >0000,>0000,>C0F0,>FCFF    ; #E0
+       DATA >0000,>0000,>0000,>0000    ; #E1
+       DATA >0F03,>0000,>0000,>0000    ; #E2
+       DATA >FFFF,>FF3F,>0F03,>0000    ; #E3
+       DATA >E0F8,>F8F8,>F8F8,>F838    ; #E4
+       DATA >0001,>0303,>0303,>0303    ; #E5
+       DATA >3FFF,>FFFF,>FFFC,>F0C0    ; #E6
+       DATA >FFFC,>F0C0,>0000,>0000    ; #E7
+       DATA >0000,>0000,>0000,>0000    ; #E8
+       DATA >0000,>0000,>0000,>0107    ; #E9
+       DATA >0000,>0107,>1F7F,>FFFF    ; #EA
+       DATA >3F7F,>FFFF,>FFFF,>FFFF    ; #EB
+       DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #EC
+       DATA >C0F0,>FCFF,>FFFF,>FFFF    ; #ED
+       DATA >1808,>0000,>0000,>0000    ; #EE
+       DATA >0301,>0000,>0000,>0000    ; #EF
+       DATA >8000,>0000,>0000,>0000    ; #F0
+       DATA >1F7F,>FFFF,>FFFF,>FFFF    ; #F1
+       DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #F2
+       DATA >0000,>0000,>0000,>0000    ; #F3
+       DATA >0000,>0000,>2070,>2000    ; #F4
+       DATA >0000,>0000,>0000,>0107    ; #F5
+       DATA >C0E0,>E0E0,>E0E0,>E0E0    ; #F6
+       DATA >0000,>0000,>0000,>0000    ; #F7
+       DATA >1F1F,>1F1F,>1F1F,>1F1F    ; #F8
+VPFRM3 DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #00
+       DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #01
+       DATA >FFFF,>FFFF,>FFFF,>FCF8    ; #02
+       DATA >FFFF,>FCF0,>C000,>0000    ; #03
+       DATA >E000,>0000,>0000,>0000    ; #04
+       DATA >0000,>0000,>0000,>0000    ; #05
+       DATA >1F03,>0000,>0000,>0000    ; #06
+       DATA >FFFF,>FF3F,>0F03,>0000    ; #07
+       DATA >FFFF,>FFFF,>FFFF,>FF7F    ; #08
+       DATA >FFFF,>FFFF,>FFFE,>FCF8    ; #09
+       DATA >F0E0,>C080,>0000,>0000    ; #0A
+       DATA >0000,>0000,>0000,>0000    ; #0B
+       DATA >0000,>0000,>0000,>0000    ; #0C
+       DATA >0000,>0000,>0000,>0000    ; #0D
+       DATA >3F1F,>0F07,>0301,>0000    ; #0E
+       DATA >0000,>0000,>0001,>0307    ; #0F
+       DATA >0000,>007C,>FEFF,>FFFF    ; #10
+       DATA >0000,>0000,>0000,>0000    ; #11
+       DATA >0000,>0000,>0000,>007C    ; #12
+       DATA >0000,>0000,>0000,>0000    ; #13
+       DATA >0000,>0000,>0000,>0000    ; #14
+       DATA >0000,>0000,>0000,>0000    ; #15
+       DATA >0000,>0000,>0000,>001F    ; #16
+       DATA >0000,>0000,>0000,>0000    ; #17
+       DATA >0000,>043F,>3F3F,>3F3F    ; #18
+       DATA >0000,>0000,>80C0,>E0F0    ; #19
+       DATA >0000,>0000,>0001,>0307    ; #1A
+       DATA >0F1F,>3F7F,>FFFF,>FF80    ; #1B
+       DATA >FFFF,>FFFF,>FFFF,>FFFE    ; #1C
+       DATA >0001,>0101,>0101,>0101    ; #1D
+       DATA >FEFF,>FFFF,>FFFF,>FFFF    ; #1E
+       DATA >0000,>8080,>8080,>8080    ; #1F
+       DATA >0008,>7FFF,>FFFF,>FFFF    ; #20
+       DATA >0000,>0080,>80C0,>C0C0    ; #21
+       DATA >3F7F,>7F7F,>7F7F,>7F7F    ; #22
+       DATA >80C0,>E0E0,>E0E0,>E0E0    ; #23
+       DATA >3F3F,>3F3F,>3F3F,>3F3F    ; #24
+       DATA >F8FC,>FEFF,>FFFF,>FFFF    ; #25
+       DATA >0000,>0000,>80C0,>C0E0    ; #26
+       DATA >3F1F,>0F07,>0301,>0000    ; #27
+       DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #28
+       DATA >0F1F,>3F7F,>FFFE,>FCF8    ; #29
+       DATA >0000,>0000,>0000,>0000    ; #2A
+       DATA >3000,>0000,>0000,>0000    ; #2B
+       DATA >0101,>0100,>0000,>0000    ; #2C
+       DATA >FFFF,>FFFF,>7E00,>0000    ; #2D
+       DATA >8080,>8080,>0000,>0000    ; #2E
+       DATA >FFFF,>FFFF,>FFFF,>7F3E    ; #2F
+       DATA >C0C0,>C0C0,>C0C0,>8000    ; #30
+       DATA >7F7F,>7F3F,>1F00,>0000    ; #31
+       DATA >E0E0,>E0E0,>8000,>0000    ; #32
+       DATA >3F07,>0000,>0000,>0000    ; #33
+       DATA >FFFF,>3F1F,>1F1F,>1F1F    ; #34
+       DATA >F0F0,>F8FC,>FCFE,>FEFF    ; #35
+       DATA >0000,>0000,>0000,>0000    ; #36
+       DATA >FF7F,>7F7F,>3F3F,>1F1F    ; #37
+       DATA >FFFF,>FFFF,>FFFE,>FCF8    ; #38
+       DATA >0000,>0000,>0001,>0307    ; #39
+       DATA >F0E0,>C080,>0000,>0000    ; #3A
+       DATA >0000,>0000,>0000,>0000    ; #3B
+       DATA >0000,>0000,>0000,>0000    ; #3C
+       DATA >0000,>0000,>0000,>0000    ; #3D
+       DATA >0000,>0000,>0000,>0000    ; #3E
+       DATA >0F0F,>0F0F,>0707,>0707    ; #3F
+       DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #40
+       DATA >0000,>8080,>C0C0,>E0E0    ; #41
+       DATA >1F0F,>0F0F,>0F0F,>0707    ; #42
+       DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #43
+       DATA >F0E0,>C0C0,>8080,>0000    ; #44
+       DATA >0000,>0000,>0001,>0307    ; #45
+       DATA >0F1F,>3F7F,>FFFC,>C080    ; #46
+       DATA >0000,>0000,>0000,>0000    ; #47
+       DATA >0000,>0000,>0003,>0F3F    ; #48
+       DATA >0000,>0000,>0080,>E0F8    ; #49
+       DATA >0303,>0303,>0101,>0101    ; #4A
+       DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #4B
+       DATA >F0F0,>F8F8,>F8F8,>F8F8    ; #4C
+       DATA >0707,>0707,>0707,>0303    ; #4D
+       DATA >FEFE,>FEFC,>FCFC,>F8F8    ; #4E
+       DATA >0F0F,>1F3F,>3F7F,>7F7F    ; #4F
+       DATA >0000,>0000,>0000,>80C0    ; #50
+       DATA >0000,>0001,>0101,>0101    ; #51
+       DATA >7FFF,>FFFF,>FFFF,>FFFF    ; #52
+       DATA >F8FC,>FEFF,>FFFF,>FFFF    ; #53
+       DATA >0000,>0000,>0000,>0000    ; #54
+       DATA >FFFF,>FFFF,>7C78,>7878    ; #55
+       DATA >FCFC,>FCFC,>0000,>0000    ; #56
+       DATA >0303,>0303,>0303,>0303    ; #57
+       DATA >F8F8,>F0F0,>F0F0,>F0F0    ; #58
+       DATA >0000,>0001,>0101,>0303    ; #59
+       DATA >FFFF,>FFFF,>FFF0,>E0C0    ; #5A
+       DATA >E0F0,>F0F8,>F87C,>3C3E    ; #5B
+       DATA >FFFF,>7F3F,>0F03,>0000    ; #5C
+       DATA >FFFE,>FCF0,>E080,>0000    ; #5D
+       DATA >0000,>0000,>0000,>0000    ; #5E
+       DATA >3838,>3838,>1C1F,>1F1F    ; #5F
+       DATA >0000,>0000,>00FF,>FFFF    ; #60
+       DATA >0303,>0303,>07FF,>FFFF    ; #61
+       DATA >F0F0,>F0F0,>F0F0,>F0F0    ; #62
+       DATA >0303,>0301,>0100,>0000    ; #63
+       DATA >C0C0,>C0C0,>E0E0,>F070    ; #64
+       DATA >1E1F,>0F0F,>0707,>0303    ; #65
+       DATA >0000,>0080,>80C0,>C0E0    ; #66
+       DATA >0000,>0000,>0000,>0003    ; #67
+       DATA >0000,>0000,>0038,>FEFF    ; #68
+       DATA >0000,>0000,>0000,>0080    ; #69
+       DATA >7838,>3C1C,>1E0E,>0F07    ; #6A
+       DATA >0101,>0000,>0000,>0000    ; #6B
+       DATA >E0F0,>F078,>783C,>3C1E    ; #6C
+       DATA >070F,>0F1F,>1F1F,>1F1F    ; #6D
+       DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #6E
+       DATA >80C0,>E0F0,>F0F0,>F0F0    ; #6F
+       DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #70
+       DATA >F0F0,>F0F0,>F0F0,>F0F0    ; #71
+       DATA >0703,>0303,>0101,>0000    ; #72
+       DATA >8080,>C0C0,>E0E0,>F0F0    ; #73
+       DATA >1E0F,>0F07,>0703,>0300    ; #74
+       DATA >0000,>0080,>80C0,>0000    ; #75
+       DATA >0000,>0000,>0000,>0000    ; #76
+       DATA >0000,>0000,>0000,>0000    ; #77
+       DATA >0F0F,>0703,>0000,>0000    ; #78
+       DATA >FFFF,>FFFF,>FE38,>0000    ; #79
+       DATA >F0E0,>C000,>0000,>0000    ; #7A
+       DATA >FFFF,>FF1F,>0F0F,>0F0F    ; #7B
+       DATA >F0F0,>F8FC,>FEFE,>FEFE    ; #7C
+       DATA >7878,>3C3C,>1E1E,>0F0F    ; #7D
+       DATA >0000,>0000,>0000,>0000    ; #7E
+       DATA >000F,>0F1F,>1F1F,>3F3F    ; #7F
+       DATA >0080,>E0F8,>FEFF,>FFFF    ; #80
+       DATA >0000,>0000,>0080,>E0F8    ; #81
+       DATA >0000,>0000,>0000,>0000    ; #82
+       DATA >0000,>0000,>0000,>0000    ; #83
+       DATA >0F0F,>0F0F,>0F0F,>0F0F    ; #84
+       DATA >FEFE,>FEFE,>FEFE,>FEFE    ; #85
+       DATA >0707,>0300,>0000,>0000    ; #86
+       DATA >8080,>0000,>0000,>0000    ; #87
+       DATA >3F0F,>0300,>0000,>0000    ; #88
+       DATA >FFFF,>FFFF,>3F0F,>0300    ; #89
+       DATA >FEFF,>FFFF,>FFFF,>FFFF    ; #8A
+       DATA >0080,>E0F8,>FEFF,>FFFF    ; #8B
+       DATA >0000,>0000,>0080,>C0E0    ; #8C
+       DATA >0000,>0000,>0000,>0000    ; #8D
+       DATA >0000,>0003,>0F1F,>1F3F    ; #8E
+       DATA >0000,>0080,>E0E0,>E0E0    ; #8F
+       DATA >0F0F,>0F0F,>0F0F,>0F0F    ; #90
+       DATA >0000,>0000,>0000,>0000    ; #91
+       DATA >3F0F,>0300,>0000,>0000    ; #92
+       DATA >FFFF,>FFFF,>3C08,>0000    ; #93
+       DATA >E0C0,>8000,>0000,>0000    ; #94
+       DATA >0000,>0000,>0001,>0103    ; #95
+       DATA >3F7F,>7FFF,>FFFF,>FFFE    ; #96
+       DATA >E0C0,>C080,>8000,>0000    ; #97
+       DATA >0F0F,>1F1F,>3F3F,>7F7F    ; #98
+       DATA >0307,>070F,>0F1F,>1F3F    ; #99
+       DATA >FEFC,>FCF8,>F8F0,>F0E0    ; #9A
+       DATA >0000,>0101,>0303,>0707    ; #9B
+       DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #9C
+       DATA >3F1F,>0F00,>0000,>0000    ; #9D
+       DATA >E0C0,>0000,>0000,>0000    ; #9E
+       DATA >0F0F,>1F1F,>3F3F,>7F7F    ; #9F
+       DATA >0000,>0101,>0303,>0707    ; #A0
+       DATA >FEFE,>FEFE,>FEFE,>FEFE    ; #A1
+       DATA >0F0F,>1F1F,>1F1F,>1F1F    ; #A2
+       DATA >FEFE,>FEFE,>FFFF,>FFFF    ; #A3
+       DATA >0000,>0000,>0080,>C0E0    ; #A4
+       DATA >1F1F,>1F1F,>1F1F,>0F07    ; #A5
+       DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #A6
+       DATA >F0F8,>F8FC,>FCFC,>FCF8    ; #A7
+       DATA >0301,>0000,>0000,>0000    ; #A8
+       DATA >FFFF,>FF7F,>3F1F,>0F07    ; #A9
+       DATA >FFFF,>FFFF,>FFFE,>FCF8    ; #AA
+       DATA >F0E0,>C080,>0000,>0000    ; #AB
+       DATA >0000,>0000,>0000,>0101    ; #AC
+       DATA >0000,>0000,>0000,>F8F8    ; #AD
+       DATA >0000,>0000,>0000,>0000    ; #AE
+       DATA >0000,>0000,>0000,>7E7F    ; #AF
+       DATA >0000,>0000,>0000,>0000    ; #B0
+       DATA >0301,>0000,>0000,>0000    ; #B1
+       DATA >FFFF,>FF7F,>3F1F,>0F0F    ; #B2
+       DATA >F0F0,>F0F0,>F0F0,>F0F0    ; #B3
+       DATA >0000,>0000,>1C1E,>1E1E    ; #B4
+       DATA >0303,>0303,>0303,>0303    ; #B5
+       DATA >FCFC,>FCFE,>FEFF,>FFFF    ; #B6
+       DATA >0000,>0000,>0000,>0000    ; #B7
+       DATA >0000,>0001,>0103,>0303    ; #B8
+       DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #B9
+       DATA >8080,>C0C0,>C0C0,>C0C0    ; #BA
+       DATA >0000,>0000,>7878,>7878    ; #BB
+       DATA >1E1E,>1E1E,>1E1E,>1E1E    ; #BC
+       DATA >0303,>0303,>0303,>0303    ; #BD
+       DATA >8080,>C0C0,>C0E0,>E0E0    ; #BE
+       DATA >0707,>0F0F,>0F1F,>1F1F    ; #BF
+       DATA >C0C0,>C0C0,>C0C0,>C0C0    ; #C0
+       DATA >7878,>7878,>7878,>7878    ; #C1
+       DATA >0303,>0303,>0303,>0303    ; #C2
+       DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #C3
+       DATA >F0F0,>F8F8,>F8FC,>FCFE    ; #C4
+       DATA >0000,>0000,>0000,>0001    ; #C5
+       DATA >3F3F,>7F7F,>7FFF,>FFFF    ; #C6
+       DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #C7
+       DATA >C0C0,>C0C0,>C0C0,>C0C0    ; #C8
+       DATA >1E1E,>1E1E,>1E1E,>1E1E    ; #C9
+       DATA >0303,>0000,>0000,>0000    ; #CA
+       DATA >FFFF,>FF1F,>0300,>0000    ; #CB
+       DATA >FEFE,>FFFF,>FF7F,>0000    ; #CC
+       DATA >0101,>0303,>0303,>0000    ; #CD
+       DATA >FFFF,>FFFF,>FFF8,>0000    ; #CE
+       DATA >FFFE,>F8E0,>0000,>0000    ; #CF
+       DATA >8000,>0000,>0000,>0000    ; #D0
+       DATA >7878,>7878,>7878,>78F8    ; #D1
+       DATA >F0F0,>F0F0,>F0F0,>F0F0    ; #D2
+       DATA >1F0F,>0F03,>0000,>0000    ; #D3
+       DATA >0080,>E0FC,>FF3F,>0F03    ; #D4
+       DATA >0000,>0000,>80F0,>FEFF    ; #D5
+       DATA >0000,>0000,>0000,>00C0    ; #D6
+       DATA >0000,>0000,>0000,>0000    ; #D7
+       DATA >0000,>0000,>0000,>0000    ; #D8
+       DATA >0000,>0000,>0000,>0000    ; #D9
+       DATA >0000,>0000,>0000,>031F    ; #DA
+       DATA >0000,>0003,>1FFF,>FFFC    ; #DB
+       DATA >010F,>7FFC,>F0C0,>0000    ; #DC
+       DATA >F0C0,>0000,>0000,>0000    ; #DD
+       DATA >0F0F,>0F0F,>0F0F,>0F0F    ; #DE
+       DATA >F0F0,>F0F8,>FCFF,>FFFF    ; #DF
+       DATA >0000,>0000,>0000,>C0F0    ; #E0
+       DATA >0000,>0000,>0000,>0000    ; #E1
+       DATA >FF3F,>0F03,>0000,>0000    ; #E2
+       DATA >F8FF,>FFFF,>FF3F,>0F03    ; #E3
+       DATA >0000,>E0F8,>F8F8,>F8F8    ; #E4
+       DATA >0000,>0001,>0303,>0303    ; #E5
+       DATA >0007,>3FFF,>FFFF,>FFFC    ; #E6
+       DATA >FFFF,>FFFC,>F0C0,>0000    ; #E7
+       DATA >F0C0,>0000,>0000,>0000    ; #E8
+       DATA >0000,>0000,>0000,>0000    ; #E9
+       DATA >0000,>0000,>0107,>1F7F    ; #EA
+       DATA >0F1F,>3F7F,>FFFF,>FFFF    ; #EB
+       DATA >FCFF,>FFFF,>FFFF,>FFFF    ; #EC
+       DATA >0000,>C0F0,>FCFF,>FFFF    ; #ED
+       DATA >F838,>1808,>0000,>0000    ; #EE
+       DATA >0303,>0301,>0000,>0000    ; #EF
+       DATA >F0C0,>8000,>0000,>0000    ; #F0
+       DATA >0107,>1F7F,>FFFF,>FFFF    ; #F1
+       DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #F2
+       DATA >0000,>0000,>0000,>0000    ; #F3
+       DATA >0000,>0000,>0000,>2070    ; #F4
+       DATA >0000,>0000,>0000,>0000    ; #F5
+       DATA >0000,>C0E0,>E0E0,>E0E0    ; #F6
+       DATA >2000,>0000,>0000,>0000    ; #F7
+       DATA >0107,>1F1F,>1F1F,>1F1F    ; #F8
