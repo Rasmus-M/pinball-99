@@ -8,7 +8,7 @@ import java.io.IOException;
 public class Convert {
 
     public static void main(String[] args) throws IOException {
-        BufferedImage image = ImageIO.read(new File("mask.png"));
+        BufferedImage image = ImageIO.read(new File("coll.png"));
         byte[] raw = new byte[image.getHeight() * image.getWidth()];
         int i = 0;
         for (int y = 0; y < image.getHeight(); y++) {
@@ -28,7 +28,7 @@ public class Convert {
                 rom[b * bankSize + headerSize + j] = i < raw.length ? raw[i++] : 0;
             }
         }
-        FileOutputStream fos = new FileOutputStream("mask8.bin");
+        FileOutputStream fos = new FileOutputStream("coll.bin");
         fos.write(rom);
         fos.close();
     }

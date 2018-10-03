@@ -1,6 +1,22 @@
        def main
 
 **
+* Constants
+*
+map_width:
+       equ  160
+map_height:
+       equ  256
+coll_map_bank_height:
+       equ  48
+
+
+coll_map_bank:
+       equ  >6004
+coll_bank_offset:
+       equ  >200
+
+**
 * Memory mapped addresses
 *
 vdpwd  equ  >8c00                      ; VDP write data
@@ -29,7 +45,8 @@ r2lb   equ  wrksp+5
 r3lb   equ  wrksp+7
 plyrws equ  wrksp+>20                  ; Sound player work space
 stack  equ  plyrws+>20
-frame  equ  stack+>10
+frame:
+       equ  stack+>10
 scroll_y:
        equ  frame+2
 
@@ -116,6 +133,38 @@ update_screen_2:
        jne  update_screen_1
        .end_proc
 *// update_screen
+
+*********************************************************************************
+*
+* Get collision map value
+*
+* r0:  X coordinate
+* r1:  Y coordinate
+*
+* Returns value in r0 MSB
+*
+* The ROM contains the collision map split into banks of 8K.
+* Each bank contains 48 lines of 160 pixels of data ordered from top to bottom.
+* Each pixel is represented by one byte, which determines the normal angle.
+* The data start at bank offset coll_bank_offset = >200.
+* The first bank is selected by writing to @coll_map_bank.
+*
+get_coll_value:
+       .proc
+       mov  r1,r2                      ; Move y to LSW
+       clr  r1                         ; Clear MSW
+       li   r3,coll_map_bank_height    ; Divisor
+       div  r3,r1                      ; Bank no in r1, line offset in r2
+       sla  r1,1                       ; Convert to bank offset
+       ai   r1,coll_map_bank           ; Add base offset
+       seto *r1                        ; Select bank
+       clr  r1                         ; Clear MSW
+       li   r3,map_width               ; LIne width
+       mpy  r3,r1                      ; Multiply line width and line offset
+       a    r0,r1                      ; Add X
+       movb *r1,r0                     ; Get byte
+       .end_proc
+*// get_coll_value
 
 *********************************************************************************
 *
