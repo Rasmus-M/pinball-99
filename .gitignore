@@ -9,3 +9,5 @@
 *.log
 *.lst
 *.dsk
+/demo/PINBALL
+/demo/PINBALM
