@@ -1,7 +1,6 @@
 /.idea/
-/JavaTest/.idea/
-/JavaTest/out/
-/PD/.idea/
+/out/
+/JavaDemo/out/
 /PD/out/
 *.iml
 *.bin
