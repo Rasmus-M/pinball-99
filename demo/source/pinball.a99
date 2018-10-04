@@ -9,12 +9,10 @@ map_height:
        equ  256
 coll_map_bank_height:
        equ  48
-
-
 coll_map_bank:
        equ  >6004
-coll_bank_offset:
-       equ  >200
+coll_bank_base:
+       equ  >6200
 
 **
 * Memory mapped addresses
@@ -73,7 +71,7 @@ main:
        lwpi wrksp                      ; Setup workspace
        li   r10,stack                  ; Setup stack pointer
        bl   @graphics_mode
-       bl   @init
+       bl   @init_vdp_ram
        clr  @scroll_y
 *      Loop
 loop:
@@ -149,20 +147,21 @@ update_screen_2:
 * The data start at bank offset coll_bank_offset = >200.
 * The first bank is selected by writing to @coll_map_bank.
 *
+* Modifies r0-r2
+*
 get_coll_value:
        .proc
        mov  r1,r2                      ; Move y to LSW
        clr  r1                         ; Clear MSW
-       li   r3,coll_map_bank_height    ; Divisor
-       div  r3,r1                      ; Bank no in r1, line offset in r2
+       div  @w_coll_map_bank_height,r1 ; Bank no in r1, line offset in r2
        sla  r1,1                       ; Convert to bank offset
        ai   r1,coll_map_bank           ; Add base offset
        seto *r1                        ; Select bank
-       clr  r1                         ; Clear MSW
-       li   r3,map_width               ; LIne width
-       mpy  r3,r1                      ; Multiply line width and line offset
-       a    r0,r1                      ; Add X
-       movb *r1,r0                     ; Get byte
+       mov  r2,r1                      ; line offset
+       mpy  @w_map_width,r1            ; Multiply line width and line offset
+       a    r0,r2                      ; Add X
+       ai   r2,coll_bank_base          ; Add ROM bank base address
+       movb *r2,r0                     ; Get byte
        .end_proc
 *// get_coll_value
 
@@ -170,7 +169,7 @@ get_coll_value:
 *
 * Initialize
 *
-init:
+init_vdp_ram:
        .proc
        clr  r0
        clr  r1
@@ -210,7 +209,7 @@ init:
        li   r2,>300
        bl   @vsmw
        .end_proc
-*// init
+*// init_vdp_ram
 
 *********************************************************************************
 *
@@ -362,6 +361,17 @@ check_quit:
 quit   clr  @>83c4                     ; Reset user ISR address
        blwp @>0000
 *// check_quit
+
+***************************************************************************
+*
+* Data
+*
+w_map_width:
+       data map_width
+w_map_height:
+       data map_height
+w_coll_map_bank_height:
+       data coll_map_bank_height
 
 **
 * Includes
