@@ -196,6 +196,11 @@ init_vdp_ram:
        mov  @TCHNUM,r2
        sla  r2,3
        bl   @vmbw
+*      Sprite patterns
+       li   r0,sprptb
+       li   r1,sprite_patterns
+       li   r2,32
+       bl   @vmbw
 *      Colors
        li   r0,colrtb
        li   r1,>1f00
@@ -373,9 +378,18 @@ w_map_height:
 w_coll_map_bank_height:
        data coll_map_bank_height
 
+sprite_patterns:
+       data >071f, >3f77, >63f7, >ffff
+       data >ffff, >7f7f, >3f1f, >0700
+       data >c0f0, >f8fc, >fcfe, >fefe
+       data >fefe, >fcfc, >f8f0, >c000
+
 **
 * Includes
 *
+normals:
+       copy "normals.a99"
+map:
        copy "map.a99"
 
        end
