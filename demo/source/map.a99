@@ -183,7 +183,7 @@ CLRSET BYTE >1F,>1F,>1F,>1F            ;
 ****************************************
 * Transition Character Pairs (from, to) 
 ****************************************
-TCHNUM DATA 249                        ;
+TCHNUM DATA 251                        ;
 TCHARS BYTE >00,>00                    ; #00 color 1/F
        BYTE >06,>00                    ; #01 color 1/F
        BYTE >07,>00                    ; #02 color 1/F
@@ -433,6 +433,8 @@ TCHARS BYTE >00,>00                    ; #00 color 1/F
        BYTE >A6,>63                    ; #F6 color 1/F
        BYTE >0A,>64                    ; #F7 color 1/F
        BYTE >93,>65                    ; #F8 color 1/F
+       BYTE >A6,>A6                    ; #F9 color 1/F
+       BYTE >93,>93                    ; #FA color 1/F
 *************************************************
 * Transition chars with inverted 'to' characters 
 *************************************************
@@ -685,12 +687,14 @@ ICHARS BYTE >00                        ; #00
        BYTE >00                        ; #F6
        BYTE >00                        ; #F7
        BYTE >00                        ; #F8
+       BYTE >00                        ; #F9
+       BYTE >00                        ; #FA
 ****************************************
 * Transition Map Data                   
 ****************************************
 * == Map #0 ==                          
 MC0    DATA 15                         ;
-MS0    DATA >0014,>001F,>026C          ; Width, Height, Size
+MS0    DATA >0014,>0020,>0280          ; Width, Height, Size
 * -- Map Row 0 --                       
 MD0    DATA >0000,>0000,>0001,>0203    ;
        DATA >0405,>0505,>0505,>0607    ;
@@ -814,6 +818,10 @@ MD0    DATA >0000,>0000,>0001,>0203    ;
 * -- Map Row 30 --                      
        DATA >0000,>0000,>00EC,>F60C    ;
        DATA >0CF7,>0C0C,>F8F2,>0000    ;
+       DATA >0000,>0000                ;
+* -- Map Row 31 --                      
+       DATA >0000,>0000,>0000,>F90C    ;
+       DATA >0C0C,>0C0C,>FA00,>0000    ;
        DATA >0000,>0000                ;
 ****************************************
 * Scrolled Character Patterns           
@@ -1067,6 +1075,8 @@ VPFRM0 DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #00
        DATA >E0E0,>E0E0,>E0E0,>E0E0    ; #F6
        DATA >0000,>0000,>0000,>0000    ; #F7
        DATA >1F1F,>1F1F,>1F1F,>1F1F    ; #F8
+       DATA >E0E0,>E0E0,>E0E0,>E0E0    ; #F9
+       DATA >1F1F,>1F1F,>1F1F,>1F1F    ; #FA
 VPFRM1 DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #00
        DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #01
        DATA >FFFF,>FCF8,>F0E0,>C080    ; #02
@@ -1316,6 +1326,8 @@ VPFRM1 DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #00
        DATA >E0E0,>E0E0,>E0E0,>E0E0    ; #F6
        DATA >0000,>0000,>0000,>0000    ; #F7
        DATA >1F1F,>1F1F,>1F1F,>1F1F    ; #F8
+       DATA >E0E0,>E0E0,>E0E0,>E0E0    ; #F9
+       DATA >1F1F,>1F1F,>1F1F,>1F1F    ; #FA
 VPFRM2 DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #00
        DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #01
        DATA >FFFF,>FFFF,>FCF8,>F0E0    ; #02
@@ -1565,6 +1577,8 @@ VPFRM2 DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #00
        DATA >C0E0,>E0E0,>E0E0,>E0E0    ; #F6
        DATA >0000,>0000,>0000,>0000    ; #F7
        DATA >1F1F,>1F1F,>1F1F,>1F1F    ; #F8
+       DATA >E0E0,>E0E0,>E0E0,>E0E0    ; #F9
+       DATA >1F1F,>1F1F,>1F1F,>1F1F    ; #FA
 VPFRM3 DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #00
        DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #01
        DATA >FFFF,>FFFF,>FFFF,>FCF8    ; #02
@@ -1814,3 +1828,5 @@ VPFRM3 DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #00
        DATA >0000,>C0E0,>E0E0,>E0E0    ; #F6
        DATA >2000,>0000,>0000,>0000    ; #F7
        DATA >0107,>1F1F,>1F1F,>1F1F    ; #F8
+       DATA >E0E0,>E0E0,>E0E0,>E0E0    ; #F9
+       DATA >1F1F,>1F1F,>1F1F,>1F1F    ; #FA

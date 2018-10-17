@@ -3,10 +3,20 @@
 **
 * Constants
 *
+screen_width:
+       equ  32
+screen_height:
+       equ  24
 map_width:
        equ  160
 map_height:
        equ  256
+map_width_char:
+       equ  20
+map_height_char:
+       equ  32
+scroll_y_max:
+       equ  map_height-192-1
 coll_map_bank_height:
        equ  48
 coll_map_bank:
@@ -76,8 +86,12 @@ main:
 *      Loop
 loop:
        bl   @vsync
-       bl   @update_screen
-       inct @scroll_y
+       bl   @scroll_screen
+       mov  @scroll_y,r0
+       ci   r0,scroll_y_max
+       jhe  loop
+       inc  r0
+       mov  r0,@scroll_y
        jmp  loop
 
 *********************************************************************
@@ -95,42 +109,40 @@ vsync_1:
 
 *********************************************************************************
 *
-* Update screen
+* Scroll screen to pixel position in @scroll_y (only even positions supported)
 *
-update_screen:
+scroll_screen:
        .proc
 *      Pattern table
-       mov  @scroll_y,r0
-       andi  r0,>0006
-       srl  r0,1
-       ori  r0,>0400
-       bl   @vwtr
+       mov  @scroll_y,r0               ; Scroll position
+       andi  r0,>0006                  ; Only offsets 0, 2, 4, 6 supported
+       srl  r0,1                       ; Pattern table no
+       ori  r0,>0400                   ; OR by pattern table reg no
+       bl   @vwtr                      ; Set pattern table
 *      Name table
-       li   r0,nametb
-       mov  @scroll_y,r1
-       srl  r1,3
-       mov  @MS0,r2
-       mpy  r2,r1
-       mov  r2,r1
-       ai   r1,MD0
-       li   r3,24
-       li   r4,vdpwd
+       li   r0,nametb                  ; VDP write address
+       mov  @scroll_y,r1               ; Scroll position
+       srl  r1,3                       ; Convert to character rows
+       mpy  @MS0,r1                    ; Multiply by map character width
+       mov  r2,r1                      ; Move LSW of result back
+       ai   r1,MD0                     ; Add map base address
+       li   r3,screen_height           ; Screen height in rows
+       li   r4,vdpwd                   ; Put VDP write data in reg
 update_screen_1:
-       bl   @vwad
-       mov  @MS0,r2
-       srl  r2,2
+       bl   @vwad                      ; Setup write address
+       li   r2,map_width_char/4        ; Map width, 4 times unrolled
 update_screen_2:
-       movb *r1+,*r4
-       movb *r1+,*r4
-       movb *r1+,*r4
-       movb *r1+,*r4
-       dec  r2
-       jne  update_screen_2
-       ai   r0,32
-       dec  r3
-       jne  update_screen_1
+       movb *r1+,*r4                   ; Send by to VDP
+       movb *r1+,*r4                   ; ...
+       movb *r1+,*r4                   ; ...
+       movb *r1+,*r4                   ; ...
+       dec  r2                         ; Column group counter
+       jne  update_screen_2            ; Column loop
+       ai   r0,screen_width            ; Address of next row
+       dec  r3                         ; Row counter
+       jne  update_screen_1            ; Row loop
        .end_proc
-*// update_screen
+*// scroll_screen
 
 *********************************************************************************
 *
@@ -164,6 +176,26 @@ get_coll_value:
        movb *r2,r0                     ; Get byte
        .end_proc
 *// get_coll_value
+
+*********************************************************************************
+*
+* Get normal vector at the given angle 0-254.
+* An angle of 0 corresponds to the normal pointing down (0,-1) and for increasing
+* angles the normals are rotated in a clockwise direction.
+* 0 points down, 64 points left, 128 points up, and 192 points right.
+*
+* r1: angle (0-254)
+*
+* On return r0 contains the X coordinate and r1 contains the Y coordinate
+* in FP 4.12 format.
+*
+get_normal:
+       sla  r1,2
+       ai   r1,normals
+       mov  *r1+,r0
+       mov  *r1,r1
+       b    *r11
+*// get_normal
 
 *********************************************************************************
 *
@@ -201,10 +233,17 @@ init_vdp_ram:
        li   r1,sprite_patterns
        li   r2,32
        bl   @vmbw
+*      Sprite attributes
+       li   r0,spratb
+       li   r1,sprite_attributes
+       li   r2,4
+       bl   @vmbw
+       li   r1,>d000
+       movb r1,@vdpwd
 *      Colors
        li   r0,colrtb
        li   r1,>1f00
-       li   r2,31
+       li   r2,32
        bl   @vsmw
        li   r1,>0e00
        movb r1,@vdpwd
@@ -231,10 +270,6 @@ graphics_mode_1:
        ai   r0,>0100
        dec  r2
        jne  graphics_mode_1
-*      Sprite attributes
-       li   r0,spratb
-       li   r1,>d000
-       bl   @vsbw
 *      Return
        .end_proc
 *      VDP registers
@@ -379,10 +414,12 @@ w_coll_map_bank_height:
        data coll_map_bank_height
 
 sprite_patterns:
-       data >071f, >3f77, >63f7, >ffff
-       data >ffff, >7f7f, >3f1f, >0700
-       data >c0f0, >f8fc, >fcfe, >fefe
-       data >fefe, >fcfc, >f8f0, >c000
+       data >3C7E,>EFFF,>FFFF,>7E3C
+       data >0000,>0000,>0000,>0000
+       data >0000,>0000,>0000,>0000
+       data >0000,>0000,>0000,>0000
+sprite_attributes:
+       byte >20,>48,>00,>0e
 
 **
 * Includes
