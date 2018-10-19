@@ -57,6 +57,26 @@ frame:
        equ  stack+>10
 scroll_y:
        equ  frame+2
+x:
+       equ  scroll_y+2
+y:
+       equ  x+2
+vx:
+       equ  y+2
+vy:
+       equ  vx+2
+ax:
+       equ  vy+2
+ay:
+       equ  ax+2
+nx:
+       equ  ay+2
+ny:
+       equ  nx+2
+rx:
+       equ  ny+2
+ry:
+       equ  rx+2
 
 **
 * Macros
@@ -179,21 +199,118 @@ get_coll_value:
 
 *********************************************************************************
 *
-* Get normal vector at the given angle 0-254.
-* An angle of 0 corresponds to the normal pointing down (0,-1) and for increasing
-* angles the normals are rotated in a clockwise direction.
+* Calculate the reflection vector r of vector v around normal vector n in FP 8.8
+* format.
+*
+* r = v − 2(v ⋅ n) n
+*
+* Input:
+* @vx: vx
+* @vy: vy
+* @nx: nx
+* @ny: ny
+*
+* On return @rx, @ry contain the reflection vector in in FP 4.12 format.
+*
+* Modified r0-r3
+*
+reflect:
+       .proc
+       bl   @get_dot_product           ; r3=dot product of v and n
+       sla  r3,1                       ; Multiply by 2
+*      x
+       mov  r3,r0
+       mov  @nx,r1
+       bl   @get_signed_product        ; r0=2*dot product*nx
+       neg  r0                         ; r0=-(2*dot product*nx)
+       a    @vx,r0                     ; r0=vx-(2*dot product*nx)
+       mov  r0,@rx
+*      y
+       mov  r3,r0
+       mov  @ny,r1
+       bl   @get_signed_product        ; r0=2*dot product*ny
+       neg  r0                         ; r0=-(2*dot product*ny)
+       a    @vy,r0                     ; r0=vy-(2*dot product*ny)
+       mov  r0,@ry
+       .end_proc
+*// reflect
+
+*********************************************************************************
+*
+* Calculate the (scalar) dot product of two vectors v and n in FP 8.8 format.
+*
+* v ⋅ n = vx * nx + vy * ny
+*
+* Input:
+* @vx: vx
+* @vy: vy
+* @nx: nx
+* @ny: ny
+*
+* On return r3 contains the result in FP 8.8 format.
+*
+* Modifies r0-r2
+*
+get_dot_product:
+       mov  @vx,r0
+       mov  @nx,r1
+       bl   @mpy_signed
+       mov  r0,r3
+       mov  @vy,r0
+       mov  @ny,r1
+       bl   @mpy_signed
+       a    r0,r3
+       b    *r11
+*// get_dot_product
+
+*********************************************************************************
+*
+* Multiply two signed numbers in FP 8.8 format.
+*
+* Input:
+* r0: first number
+* r1: second number
+*
+* On return r0 contains the result in FP 8.8 format.
+*
+* Modifies r0-r2
+*
+get_signed_product:
+       clr  r2                         ; Sign
+       mov  r0,r0                      ; Test sign of first number
+       jgt  !
+       inv  r2                         ; Flip sign
+       neg  r0                         ; Make positive
+!      mov  r1,r1                      ; Test sign of second number
+       jgt  !
+       inv  r2                         ; Flip sign
+       neg  r1                         ; Make positive
+!      mpy  r1,r0                      ; Multiply
+       swpb r0                         ; Move MSB into position
+       movb r1,@r0lb                   ; Move LSB into position
+       mov  r2,r2                      ; Test sign
+       jeq  !
+       neg  r0                         ; Negate if sign is minus
+!      b    *r11
+*// get_signed_product
+
+*********************************************************************************
+*
+* Get normal vector at the given angle 0-254 in FP 8.8 format.
+
+* An angle of 0 corresponds to the normal pointing down (0,-1) and for
+* increasing angles the normals are rotated in a clockwise direction.
 * 0 points down, 64 points left, 128 points up, and 192 points right.
 *
 * r1: angle (0-254)
 *
-* On return r0 contains the X coordinate and r1 contains the Y coordinate
-* in FP 4.12 format.
+* On return @nx contains the X coordinate and @ny contains the Y coordinate.
 *
 get_normal:
        sla  r1,2
        ai   r1,normals
-       mov  *r1+,r0
-       mov  *r1,r1
+       mov  *r1+,@nx
+       mov  *r1,@ny
        b    *r11
 *// get_normal
 

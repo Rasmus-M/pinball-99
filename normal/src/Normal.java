@@ -12,7 +12,7 @@ public class Normal {
     }
 
     private static String hex(double d) {
-        int i = (int) Math.round(d * 0x1000);
+        int i = (int) Math.round(d * 0x0100);
         String hex = Integer.toHexString(i);
         if (hex.length() > 4) {
             hex = hex.substring(hex.length() - 4);
