@@ -16,7 +16,7 @@ map_width_char:
 map_height_char:
        equ  32
 scroll_y_max:
-       equ  map_height-192-1
+       equ  map_height-192-2
 coll_map_bank_height:
        equ  48
 coll_map_bank:
@@ -57,26 +57,28 @@ frame:
        equ  stack+>10
 scroll_y:
        equ  frame+2
-x:
+x:                                     ; Ball position x (FP 12.4)
        equ  scroll_y+2
-y:
+y:                                     ; Ball position y (FP 12.4)
        equ  x+2
-vx:
+vx:                                    ; Ball velocity x (FP 8.8)
        equ  y+2
-vy:
+vy:                                    ; Ball velocity y (FP 8.8)
        equ  vx+2
-ax:
+ax:                                    ; Ball acceleration x (FP 8.8)
        equ  vy+2
-ay:
+ay:                                    ; Ball acceleration y (FP 8.8)
        equ  ax+2
-nx:
+nx:                                    ; Normal vector x (FP 8.8)
        equ  ay+2
-ny:
+ny:                                    ; Normal vector y (FP 8.8)
        equ  nx+2
-rx:
+rx:                                    ; Reflection vector x (FP 8.8)
        equ  ny+2
-ry:
+ry:                                    ; Reflection vector y (FP 8.8)
        equ  rx+2
+color:
+       equ  ry+2
 
 **
 * Macros
@@ -102,17 +104,37 @@ main:
        li   r10,stack                  ; Setup stack pointer
        bl   @graphics_mode
        bl   @init_vdp_ram
-       clr  @scroll_y
+       bl   @init_game
 *      Loop
 loop:
        bl   @vsync
+       bl   @display_ball
        bl   @scroll_screen
-       mov  @scroll_y,r0
-       ci   r0,scroll_y_max
-       jhe  loop
-       inc  r0
-       mov  r0,@scroll_y
+       bl   @move_ball
+       bl   @move_screen
+       bl   @check_collision
        jmp  loop
+
+*********************************************************************************
+*
+* Initialize game
+*
+init_game:
+       .proc
+       clr  @scroll_y
+       li   r0,init_values
+       mov  *r0+,@x
+       mov  *r0+,@y
+       mov  *r0+,@vx
+       mov  *r0+,@vy
+       mov  *r0+,@ax
+       mov  *r0+,@ay
+       li   r0,>000e
+       clr  @color
+       .end_proc
+init_values:
+       data >0200,>03c0,>0020,>0000,>0000,>0000
+*// init_game
 
 *********************************************************************
 *
@@ -126,6 +148,69 @@ vsync_1:
        jeq  vsync_1
        b    *r11
 *// vsync
+
+*********************************************************************************
+*
+* Display ball
+*
+display_ball:
+       .proc
+       li   r0,spratb
+       bl   @vwad
+       mov  @y,r0
+       srl  r0,4
+       s    @scroll_y,r0
+       swpb r0
+       movb r0,@vdpwd
+       mov  @x,r0
+       sla  r0,4
+       movb r0,@vdpwd
+       movb @color,@vdpwd
+       movb @color+1,@vdpwd
+       .end_proc
+*// display_ball
+
+*********************************************************************************
+*
+* Move ball
+*
+move_ball:
+       a    @ax,@vx
+       a    @ay,@vy
+       mov  @vx,r0
+       sra  r0,4
+       a    r0,@x
+       mov  @vy,r0
+       sra  r0,4
+       a    r0,@y
+       b    *r11
+*// move_ball
+
+*********************************************************************************
+*
+* Move screen
+*
+move_screen:
+       mov  @y,r0
+       srl  r0,4
+       s    @scroll_y,r0
+       ci   r0,48
+       jgt  move_screen_0
+       mov  @scroll_y,r1
+       ci   r1,0
+       jle  move_screen_0
+       dect @scroll_y
+       jmp  move_screen_1
+move_screen_0:
+       ci   r0,144
+       jlt  move_screen_1
+       mov  @scroll_y,r1
+       ci   r1,scroll_y_max
+       jhe  move_screen_1
+       inct @scroll_y
+move_screen_1:
+       b    *r11
+*// move_screen
 
 *********************************************************************************
 *
@@ -164,6 +249,39 @@ update_screen_2:
        .end_proc
 *// scroll_screen
 
+
+*********************************************************************************
+*
+* Check for collision and rebounce ball according to normal vector.
+*
+* Returns value in r0 MSB
+*
+* Modifies r0-r3
+*
+check_collision:
+       .proc
+       mov  @x,r0
+       srl  r0,4
+       ai   r0,4
+       mov  @y,r1
+       srl  r1,4
+       ai   r1,8
+       bl   @get_coll_value
+       jeq  check_collision_1
+       dec  r1                         ; Convert to zero-based
+       bl   @get_normal
+       bl   @reflect
+       mov  @rx,@vx
+       mov  @ry,@vy
+       li   r0,>0008
+       jmp  check_collision_2
+check_collision_1:
+       li   r0,>000e
+check_collision_2:
+       mov  r0,@color
+       .end_proc
+*// check_collision
+
 *********************************************************************************
 *
 * Get collision map value
@@ -171,18 +289,18 @@ update_screen_2:
 * r0:  X coordinate
 * r1:  Y coordinate
 *
-* Returns value in r0 MSB
+* Returns value in r1
 *
 * The ROM contains the collision map split into banks of 8K.
 * Each bank contains 48 lines of 160 pixels of data ordered from top to bottom.
-* Each pixel is represented by one byte, which determines the normal angle.
+* Each pixel is represented by one byte, which determines the normal angle (1-255),
+* or 0 if there is no collision.
 * The data start at bank offset coll_bank_offset = >200.
 * The first bank is selected by writing to @coll_map_bank.
 *
 * Modifies r0-r2
 *
 get_coll_value:
-       .proc
        mov  r1,r2                      ; Move y to LSW
        clr  r1                         ; Clear MSW
        div  @w_coll_map_bank_height,r1 ; Bank no in r1, line offset in r2
@@ -193,9 +311,30 @@ get_coll_value:
        mpy  @w_map_width,r1            ; Multiply line width and line offset
        a    r0,r2                      ; Add X
        ai   r2,coll_bank_base          ; Add ROM bank base address
-       movb *r2,r0                     ; Get byte
-       .end_proc
+       clr  r1                         ; Clear result reg
+       movb *r2,@r1lb                  ; Get byte
+       b    *r11
 *// get_coll_value
+
+*********************************************************************************
+*
+* Get normal vector at the given angle 0-254 in FP 8.8 format.
+
+* An angle of 0 corresponds to the normal pointing down (0,-1) and for
+* increasing angles the normals are rotated in a clockwise direction.
+* 0 points down, 64 points left, 128 points up, and 192 points right.
+*
+* r1: angle (0-254)
+*
+* On return @nx contains the X coordinate and @ny contains the Y coordinate.
+*
+get_normal:
+       sla  r1,2
+       ai   r1,normals
+       mov  *r1+,@nx
+       mov  *r1,@ny
+       b    *r11
+*// get_normal
 
 *********************************************************************************
 *
@@ -216,19 +355,19 @@ get_coll_value:
 *
 reflect:
        .proc
-       bl   @get_dot_product           ; r3=dot product of v and n
+       bl   @calc_dot_product          ; r3=dot product of v and n
        sla  r3,1                       ; Multiply by 2
 *      x
        mov  r3,r0
        mov  @nx,r1
-       bl   @get_signed_product        ; r0=2*dot product*nx
+       bl   @calc_signed_product       ; r0=2*dot product*nx
        neg  r0                         ; r0=-(2*dot product*nx)
        a    @vx,r0                     ; r0=vx-(2*dot product*nx)
        mov  r0,@rx
 *      y
        mov  r3,r0
        mov  @ny,r1
-       bl   @get_signed_product        ; r0=2*dot product*ny
+       bl   @calc_signed_product       ; r0=2*dot product*ny
        neg  r0                         ; r0=-(2*dot product*ny)
        a    @vy,r0                     ; r0=vy-(2*dot product*ny)
        mov  r0,@ry
@@ -251,17 +390,18 @@ reflect:
 *
 * Modifies r0-r2
 *
-get_dot_product:
+calc_dot_product:
+       .proc
        mov  @vx,r0
        mov  @nx,r1
-       bl   @mpy_signed
+       bl   @calc_signed_product
        mov  r0,r3
        mov  @vy,r0
        mov  @ny,r1
-       bl   @mpy_signed
+       bl   @calc_signed_product
        a    r0,r3
-       b    *r11
-*// get_dot_product
+       .end_proc
+*// calc_dot_product
 
 *********************************************************************************
 *
@@ -275,7 +415,7 @@ get_dot_product:
 *
 * Modifies r0-r2
 *
-get_signed_product:
+calc_signed_product:
        clr  r2                         ; Sign
        mov  r0,r0                      ; Test sign of first number
        jgt  !
@@ -292,27 +432,7 @@ get_signed_product:
        jeq  !
        neg  r0                         ; Negate if sign is minus
 !      b    *r11
-*// get_signed_product
-
-*********************************************************************************
-*
-* Get normal vector at the given angle 0-254 in FP 8.8 format.
-
-* An angle of 0 corresponds to the normal pointing down (0,-1) and for
-* increasing angles the normals are rotated in a clockwise direction.
-* 0 points down, 64 points left, 128 points up, and 192 points right.
-*
-* r1: angle (0-254)
-*
-* On return @nx contains the X coordinate and @ny contains the Y coordinate.
-*
-get_normal:
-       sla  r1,2
-       ai   r1,normals
-       mov  *r1+,@nx
-       mov  *r1,@ny
-       b    *r11
-*// get_normal
+*// calc_signed_product
 
 *********************************************************************************
 *

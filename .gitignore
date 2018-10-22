@@ -10,3 +10,4 @@
 *.dsk
 /demo/PINBALL
 /demo/PINBALM
+!/demo/coll.bin

@@ -14,7 +14,7 @@ public class Convert {
         for (int y = 0; y < image.getHeight(); y++) {
             for (int x = 0; x < image.getWidth(); x++) {
                 int rgb = image.getRGB(x, y);
-                raw[i++] = (byte) ((rgb >> 16) & 0xff);
+                raw[i++] = (byte) (((rgb >> 16) + 1) & 0xff);
             }
         }
         int bankSize = 0x2000;
