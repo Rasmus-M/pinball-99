@@ -111,8 +111,8 @@ loop:
        bl   @display_ball
        bl   @scroll_screen
        bl   @move_ball
-       bl   @move_screen
        bl   @check_collision
+       bl   @move_screen
        jmp  loop
 
 *********************************************************************************
@@ -133,7 +133,7 @@ init_game:
        clr  @color
        .end_proc
 init_values:
-       data >0200,>03c0,>0020,>0000,>0000,>0000
+       data >0200,>03c0,>0080,>0000,>0000,>0001
 *// init_game
 
 *********************************************************************
@@ -175,14 +175,35 @@ display_ball:
 * Move ball
 *
 move_ball:
+*      Accellerate
        a    @ax,@vx
        a    @ay,@vy
+*      Move x
        mov  @vx,r0
        sra  r0,4
-       a    r0,@x
+       mov  @x,r1
+       a    r0,r1
+       jlt  move_ball_1
+       ci   r1,(map_width-8)*16
+       jgt  move_ball_1
+       mov  r1,@x
+       jmp  move_ball_3
+move_ball_1:
+       neg  @vx
+move_ball_3:
+*      Move y
        mov  @vy,r0
        sra  r0,4
-       a    r0,@y
+       mov  @y,r1
+       a    r0,r1
+       jlt  move_ball_2
+       ci   r1,(map_height-8)*16
+       jgt  move_ball_2
+       mov  r1,@y
+       jmp  move_ball_4
+move_ball_2:
+       neg  @vy
+move_ball_4:
        b    *r11
 *// move_ball
 
@@ -254,25 +275,23 @@ update_screen_2:
 *
 * Check for collision and rebounce ball according to normal vector.
 *
-* Returns value in r0 MSB
-*
 * Modifies r0-r3
 *
 check_collision:
        .proc
-       mov  @x,r0
-       srl  r0,4
-       ai   r0,4
-       mov  @y,r1
-       srl  r1,4
-       ai   r1,8
-       bl   @get_coll_value
+       bl   @check_ball_collision
+       mov  r1,r1
        jeq  check_collision_1
        dec  r1                         ; Convert to zero-based
        bl   @get_normal
        bl   @reflect
        mov  @rx,@vx
        mov  @ry,@vy
+check_collision_3:
+       bl   @move_ball
+       bl   @check_ball_collision
+       mov  r1,r1
+       jne  check_collision_3
        li   r0,>0008
        jmp  check_collision_2
 check_collision_1:
@@ -281,6 +300,26 @@ check_collision_2:
        mov  r0,@color
        .end_proc
 *// check_collision
+
+*********************************************************************************
+*
+* Get collision map value for ball
+*
+* Returns value in r0
+*
+* Modifies r0-r3
+*
+check_ball_collision:
+       .proc
+       mov  @x,r0
+       srl  r0,4
+       ai   r0,4
+       mov  @y,r1
+       srl  r1,4
+       ai   r1,8
+       bl   @get_coll_value
+       .end_proc
+*// check_ball_collision
 
 *********************************************************************************
 *
