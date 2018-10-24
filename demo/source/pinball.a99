@@ -284,14 +284,14 @@ check_collision:
        jeq  check_collision_1
        dec  r1                         ; Convert to zero-based
        bl   @get_normal
+       bl   @calc_dot_product          ; r3=dot product of v and n
+       mov  r3,r3
+       jgt  check_collision_3          ; If positive, the ball is inside the wall moving out
+       jeq  check_collision_1          ; If zero, the ball is moving along the wall
        bl   @reflect
        mov  @rx,@vx
        mov  @ry,@vy
 check_collision_3:
-       bl   @move_ball
-       bl   @check_ball_collision
-       mov  r1,r1
-       jne  check_collision_3
        li   r0,>0008
        jmp  check_collision_2
 check_collision_1:
@@ -313,10 +313,10 @@ check_ball_collision:
        .proc
        mov  @x,r0
        srl  r0,4
-       ai   r0,4
+       ai   r0,3
        mov  @y,r1
        srl  r1,4
-       ai   r1,8
+       ai   r1,7
        bl   @get_coll_value
        .end_proc
 *// check_ball_collision
@@ -383,6 +383,7 @@ get_normal:
 * r = v − 2(v ⋅ n) n
 *
 * Input:
+* r3: dot product of v and n (v ⋅ n)
 * @vx: vx
 * @vy: vy
 * @nx: nx
@@ -394,8 +395,7 @@ get_normal:
 *
 reflect:
        .proc
-       bl   @calc_dot_product          ; r3=dot product of v and n
-       sla  r3,1                       ; Multiply by 2
+       sla  r3,1                       ; Multiply dot product by 2
 *      x
        mov  r3,r0
        mov  @nx,r1
