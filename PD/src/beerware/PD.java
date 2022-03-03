@@ -145,6 +145,9 @@ public class PD extends JFrame {
         zoomLevel.addItem("300%");
         zoomLevel.addItem("400%");
         zoomLevel.addItem("500%");
+        zoomLevel.addItem("600%");
+        zoomLevel.addItem("700%");
+        zoomLevel.addItem("800%");
         zoomLevel.setMaximumSize(new Dimension(80, 1000));
         zoomLevel.setSelectedIndex(m_editor.getZoomLevel() - 1);
         tb.add(zoomLevel);

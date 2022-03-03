@@ -8,7 +8,7 @@ import java.io.IOException;
 public class Convert {
 
     public static void main(String[] args) throws IOException {
-        BufferedImage image = ImageIO.read(new File("coll.png"));
+        BufferedImage image = ImageIO.read(new File("angles.png"));
         byte[] raw = new byte[image.getHeight() * image.getWidth()];
         int i = 0;
         for (int y = 0; y < image.getHeight(); y++) {
@@ -18,8 +18,8 @@ public class Convert {
             }
         }
         int bankSize = 0x2000;
-        int headerSize = 0x200; // 0x0800;
-        int dataSize = 0x1e00; // 0x1800;
+        int headerSize = 0x0000;
+        int dataSize = 0x2000;
         int banks = (raw.length / dataSize) + (raw.length % dataSize == 0 ? 0 : 1);
         byte[] rom = new byte[banks * bankSize];
         i = 0;
