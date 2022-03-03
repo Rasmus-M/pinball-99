@@ -268,7 +268,7 @@ scroll_screen:
        srl  r1,3                       ; Convert to character rows
        mpy  @MS0,r1                    ; Multiply by map character width
        mov  r2,r1                      ; Move LSW of result back
-       ai   r1,MD0+map_width_char      ; Add map base address
+       ai   r1,MD0                     ; Add map base address
        li   r3,screen_height           ; Screen height in rows
        li   r4,vdpwd                   ; Put VDP write data in reg
 update_screen_1:
@@ -524,22 +524,22 @@ init_vdp_ram:
        bl   @vsmw
 *      Patterns
        li   r0,ptrntb
-       li   r1,VPFRM3
+       li   r1,VPFRM0
        mov  @TCHNUM,r2
        sla  r2,3
        bl   @vmbw
        li   r0,ptrntb+>800
-       li   r1,VPFRM2
-       mov  @TCHNUM,r2
-       sla  r2,3
-       bl   @vmbw
-       li   r0,ptrntb+>1000
        li   r1,VPFRM1
        mov  @TCHNUM,r2
        sla  r2,3
        bl   @vmbw
+       li   r0,ptrntb+>1000
+       li   r1,VPFRM2
+       mov  @TCHNUM,r2
+       sla  r2,3
+       bl   @vmbw
        li   r0,ptrntb+>1800
-       li   r1,VPFRM0
+       li   r1,VPFRM3
        mov  @TCHNUM,r2
        sla  r2,3
        bl   @vmbw
