@@ -9,14 +9,14 @@ SPR1   DATA >7F00,>1F20,>1F00,>1F20    ; Color 1
        DATA >1F00,>1F20,>1F00,>1F7F    ; 
        DATA >FC08,>F000,>F008,>F000    ; 
        DATA >F008,>F000,>F008,>F0FE    ; 
-SPR2   DATA >0000,>F87F,>0738,>3F3F    ; Color 1
-       DATA >3F3F,>3E31,>0F7F,>F800    ; 
-       DATA >0000,>0000,>E0F8,>1EE7    ; 
-       DATA >FBC7,>3EF8,>E000,>0000    ; 
-SPR3   DATA >0000,>0000,>0000,>0000    ; Color 1
-       DATA >0000,>0000,>0000,>0000    ; 
-       DATA >0000,>0000,>0000,>0000    ; 
-       DATA >0000,>0000,>0000,>0000    ; 
+SPR2   DATA >071F,>3F41,>41CF,>CFC3    ; Color 4
+       DATA >C1F9,>F941,>433F,>1F07    ; 
+       DATA >E0F8,>FC86,>0233,>3333    ; 
+       DATA >3333,>3302,>86FC,>F8E0    ; 
+SPR3   DATA >071F,>3F43,>41F9,>F9F1    ; Color 8
+       DATA >E3C7,>CF41,>413F,>1F07    ; 
+       DATA >E0F8,>FC86,>0233,>3333    ; 
+       DATA >3333,>3302,>86FC,>F8E0    ; 
 SPR4   DATA >0007,>1F3C,>736F,>EFDF    ; Color 8
        DATA >DFDF,>EF6F,>733C,>1F07    ; 
        DATA >00E0,>F81E,>E7F9,>FEFF    ; 
@@ -129,3 +129,16 @@ SPR31  DATA >0000,>0101,>0100,>0000    ; Color 4
        DATA >0000,>0000,>0000,>0000    ; 
        DATA >00C0,>F01C,>AFB3,>5C6F    ; 
        DATA >371B,>1B0D,>0603,>0301    ; 
+
+* Sprite Locations
+SL0    DATA 144,80,8,4                 ; y, x, pattern#, color#
+       DATA 208,96,8,4                 ; 
+       DATA 472,88,20,8                ; 
+       DATA 488,232,4,1                ; 
+       DATA 456,104,0,14               ; 
+       DATA 472,232,0,14               ; 
+       DATA 468,144,120,4              ; 
+       DATA 452,144,76,4               ; 
+       DATA 160,152,12,8               ; 
+       DATA 460,128,124,4              ; 
+       DATA 468,72,16,8                ; 

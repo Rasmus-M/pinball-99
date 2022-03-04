@@ -17,6 +17,10 @@ map_height_char:
        equ  64
 ball_radius:
        equ  7
+scroll_when_y_less_than:
+       equ  48
+scroll_when_y_greater_than:
+       equ  144
 scroll_y_max:
        equ  map_height-192-2
 coll_map_bank_height:
@@ -222,31 +226,29 @@ move_screen:
        mov  @y,r0
        srl  r0,4
        s    @scroll_y,r0
-*      Should we scroll up?
-       ci   r0,48
-       jgt  move_screen_0
-       mov  @scroll_y,r1
-       ci   r1,0
-       jle  move_screen_0
-*      Yes - scroll up
-       dect @scroll_y
-       ci   r0,32
+*      Scroll up
+       mov  r0,r1
+       ai   r1,-scroll_when_y_less_than
+       jgt  move_screen_2
+       mov  @scroll_y,r2
+       a    r1,r2
        jgt  move_screen_1
-       dect @scroll_y
-       jmp  move_screen_1
-*      Should we scroll down?
-move_screen_0:
-       ci   r0,144
-       jlt  move_screen_1
-       mov  @scroll_y,r1
-       ci   r1,scroll_y_max
-       jhe  move_screen_1
-*      Yes - scroll down
-       inct @scroll_y
-       ci   r0,160
-       jlt  move_screen_1
-       inct @scroll_y
+       clr  r2
 move_screen_1:
+       mov  r2,@scroll_y
+       jmp  move_screen_4
+move_screen_2:
+*      Scroll down
+       ai   r0,-scroll_when_y_greater_than
+       jlt  move_screen_4
+       mov  @scroll_y,r1
+       a    r0,r1
+       ci   r1,scroll_y_max
+       jlt  move_screen_3
+       li   r1,scroll_y_max
+move_screen_3:
+       mov  r1,@scroll_y
+move_screen_4:
        rt
 *// move_screen
 
