@@ -32,6 +32,8 @@ map_height_char:
        equ  64
 ball_radius:
        equ  7
+max_flipper_state:
+       equ  5
 scroll_when_y_less_than:
        equ  48
 scroll_when_y_greater_than:
@@ -81,7 +83,7 @@ pad:
 wrksp:
        equ  pad                        ; Workspace
 r0lb:
-       equ  wrksp+1                    ; r0 low byte required for VDP routines
+       equ  wrksp+1
 r1lb:
        equ  wrksp+3
 r2lb:
@@ -128,8 +130,12 @@ ry:                                    ; Reflection vector y (FP 8.8)
        equ  rx+2
 pattern_and_color:
        equ  ry+2
-pad_max:
+left_flipper_state:
        equ  pattern_and_color+2
+right_flipper_state:
+       equ  left_flipper_state+2
+pad_max:
+       equ  right_flipper_state+2
 
 ********************************************************************************
 *
@@ -175,9 +181,12 @@ init_game:
        mov  *r0+,@ay
        li   r0,>000e
        mov  r0,@pattern_and_color
+       clr  @left_flipper_state
+       li   r0,4
+       mov r0,@right_flipper_state
        .endproc
 init_values:
-       data >0e80,>0600,>0000,->0000,>0000,>0001
+       data >0e80,>1e80,>0000,->0000,>0000,>0002
 *// init_game
 
 *********************************************************************
@@ -229,23 +238,49 @@ set_vdp_regs:
 *
 user_input:
        .proc
-       li   r0,JOY_LT
+*      Left flipper
+       li   r0,KEY_Z
        bl   @check_key
        jeq  user_input_1
-       li   r0,->0040
+       mov  @left_flipper_state,r0
+       ci   r0,max_flipper_state
+       jeq  user_input_2
+       inc  @left_flipper_state
+       li   r0,->0080
        mov  r0,@vx
-       li   r0,->0040
+       li   r0,->0100
        mov  r0,@vy
        jmp  user_input_2
 user_input_1:
-       li   r0,JOY_RT
-       bl   @check_key
+       mov  @left_flipper_state,r0
        jeq  user_input_2
-       li   r0,>0040
-       mov  r0,@vx
-       li   r0,->0040
-       mov  r0,@vy
+       dec  @left_flipper_state
 user_input_2:
+*      Right flipper
+       li   r0,KEY_M
+       bl   @check_key
+       jeq  user_input_3
+       mov  @right_flipper_state,r0
+       ci   r0,max_flipper_state
+       jeq  user_input_4
+       inc  @right_flipper_state
+       li   r0,>0080
+       mov  r0,@vx
+       li   r0,->0100
+       mov  r0,@vy
+       jmp  user_input_4
+user_input_3:
+       mov  @right_flipper_state,r0
+       jeq  user_input_4
+       dec  @right_flipper_state
+user_input_4:
+*      Shoot
+       li   r0,KEY_SP
+       bl   @check_key
+       jeq  user_input_5
+       li   r0,->0200
+       mov  r0,@vy
+user_input_5:
        .endproc
 *// user_input
 
@@ -304,8 +339,14 @@ check_collision:
        jgt  check_collision_1          ; If positive, the ball is inside the wall moving out
        jeq  check_collision_1          ; If zero, the ball is moving along the wall
        bl   @reflect
-       mov  @rx,@vx
-       mov  @ry,@vy
+       mov  @rx,r0
+       mov  r0,@vx
+       sra  r0,2
+       s    r0,@vx
+       mov  @ry,r0
+       mov  r0,@vy
+       sra  r0,2
+       s    r0,@vy
 check_collision_1:
        .endproc
 *// check_collision
@@ -394,43 +435,114 @@ update_sprite_attr_table:
        movb r0,*r15
        movb @pattern_and_color,*r15
        movb @pattern_and_color+1,*r15
+*      Flippers
+       bl   @update_flippers_sprites
 *      Static sprites
-       mov  @scroll_y,r0
-       ai   r0,-16                     ; Sprites with y > this should be displayed
-       li   r3,static_sprites
-*      Find first sprite to display
-update_sprite_attr_table_1:
-       mov  *r3+,r1                     ; Get y
-       jlt  update_sprite_attr_table_4
-       c    r1,r0
-       jlt  update_sprite_attr_table_1
-*      Display until out of screen
-       mov  @scroll_y,r0
-       ai   r0,screen_height           ; Sprites with y > this should not be displayed
-update_sprite_attr_table_2:
-       s    @scroll_y,r1
-       dec  r1
-       swpb r1
-       movb r1,*r15
-       mov  *r3+,r1
-       swpb r1
-       movb r1,*r15
-       mov  *r3+,r1
-       swpb r1
-       movb r1,*r15
-       mov  *r3+,r1
-       swpb r1
-       movb r1,*r15
-       mov  *r3+,r1                    ; Get y
-       jlt  update_sprite_attr_table_4
-       c    r1,r0
-       jlt  update_sprite_attr_table_2
+       bl   @update_static_sprites
 *      End marker
 update_sprite_attr_table_4:
        li   r1,>d000
        movb r1,*r15
        .endproc
 *// update_sprite_attr_table
+
+*********************************************************************************
+*
+* Update flipper sprites for all flippers
+*
+update_flippers_sprites:
+       .proc
+       mov  @double_buffer_flag,r0
+       jne  update_flippers_sprites_1
+*      Left then right
+       mov  @left_flipper_state,r0
+       li   r1,left_flipper
+       bl   @update_flipper_sprites
+       mov  @right_flipper_state,r0
+       li   r1,right_flipper
+       bl   @update_flipper_sprites
+       jmp  update_flippers_sprites_2
+update_flippers_sprites_1:
+*      Right then left
+       mov  @right_flipper_state,r0
+       li   r1,right_flipper
+       bl   @update_flipper_sprites
+       mov  @left_flipper_state,r0
+       li   r1,left_flipper
+       bl   @update_flipper_sprites
+update_flippers_sprites_2:
+       .endproc
+*// update_flippers_sprites:
+
+*********************************************************************************
+*
+* Update flipper sprite for one flipper
+*
+* r0: flipper state
+* r1: points to flipper structure
+*
+update_flipper_sprites:
+       mov  *r1+,r2                    ; Get flipper y
+       s    @scroll_y,r2               ; y position on screen
+       ci   r2,screen_height
+       jhe  update_flipper_sprites_3
+       swpb r2
+       mov  *r1+,r3                    ; Get flipper x
+       swpb r3
+       sla  r0,1                       ; Convert flipper state to word
+       a    r0,r1                      ; r1 now points to pointer to sprite list
+       mov  *r1,r1                     ; r1 now points to sprite list
+       mov  *r1+,r4                    ; get number of sprites
+update_flipper_sprites_1:
+       movb *r1+,r5                    ; Get y offset
+       ab   r2,r5                      ; Add screen y
+       movb r5,*r15                    ; Write y
+       movb *r1+,r5                    ; Get x offset
+       ab   r3,r5                      ; Add screen x
+       movb r5,*r15                    ; Write x
+       movb *r1+,*r15                  ; Write pattern
+       movb *r1+,*r15                  ; Write color
+       dec  r4
+       jne  update_flipper_sprites_1
+update_flipper_sprites_3:
+       rt
+*// update_flipper_sprites:
+
+*********************************************************************************
+*
+* Update static sprites
+*
+update_static_sprites:
+       mov  @scroll_y,r0
+       ai   r0,-16                     ; Sprites with y > this should be displayed
+       li   r3,static_sprites
+*      Find first sprite to display
+update_static_sprites_1:
+       mov  *r3+,r1                    ; Get y
+       jlt  update_static_sprites_3
+       c    r1,r0                      ; Is y less than the y value where it should be displayed?
+       jlt  update_static_sprites_1
+*      Display until out of screen
+       mov  @scroll_y,r0
+       ai   r0,screen_height           ; Sprites with y > this should not be displayed
+update_static_sprites_2:
+       c    r1,r0
+       jgt  update_static_sprites_3
+       s    @scroll_y,r1
+       dec  r1                         ; Adjust y coordinate
+       swpb r1
+       movb r1,*r15                    ; Write y
+       inc  r3                         ; To x LSB
+       movb *r3,*r15                   ; Write x
+       inct r3                         ; To pattern LSB
+       movb *r3,*r15                   ; Write pattern
+       inct r3                         ; To color LSB
+       movb *r3+,*r15                  ; Write color
+       mov  *r3+,r1                    ; Get y
+       jgt  update_static_sprites_2
+update_static_sprites_3:
+       rt
+*// update_static_sprites
 
 ***************************************************************************
 *
@@ -805,10 +917,6 @@ static_sprites:
        DATA 144,80,8,4                 ; y, x, pattern#, color#
        DATA 160,152,12,8               ;
        DATA 208,96,8,4                 ;
-       DATA 468,72,16,8                ;
-       DATA 468,88,20,8                ;
-       DATA 468,128,80,4               ;
-       DATA 468,144,84,4               ;
        DATA 488,232,4,14               ;
        data -1
 
@@ -822,5 +930,6 @@ sprite_patterns:
 normals:
        copy "normals.a99"
        copy "map.a99"
+       copy "flippers.a99"
 
        end

@@ -1,0 +1,79 @@
+left_flipper:
+       equ  $
+left_flipper_y:
+       data 468
+left_flipper_x:
+       data 72
+left_flipper_sprites:
+       data left_flipper_sprites_0
+       data left_flipper_sprites_1
+       data left_flipper_sprites_2
+       data left_flipper_sprites_3
+       data left_flipper_sprites_4
+       data left_flipper_sprites_5
+left_flipper_sprites_0:
+       data 2
+       byte 0,0,16,8
+       byte 0,16,20,8
+left_flipper_sprites_1:
+       data 2
+       byte 0,0,24,8
+       byte 0,16,28,8
+left_flipper_sprites_2:
+       data 2
+       byte 0,0,32,8
+       byte 0,16,36,8
+left_flipper_sprites_3:
+       data 2
+       byte 0,0,40,8
+       byte -2,16,44,8
+left_flipper_sprites_4:
+       data 3
+       byte 0,0,48,8
+       byte -16,0,64,8
+       byte -4,16,52,8
+left_flipper_sprites_5:
+       data 3
+       byte 0,0,56,8
+       byte -14,0,68,8
+       byte -7,16,60,8
+
+right_flipper:
+       equ  $
+right_flipper_y:
+       data 468
+right_flipper_x:
+       data 144
+right_flipper_sprites:
+       data right_flipper_sprites_0
+       data right_flipper_sprites_1
+       data right_flipper_sprites_2
+       data right_flipper_sprites_3
+       data right_flipper_sprites_4
+       data right_flipper_sprites_5
+right_flipper_sprites_0:
+       data 2
+       byte 0,0,84,4
+       byte 0,-16,80,4
+right_flipper_sprites_1:
+       data 2
+       byte 0,0,92,4
+       byte 0,-16,88,4
+right_flipper_sprites_2:
+       data 2
+       byte 0,0,100,4
+       byte 0,-16,96,4
+right_flipper_sprites_3:
+       data 2
+       byte 0,0,108,4
+       byte -2,-16,104,4
+right_flipper_sprites_4:
+       data 3
+       byte 0,0,116,4
+       byte -4,-16,112,4
+       byte -16,0,72,4
+right_flipper_sprites_5:
+       data 3
+       byte 0,0,124,4
+       byte -7,-16,120,4
+       byte -16,0,76,4
