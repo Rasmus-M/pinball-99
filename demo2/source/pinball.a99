@@ -46,6 +46,14 @@ coll_map_bank:
        equ  >6008
 coll_bank_base:
        equ  >6000
+flipper_col_map_bank:
+       equ  >6028
+flipper_col_map_width:
+       equ  96
+flipper_col_map_height:
+       equ  40
+flipper_col_map_size:
+       equ  flipper_col_map_width*flipper_col_map_height
 
 **
 * Memory mapped addresses
@@ -82,13 +90,13 @@ pad:
        equ  >8300
 wrksp:
        equ  pad                        ; Workspace
-r0lb:
+lsb_r0:
        equ  wrksp+1
-r1lb:
+lsb_r1:
        equ  wrksp+3
-r2lb:
+lsb_r2:
        equ  wrksp+5
-r3lb:
+lsb_r3:
        equ  wrksp+7
 stack:
        equ  wrksp+>20
@@ -186,7 +194,7 @@ init_game:
        mov r0,@right_flipper_state
        .endproc
 init_values:
-       data >0e80,>1e80,>0000,->0000,>0000,>0002
+       data >0880,>1a00,>0000,->0000,>0000,>0002
 *// init_game
 
 *********************************************************************
@@ -246,10 +254,6 @@ user_input:
        ci   r0,max_flipper_state
        jeq  user_input_2
        inc  @left_flipper_state
-       li   r0,->0080
-       mov  r0,@vx
-       li   r0,->0100
-       mov  r0,@vy
        jmp  user_input_2
 user_input_1:
        mov  @left_flipper_state,r0
@@ -264,10 +268,6 @@ user_input_2:
        ci   r0,max_flipper_state
        jeq  user_input_4
        inc  @right_flipper_state
-       li   r0,>0080
-       mov  r0,@vx
-       li   r0,->0100
-       mov  r0,@vy
        jmp  user_input_4
 user_input_3:
        mov  @right_flipper_state,r0
@@ -289,7 +289,7 @@ user_input_5:
 * Move ball
 *
 move_ball:
-*      Accellerate
+*      Accelerate
        a    @ax,@vx
        a    @ay,@vy
 *      Move x
@@ -298,12 +298,15 @@ move_ball:
        mov  @x,r1
        a    r0,r1
        jlt  move_ball_1
-       ci   r1,(map_width-8)*16
+       ci   r1,(map_width-16)*16       ; *16 because of FP 12.4 format
        jgt  move_ball_1
        mov  r1,@x
        jmp  move_ball_3
 move_ball_1:
        neg  @vx
+       mov  @vx,r0
+       sra  r0,2
+       s    r0,@vx
 move_ball_3:
 *      Move y
        mov  @vy,r0
@@ -311,12 +314,15 @@ move_ball_3:
        mov  @y,r1
        a    r0,r1
        jlt  move_ball_2
-       ci   r1,(map_height-8)*16
+       ci   r1,(map_height-16)*16      ; *16 because of FP 12.4 format
        jgt  move_ball_2
        mov  r1,@y
        jmp  move_ball_4
 move_ball_2:
        neg  @vy
+       mov  @vy,r0
+       sra  r0,2
+       s    r0,@vy
 move_ball_4:
        rt
 *// move_ball
@@ -329,24 +335,28 @@ move_ball_4:
 *
 check_collision:
        .proc
-       bl   @check_ball_collision
-       mov  r1,r1
-       jeq  check_collision_1
+       bl   @check_flipper_collision
+       mov  r1,r1                      ; Test colllision map value
+       jne  check_collision_0
+       bl   @check_map_collision
+       mov  r1,r1                      ; Test colllision map value
+       jeq  check_collision_1          ; Zero means no collision
+check_collision_0:
        dec  r1                         ; Convert to zero-based
-       bl   @get_normal
+       bl   @calc_normal               ; Calculate n
        bl   @calc_dot_product          ; r3=dot product of v and n
        mov  r3,r3
        jgt  check_collision_1          ; If positive, the ball is inside the wall moving out
        jeq  check_collision_1          ; If zero, the ball is moving along the wall
        bl   @reflect
-       mov  @rx,r0
-       mov  r0,@vx
-       sra  r0,2
-       s    r0,@vx
-       mov  @ry,r0
-       mov  r0,@vy
-       sra  r0,2
-       s    r0,@vy
+       mov  @rx,r0                     ; rx
+       mov  r0,@vx                     ; vx = rx
+       sra  r0,2                       ; 0.25 rx
+       s    r0,@vx                     ; vx = rx - 0.25 rx = 0.75 rx
+       mov  @ry,r0                     ; ry
+       mov  r0,@vy                     ; vy = ry
+       sra  r0,2                       ; 0.25 ry
+       s    r0,@vy                     ; vy = ry - 0.25 ry = 0.75 ry
 check_collision_1:
        .endproc
 *// check_collision
@@ -428,10 +438,13 @@ update_sprite_attr_table:
        mov  @y,r0
        srl  r0,4
        s    @scroll_y,r0
+       ai   r0,-ball_radius-1
        swpb r0
        movb r0,*r15
        mov  @x,r0
-       sla  r0,4
+       srl  r0,4
+       ai   r0,-ball_radius
+       swpb r0
        movb r0,*r15
        movb @pattern_and_color,*r15
        movb @pattern_and_color+1,*r15
@@ -565,23 +578,102 @@ quit   clr  @>83c4                     ; Reset user ISR address
 
 *********************************************************************************
 *
+* Check for collision with flippers
+*
+check_flipper_collision:
+       .proc
+*      Check y boundaries
+       mov  @y,r1
+       srl  r1,4
+       ci   r1,flippers_area_y_min
+       jl   check_flipper_collision_3
+       ci   r1,flippers_area_y_max
+       jhe  check_flipper_collision_3
+*      Check x boundaries
+       mov  @x,r0
+       srl  r0,4
+       ci   r0,left_flipper_area_x_min
+       jl   check_flipper_collision_3
+       ci   r0,left_flipper_area_x_max
+       jle  check_flipper_collision_1
+       ci   r0,right_flipper_area_x_min
+       jl   check_flipper_collision_3
+       ci   r0,right_flipper_area_x_max
+       jle  check_flipper_collision_2
+       jmp  check_flipper_collision_3
+*      Left flipper
+check_flipper_collision_1:
+;       li   r0,->0080
+;       mov  r0,@vx
+;       li   r0,->0100
+;       mov  r0,@vy
+       mov  @left_flipper_state,r0
+       sla  r0,2
+       ai   r0,left_flipper_collision_maps
+       li   r1,left_flipper_col_map_y
+       bl   @check_flipper_map_collision
+       jmp  check_flipper_collision_4
+*      Right flipper
+check_flipper_collision_2:
+;       li   r0,>0080
+;       mov  r0,@vx
+;       li   r0,->0100
+;       mov  r0,@vy
+       mov  @right_flipper_state,r0
+       sla  r0,2
+       ai   r0,right_flipper_collision_maps
+       li   r1,right_flipper_col_map_y
+       bl   @check_flipper_map_collision
+       jmp  check_flipper_collision_4
+check_flipper_collision_3:
+       li   r1,0
+check_flipper_collision_4:
+       .endproc
+*// check_flipper_collision
+
+*********************************************************************************
+*
+* Check flipper map collision for one flipper
+*
+* r0: points to flipper collision map bank and address
+* r1: points to y and x coordinates of flipper collision map area
+*
+check_flipper_map_collision:
+       mov  *r0+,r2
+       seto *r2                        ; Select ROM bank
+       mov  *r0,r0                     ; Map address
+       mov  @y,r2                      ; Ball y
+       srl  r2,4                       ; To integer
+       s    *r1+,r2                    ; Ball y - flipper y
+       li   r3,flipper_col_map_width
+       mpy  r3,r2                      ; Line offset in r3
+       mov  @x,r2                      ; Ball x
+       srl  r2,4                       ; To integer
+       s    *r1,r2                     ; Ball x - flipper x
+       a    r2,r0
+       a    r3,r0
+       clr  r1
+       movb *r0,@lsb_r1
+       rt
+*// check_flipper_map_collision
+
+*********************************************************************************
+*
 * Get collision map value for ball
 *
-* Returns value in r0
+* Returns value in r1
 *
 * Modifies r0-r3
 *
-check_ball_collision:
+check_map_collision:
        .proc
        mov  @x,r0
        srl  r0,4
-       ai   r0,ball_radius             ; Center x
        mov  @y,r1
        srl  r1,4
-       ai   r1,ball_radius             ; Center y
        bl   @get_coll_value
        .endproc
-*// check_ball_collision
+*// check_map_collision
 
 *********************************************************************************
 *
@@ -613,13 +705,13 @@ get_coll_value:
        a    r0,r2                      ; Add X
        ai   r2,coll_bank_base          ; Add ROM bank base address
        clr  r1                         ; Clear result reg
-       movb *r2,@r1lb                  ; Get byte
+       movb *r2,@lsb_r1                ; Get byte
        rt
 *// get_coll_value
 
 *********************************************************************************
 *
-* Get normal vector at the given angle 0-254 in FP 8.8 format.
+* Calculate normal vector at the given angle 0-254 in FP 8.8 format.
 
 * An angle of 0 corresponds to the normal pointing down (0,-1) and for
 * increasing angles the normals are rotated in a clockwise direction.
@@ -629,29 +721,28 @@ get_coll_value:
 *
 * On return @nx contains the X coordinate and @ny contains the Y coordinate.
 *
-get_normal:
+calc_normal:
        sla  r1,2
        ai   r1,normals
        mov  *r1+,@nx
        mov  *r1,@ny
        rt
-*// get_normal
+*// calc_normal
 
 *********************************************************************************
 *
-* Calculate the reflection vector r of vector v around normal vector n in FP 8.8
-* format.
+* Calculate the reflection vector r of vector v around normal vector n.
 *
 * r = v − 2(v ⋅ n) n
 *
 * Input:
-* r3: dot product of v and n (v ⋅ n)
-* @vx: vx
-* @vy: vy
-* @nx: nx
-* @ny: ny
+* r3: dot product of v and n, i.e. v ⋅ n, in FP 8.8 format.
+* @vx: vx (FP 8.8)
+* @vy: vy (FP 8.8)
+* @nx: nx (FP 8.8)
+* @ny: ny (FP 8.8)
 *
-* On return @rx, @ry contain the reflection vector in in FP 4.12 format.
+* On return @rx, @ry contain the reflection vector in in FP 8.8 format.
 *
 * Modified r0-r3
 *
@@ -728,7 +819,7 @@ calc_signed_product:
        neg  r1                         ; Make positive
 !      mpy  r1,r0                      ; Multiply
        swpb r0                         ; Move MSB into position
-       movb r1,@r0lb                   ; Move LSB into position
+       movb r1,@lsb_r0                   ; Move LSB into position
        mov  r2,r2                      ; Test sign
        jeq  !
        neg  r0                         ; Negate if sign is minus
@@ -794,7 +885,7 @@ graphics_mode:
        li   r1,vregs2
        li   r2,8
 graphics_mode_1:
-       movb *r1+,@r0lb
+       movb *r1+,@lsb_r0
        bl   @vwtr                      ; Set register
        ai   r0,>0100
        dec  r2

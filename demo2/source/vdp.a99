@@ -55,7 +55,7 @@ vsbw:
 * R2: Number of bytes to send
 *
 vmbw:
-       movb  @r0lb,@vdpwa              ; Send low byte of VDP RAM write address
+       movb  @lsb_r0,@vdpwa              ; Send low byte of VDP RAM write address
        ori  r0,>4000                   ; Set read/write bits 14 and 15 to write (01)
        movb r0,@vdpwa                  ; Send high byte of VDP RAM write address
 vmbw_1:
@@ -74,7 +74,7 @@ vmbw_1:
 * R2: Number of bytes to write to VDP RAM
 *
 vsmw:
-       movb  @r0lb,@vdpwa              ; Send low byte of VDP RAM write address
+       movb  @lsb_r0,@vdpwa              ; Send low byte of VDP RAM write address
        ori  r0,>4000                   ; Set read/write bits 14 and 15 to write (01)
        movb r0,@vdpwa                  ; Send high byte of VDP RAM write address
 vsmw_1:
@@ -126,7 +126,7 @@ vsbr:
 * Modifies R0-R2
 *
 vmbr:
-       movb  @r0lb,@vdpwa              ; Send low byte of VDP RAM read address
+       movb  @lsb_r0,@vdpwa              ; Send low byte of VDP RAM read address
        andi r0,>3fff                   ; Set read/write bits 14 and 15 to read (00)
        movb r0,@vdpwa                  ; Send high byte of VDP RAM read address
        li   r0,vdprd

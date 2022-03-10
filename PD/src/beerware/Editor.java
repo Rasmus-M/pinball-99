@@ -719,6 +719,8 @@ class Editor extends JPanel {
             //	os.drawPolygon(x,y,x.length);
         }
 
+        g.setColor(Color.LIGHT_GRAY);
+        g.fillRect(0, 0, getWidth(), getHeight());
         g.drawImage(m_offscreen, 0, 0, w * m_zoom * WIDTH_SCALE, h * m_zoom, null);
     }
 }

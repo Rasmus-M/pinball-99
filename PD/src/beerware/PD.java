@@ -40,6 +40,8 @@ public class PD extends JFrame {
 
         setResizable(true);
         getContentPane().setLayout(new BorderLayout());
+
+        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
                 exit();
@@ -50,7 +52,7 @@ public class PD extends JFrame {
 
         m_actionLoad = new AbstractAction("Load...") {
             public void actionPerformed(ActionEvent evt) {
-                JFileChooser chooser = new JFileChooser();
+                JFileChooser chooser = new JFileChooser(".");
                 chooser.setFileFilter(new LevelFileFilter());
                 int returnVal = chooser.showOpenDialog(PD.this);
                 if (returnVal == JFileChooser.APPROVE_OPTION) {
@@ -74,7 +76,7 @@ public class PD extends JFrame {
 
         m_actionSaveAs = new AbstractAction("Save As...") {
             public void actionPerformed(ActionEvent evt) {
-                JFileChooser chooser = new JFileChooser();
+                JFileChooser chooser = new JFileChooser(".");
                 chooser.setFileFilter(new LevelFileFilter());
                 int returnVal = chooser.showSaveDialog(PD.this);
                 if (returnVal == JFileChooser.APPROVE_OPTION) {
@@ -97,13 +99,13 @@ public class PD extends JFrame {
             }
         };
 
-        m_editor = new Editor("bitmap.gif");
-        JScrollPane jsp = new JScrollPane(m_editor);
+        m_editor = new Editor("backdrop.gif");
+        final JScrollPane jsp = new JScrollPane(m_editor);
         jsp.setWheelScrollingEnabled(true);
-        jsp.getViewport().setPreferredSize(new Dimension(960, 800));
+        jsp.getViewport().setPreferredSize(new Dimension(600, 800));
         getContentPane().add(jsp, BorderLayout.CENTER);
 
-        m_editor.load(new File("level.pd64"));
+        // m_editor.load(new File("level.pd64"));
 
         m_editor.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_MASK), "load");
         m_editor.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_MASK), "save");
@@ -155,6 +157,7 @@ public class PD extends JFrame {
         zoomLevel.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 m_editor.setZoomLevel(zoomLevel.getSelectedIndex() + 1);
+                jsp.revalidate();
             }
         });
 

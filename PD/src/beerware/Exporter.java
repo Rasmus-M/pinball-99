@@ -695,7 +695,7 @@ class Exporter extends JDialog {
     }
 
     private void importAngles() {
-        JFileChooser chooser = new JFileChooser();
+        JFileChooser chooser = new JFileChooser(".");
         chooser.setFileFilter(new AngleFileFilter());
         int returnVal = chooser.showOpenDialog(this);
         if (returnVal == JFileChooser.APPROVE_OPTION) {
@@ -758,7 +758,7 @@ class Exporter extends JDialog {
             ColorModel cm = new IndexColorModel(8, 256, r, g, b);
             MemoryImageSource mis = new MemoryImageSource(w, h, cm, out, 0, w);
 
-            JFileChooser chooser = new JFileChooser();
+            JFileChooser chooser = new JFileChooser(".");
             chooser.setFileFilter(new AngleFileFilter());
             int returnVal = chooser.showSaveDialog(this);
             if (returnVal == JFileChooser.APPROVE_OPTION) {
@@ -808,7 +808,7 @@ class Exporter extends JDialog {
                     raster.setPixel(xp, yp, new int[]{pixel});
                 }
             }
-            JFileChooser chooser = new JFileChooser();
+            JFileChooser chooser = new JFileChooser(".");
             chooser.setFileFilter(new AngleFileFilter());
             int returnVal = chooser.showSaveDialog(this);
             if (returnVal == JFileChooser.APPROVE_OPTION) {

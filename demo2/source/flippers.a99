@@ -1,7 +1,20 @@
+flippers_area_y_min:
+       equ  448
+flippers_area_y_max:
+       equ  488
+left_flipper_area_x_min:
+       equ  64
+left_flipper_area_x_max:
+       equ  112
+right_flipper_area_x_min:
+       equ  120
+right_flipper_area_x_max:
+       equ  168
+
 left_flipper:
        equ  $
 left_flipper_y:
-       data 468
+       data 464
 left_flipper_x:
        data 72
 left_flipper_sprites:
@@ -35,13 +48,24 @@ left_flipper_sprites_4:
 left_flipper_sprites_5:
        data 3
        byte 0,0,56,8
-       byte -14,0,68,8
        byte -7,16,60,8
+       byte -16,0,68,8
+left_flipper_col_map_y:
+       data flippers_area_y_min
+left_flipper_col_map_x:
+       data left_flipper_area_x_min
+left_flipper_collision_maps:
+       data flipper_col_map_bank,>6000
+       data flipper_col_map_bank,>6000+flipper_col_map_size
+       data flipper_col_map_bank+2,>6000
+       data flipper_col_map_bank+2,>6000+flipper_col_map_size
+       data flipper_col_map_bank+4,>6000
+       data flipper_col_map_bank+4,>6000+flipper_col_map_size
 
 right_flipper:
        equ  $
 right_flipper_y:
-       data 468
+       data 464
 right_flipper_x:
        data 144
 right_flipper_sprites:
@@ -77,3 +101,14 @@ right_flipper_sprites_5:
        byte 0,0,124,4
        byte -7,-16,120,4
        byte -16,0,76,4
+right_flipper_col_map_y:
+       data flippers_area_y_min
+right_flipper_col_map_x:
+       data right_flipper_area_x_min
+right_flipper_collision_maps:
+       data flipper_col_map_bank,>6000+(flipper_col_map_width/2)
+       data flipper_col_map_bank,>6000+flipper_col_map_size+(flipper_col_map_width/2)
+       data flipper_col_map_bank+2,>6000+(flipper_col_map_width/2)
+       data flipper_col_map_bank+2,>6000+flipper_col_map_size+(flipper_col_map_width/2)
+       data flipper_col_map_bank+4,>6000+(flipper_col_map_width/2)
+       data flipper_col_map_bank+4,>6000+flipper_col_map_size+(flipper_col_map_width/2)
