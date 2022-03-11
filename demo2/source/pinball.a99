@@ -32,6 +32,8 @@ map_height_char:
        equ  64
 ball_radius:
        equ  7
+damping:
+       equ  >00e0
 max_flipper_state:
        equ  5
 scroll_when_y_less_than:
@@ -142,8 +144,14 @@ left_flipper_state:
        equ  pattern_and_color+2
 right_flipper_state:
        equ  left_flipper_state+2
-pad_max:
+left_flipper_dir:
        equ  right_flipper_state+2
+right_flipper_dir:
+       equ  left_flipper_dir+2
+collision_type:                        ; 0=background, -1=left flipper, 1=right flipper
+       equ  right_flipper_dir+2
+pad_max:
+       equ  collision_type+2
 
 ********************************************************************************
 *
@@ -194,7 +202,7 @@ init_game:
        mov r0,@right_flipper_state
        .endproc
 init_values:
-       data >0880,>1a00,>0000,->0000,>0000,>0002
+       data >05c0,>1800,>0000,->0000,>0000,>0002
 *// init_game
 
 *********************************************************************
@@ -247,6 +255,7 @@ set_vdp_regs:
 user_input:
        .proc
 *      Left flipper
+       clr  @left_flipper_dir
        li   r0,KEY_Z
        bl   @check_key
        jeq  user_input_1
@@ -254,13 +263,16 @@ user_input:
        ci   r0,max_flipper_state
        jeq  user_input_2
        inc  @left_flipper_state
+       inc  @left_flipper_dir
        jmp  user_input_2
 user_input_1:
        mov  @left_flipper_state,r0
        jeq  user_input_2
        dec  @left_flipper_state
+       dec  @left_flipper_dir
 user_input_2:
 *      Right flipper
+       clr  @right_flipper_dir
        li   r0,KEY_M
        bl   @check_key
        jeq  user_input_3
@@ -268,11 +280,13 @@ user_input_2:
        ci   r0,max_flipper_state
        jeq  user_input_4
        inc  @right_flipper_state
+       inc  @right_flipper_dir
        jmp  user_input_4
 user_input_3:
        mov  @right_flipper_state,r0
        jeq  user_input_4
        dec  @right_flipper_state
+       dec  @right_flipper_dir
 user_input_4:
 *      Shoot
        li   r0,KEY_SP
@@ -289,6 +303,7 @@ user_input_5:
 * Move ball
 *
 move_ball:
+       .proc
 *      Accelerate
        a    @ax,@vx
        a    @ay,@vy
@@ -298,15 +313,16 @@ move_ball:
        mov  @x,r1
        a    r0,r1
        jlt  move_ball_1
-       ci   r1,(map_width-16)*16       ; *16 because of FP 12.4 format
+       ci   r1,(map_width-ball_radius)*16       ; *16 because of FP 12.4 format
        jgt  move_ball_1
        mov  r1,@x
        jmp  move_ball_3
 move_ball_1:
-       neg  @vx
        mov  @vx,r0
-       sra  r0,2
-       s    r0,@vx
+       neg  r0
+       li   r1,damping
+       bl   @calc_signed_product
+       mov  r0,@vx
 move_ball_3:
 *      Move y
        mov  @vy,r0
@@ -314,17 +330,18 @@ move_ball_3:
        mov  @y,r1
        a    r0,r1
        jlt  move_ball_2
-       ci   r1,(map_height-16)*16      ; *16 because of FP 12.4 format
+       ci   r1,(map_height-ball_radius)*16      ; *16 because of FP 12.4 format
        jgt  move_ball_2
        mov  r1,@y
        jmp  move_ball_4
 move_ball_2:
-       neg  @vy
        mov  @vy,r0
-       sra  r0,2
-       s    r0,@vy
+       neg  r0
+       li   r1,damping
+       bl   @calc_signed_product
+       mov  r0,@vy
 move_ball_4:
-       rt
+       .endproc
 *// move_ball
 
 *********************************************************************************
@@ -335,29 +352,77 @@ move_ball_4:
 *
 check_collision:
        .proc
+       clr  @collision_type
        bl   @check_flipper_collision
        mov  r1,r1                      ; Test colllision map value
-       jne  check_collision_0
-       bl   @check_map_collision
+       jne  check_collision_1
+       bl   @get_background_collision_map_value
        mov  r1,r1                      ; Test colllision map value
-       jeq  check_collision_1          ; Zero means no collision
-check_collision_0:
+       jeq  check_collision_6          ; Zero means no collision
+check_collision_1:
        dec  r1                         ; Convert to zero-based
        bl   @calc_normal               ; Calculate n
        bl   @calc_dot_product          ; r3=dot product of v and n
        mov  r3,r3
-       jgt  check_collision_1          ; If positive, the ball is inside the wall moving out
-       jeq  check_collision_1          ; If zero, the ball is moving along the wall
+       jgt  check_collision_6          ; If positive, the ball is inside the wall moving out
+       jeq  check_collision_6          ; If zero, the ball is moving along the wall
        bl   @reflect
-       mov  @rx,r0                     ; rx
-       mov  r0,@vx                     ; vx = rx
-       sra  r0,2                       ; 0.25 rx
-       s    r0,@vx                     ; vx = rx - 0.25 rx = 0.75 rx
-       mov  @ry,r0                     ; ry
-       mov  r0,@vy                     ; vy = ry
-       sra  r0,2                       ; 0.25 ry
-       s    r0,@vy                     ; vy = ry - 0.25 ry = 0.75 ry
-check_collision_1:
+       mov  @collision_type,r0
+       jlt  check_collision_3
+       jgt  check_collision_4
+*      Background collision
+check_collision_2:
+       li   r3,damping
+*      Set velocity as r3 * (vx, vy)
+       mov  @rx,r0
+       mov  r3,r1
+       bl   @calc_signed_product
+       mov r0,@vx
+       mov  @ry,r0
+       mov  r3,r1
+       bl   @calc_signed_product
+       mov r0,@vy
+       jmp  check_collision_6
+*      Right flipper collision
+check_collision_3:
+       mov  @left_flipper_dir,r0
+       jeq  check_collision_2
+       jlt  check_collision_2
+       mov  @y,r0
+       srl  r0,4
+       c    r0,@left_flipper_y
+       jhe  check_collision_2
+       mov  @x,r3
+       srl  r3,4
+       s    @left_flipper_x,r3
+       sla  r3,4
+       jmp  check_collision_5
+*      Left flipper collision
+check_collision_4:
+       mov  @right_flipper_dir,r0
+       jeq  check_collision_2
+       jlt  check_collision_2
+       mov  @y,r0
+       srl  r0,4
+       c    r0,@right_flipper_y
+       jhe  check_collision_2
+       mov  @x,r3
+       srl  r3,4
+       neg  r3
+       a    @right_flipper_x,r3
+       sla  r3,4
+check_collision_5:
+       mov  @nx,r0
+       mov  r3,r1
+       bl   @calc_signed_product
+       a    @rx,r0
+       mov  r0,@vx
+       a    @ny,r0
+       mov  r3,r1
+       bl   @calc_signed_product
+       a     @ry,r0
+       mov  r0,@vy
+check_collision_6:
        .endproc
 *// check_collision
 
@@ -453,7 +518,6 @@ update_sprite_attr_table:
 *      Static sprites
        bl   @update_static_sprites
 *      End marker
-update_sprite_attr_table_4:
        li   r1,>d000
        movb r1,*r15
        .endproc
@@ -603,27 +667,21 @@ check_flipper_collision:
        jmp  check_flipper_collision_3
 *      Left flipper
 check_flipper_collision_1:
-;       li   r0,->0080
-;       mov  r0,@vx
-;       li   r0,->0100
-;       mov  r0,@vy
+       dec  @collision_type
        mov  @left_flipper_state,r0
        sla  r0,2
        ai   r0,left_flipper_collision_maps
        li   r1,left_flipper_col_map_y
-       bl   @check_flipper_map_collision
+       bl   @get_flipper_collision_map_value
        jmp  check_flipper_collision_4
 *      Right flipper
 check_flipper_collision_2:
-;       li   r0,>0080
-;       mov  r0,@vx
-;       li   r0,->0100
-;       mov  r0,@vy
+       inc  @collision_type
        mov  @right_flipper_state,r0
        sla  r0,2
        ai   r0,right_flipper_collision_maps
        li   r1,right_flipper_col_map_y
-       bl   @check_flipper_map_collision
+       bl   @get_flipper_collision_map_value
        jmp  check_flipper_collision_4
 check_flipper_collision_3:
        li   r1,0
@@ -633,29 +691,29 @@ check_flipper_collision_4:
 
 *********************************************************************************
 *
-* Check flipper map collision for one flipper
+* Get flipper collision map value for ball
 *
 * r0: points to flipper collision map bank and address
 * r1: points to y and x coordinates of flipper collision map area
 *
-check_flipper_map_collision:
+get_flipper_collision_map_value:
        mov  *r0+,r2
        seto *r2                        ; Select ROM bank
        mov  *r0,r0                     ; Map address
        mov  @y,r2                      ; Ball y
        srl  r2,4                       ; To integer
-       s    *r1+,r2                    ; Ball y - flipper y
+       s    *r1+,r2                    ; Ball y - flipper start y
        li   r3,flipper_col_map_width
        mpy  r3,r2                      ; Line offset in r3
        mov  @x,r2                      ; Ball x
        srl  r2,4                       ; To integer
-       s    *r1,r2                     ; Ball x - flipper x
+       s    *r1,r2                     ; Ball x - flipper start x
        a    r2,r0
        a    r3,r0
        clr  r1
        movb *r0,@lsb_r1
        rt
-*// check_flipper_map_collision
+*// get_flipper_collision_map_value
 
 *********************************************************************************
 *
@@ -665,7 +723,7 @@ check_flipper_map_collision:
 *
 * Modifies r0-r3
 *
-check_map_collision:
+get_background_collision_map_value:
        .proc
        mov  @x,r0
        srl  r0,4
@@ -673,11 +731,11 @@ check_map_collision:
        srl  r1,4
        bl   @get_coll_value
        .endproc
-*// check_map_collision
+*// get_background_collision_map_value
 
 *********************************************************************************
 *
-* Get collision map value
+* Get background collision map value for given coordinates
 *
 * r0:  X coordinate
 * r1:  Y coordinate
