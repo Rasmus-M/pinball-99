@@ -150,8 +150,12 @@ right_flipper_dir:
        equ  left_flipper_dir+2
 collision_type:                        ; 0=background, -1=left flipper, 1=right flipper
        equ  right_flipper_dir+2
-pad_max:
+launch_speed:
        equ  collision_type+2
+player_status:
+       equ  launch_speed+2
+pad_max:
+       equ  player_status+2
 
 ********************************************************************************
 *
@@ -165,6 +169,7 @@ main:
        li   r15,vdpwd
        bl   @graphics_mode
        bl   @init_vdp_ram
+restart:
        bl   @init_game
        clr  @double_buffer_flag
 loop:
@@ -181,7 +186,9 @@ loop:
        bl   @update_name_table
        bl   @update_sprite_attr_table
        bl   @check_quit
-       jmp  loop
+       mov  @player_status,r0
+       jeq  loop
+       jmp  restart
 
 *********************************************************************************
 *
@@ -200,11 +207,10 @@ init_game:
        li   r0,>000e
        mov  r0,@pattern_and_color
        clr  @left_flipper_state
-       li   r0,4
-       mov r0,@right_flipper_state
+       clr  @right_flipper_state
+       clr  @launch_speed
+       clr  @player_status
        .endproc
-init_values:
-       data >0600,>1800,>0000,->0000,>0000,>0002
 *// init_game
 
 *********************************************************************
@@ -290,13 +296,32 @@ user_input_3:
        dec  @right_flipper_state
        dec  @right_flipper_dir
 user_input_4:
-*      Shoot
        li   r0,KEY_SP
        bl   @check_key
-       jeq  user_input_5
+       jeq  user_input_6
+*      Space pressed
+       c    @x,@x_init
+       jne  user_input_5
+       mov  @launch_speed,r0
+       ci   r0,>0400
+       jgt  user_input_7
+       ai   r0,>0020
+       mov  r0,@launch_speed
+       jmp  user_input_7
+user_input_5:
+*      Tilt
+       li   r0,>0040
+       mov  r0,@vx
        li   r0,->00c0
        mov  r0,@vy
-user_input_5:
+       jmp  user_input_7
+user_input_6:
+*      Space not pressed
+       c    @x,@x_init
+       jne  user_input_7
+       s    @launch_speed,@vy
+       clr  @launch_speed
+user_input_7:
        .endproc
 *// user_input
 
@@ -342,6 +367,7 @@ move_ball_2:
        li   r1,damping
        bl   @calc_signed_product
        mov  r0,@vy
+       inc  @player_status
 move_ball_4:
        .endproc
 *// move_ball
@@ -366,17 +392,9 @@ check_collision_1:
        bl   @calc_normal               ; Calculate n
        bl   @calc_dot_product          ; r3=dot product of v and n
        mov  r3,r3
+       jgt  check_collision_6          ; If positive, the ball is inside the wall, moving out
        jeq  check_collision_6          ; If zero, the ball is moving along the wall
-       jlt  check_collision_1a         ; If negative, the ball is outside the wall, moving in
-*      Ball is inside the wall moving out
-       mov  @collision_type,r0
-       jeq  check_collision_6          ; Do nothing if it's a background collision
-*      TODO
-       jmp  check_collision_6
-check_collision_1a:
-*      Ball is outside the wall, moving in
        bl   @reflect
-check_collision_1b:
        mov  @collision_type,r0
        jlt  check_collision_3
        jgt  check_collision_4
@@ -406,7 +424,7 @@ check_collision_3:
        srl  r3,4
        s    @left_flipper_center_x,r3
        jlt  check_collision_2
-       sla  r3,4
+       sla  r3,5
        jmp  check_collision_5
 *      Right flipper collision
 check_collision_4:
@@ -422,7 +440,7 @@ check_collision_4:
        neg  r3
        a    @right_flipper_center_x,r3
        jlt  check_collision_2
-       sla  r3,4
+       sla  r3,5
 check_collision_5:
 *      Set velocity to (rx, ry) + r3 * (nx, ny)
        mov  @nx,r0
@@ -1077,6 +1095,21 @@ check_key:
 *
 * Data
 *
+init_values:
+       equ  $
+x_init:
+       data >0f00
+y_init:
+       data >1e00
+vx_init:
+       data >0000
+vy_init:
+       data >0000
+ax_init:
+       data >0000
+ay_init:
+       data >0002
+
 w_map_width:
        data map_width
 w_map_height:
@@ -1095,7 +1128,6 @@ static_sprites:
 ***************************************************************************
 *
 * Data includes
-*
 *
 sprite_patterns:
        copy "sprite-patterns.a99"
