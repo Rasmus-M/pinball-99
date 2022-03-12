@@ -175,10 +175,8 @@ loop:
        bl   @check_collision
        bl   @move_ball
        bl   @check_collision
-;       bl   @move_ball
-;       bl   @check_collision
-;       bl   @move_ball
-;       bl   @check_collision
+       bl   @move_ball
+       bl   @check_collision
        bl   @scroll_screen
        bl   @update_name_table
        bl   @update_sprite_attr_table
@@ -206,7 +204,7 @@ init_game:
        mov r0,@right_flipper_state
        .endproc
 init_values:
-       data >05c0,>1800,>0000,->0000,>0000,>0002
+       data >0600,>1800,>0000,->0000,>0000,>0002
 *// init_game
 
 *********************************************************************
@@ -378,6 +376,7 @@ check_collision_1:
 check_collision_1a:
 *      Ball is outside the wall, moving in
        bl   @reflect
+check_collision_1b:
        mov  @collision_type,r0
        jlt  check_collision_3
        jgt  check_collision_4
@@ -431,7 +430,7 @@ check_collision_5:
        bl   @calc_signed_product
        a    @rx,r0
        mov  r0,@vx
-       a    @ny,r0
+       mov  @ny,r0
        mov  r3,r1
        bl   @calc_signed_product
        a     @ry,r0
