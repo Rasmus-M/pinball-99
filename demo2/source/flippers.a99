@@ -13,9 +13,9 @@ right_flipper_area_x_max:
 
 left_flipper:
        equ  $
-left_flipper_y:
+left_flipper_sprite_y:
        data 464
-left_flipper_x:
+left_flipper_sprite_x:
        data 72
 left_flipper_sprites:
        data left_flipper_sprites_0
@@ -61,12 +61,18 @@ left_flipper_collision_maps:
        data flipper_col_map_bank+2,>6000+flipper_col_map_size
        data flipper_col_map_bank+4,>6000
        data flipper_col_map_bank+4,>6000+flipper_col_map_size
+left_flipper_center_x:
+       data 80
+left_flipper_center_y:
+       data 472
+left_flipper_bottom_y:
+       data 480
 
 right_flipper:
        equ  $
-right_flipper_y:
+right_flipper_sprite_y:
        data 464
-right_flipper_x:
+right_flipper_sprite_x:
        data 144
 right_flipper_sprites:
        data right_flipper_sprites_0
@@ -112,3 +118,9 @@ right_flipper_collision_maps:
        data flipper_col_map_bank+2,>6000+flipper_col_map_size+(flipper_col_map_width/2)
        data flipper_col_map_bank+4,>6000+(flipper_col_map_width/2)
        data flipper_col_map_bank+4,>6000+flipper_col_map_size+(flipper_col_map_width/2)
+right_flipper_center_x:
+       data 151
+right_flipper_center_y:
+       data 472
+right_flipper_bottom_y:
+       data 480

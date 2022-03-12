@@ -33,7 +33,7 @@ map_height_char:
 ball_radius:
        equ  7
 damping:
-       equ  >00e0
+       equ  >00c0
 max_flipper_state:
        equ  5
 scroll_when_y_less_than:
@@ -175,6 +175,10 @@ loop:
        bl   @check_collision
        bl   @move_ball
        bl   @check_collision
+;       bl   @move_ball
+;       bl   @check_collision
+;       bl   @move_ball
+;       bl   @check_collision
        bl   @scroll_screen
        bl   @update_name_table
        bl   @update_sprite_attr_table
@@ -292,7 +296,7 @@ user_input_4:
        li   r0,KEY_SP
        bl   @check_key
        jeq  user_input_5
-       li   r0,->0200
+       li   r0,->00c0
        mov  r0,@vy
 user_input_5:
        .endproc
@@ -364,8 +368,15 @@ check_collision_1:
        bl   @calc_normal               ; Calculate n
        bl   @calc_dot_product          ; r3=dot product of v and n
        mov  r3,r3
-       jgt  check_collision_6          ; If positive, the ball is inside the wall moving out
        jeq  check_collision_6          ; If zero, the ball is moving along the wall
+       jlt  check_collision_1a         ; If negative, the ball is outside the wall, moving in
+*      Ball is inside the wall moving out
+       mov  @collision_type,r0
+       jeq  check_collision_6          ; Do nothing if it's a background collision
+*      TODO
+       jmp  check_collision_6
+check_collision_1a:
+*      Ball is outside the wall, moving in
        bl   @reflect
        mov  @collision_type,r0
        jlt  check_collision_3
@@ -373,7 +384,7 @@ check_collision_1:
 *      Background collision
 check_collision_2:
        li   r3,damping
-*      Set velocity as r3 * (vx, vy)
+*      Set velocity to r3 * (rx, ry)
        mov  @rx,r0
        mov  r3,r1
        bl   @calc_signed_product
@@ -383,35 +394,38 @@ check_collision_2:
        bl   @calc_signed_product
        mov r0,@vy
        jmp  check_collision_6
-*      Right flipper collision
+*      Left flipper collision
 check_collision_3:
        mov  @left_flipper_dir,r0
        jeq  check_collision_2
        jlt  check_collision_2
        mov  @y,r0
        srl  r0,4
-       c    r0,@left_flipper_y
+       c    r0,@left_flipper_center_y
        jhe  check_collision_2
        mov  @x,r3
        srl  r3,4
-       s    @left_flipper_x,r3
+       s    @left_flipper_center_x,r3
+       jlt  check_collision_2
        sla  r3,4
        jmp  check_collision_5
-*      Left flipper collision
+*      Right flipper collision
 check_collision_4:
        mov  @right_flipper_dir,r0
        jeq  check_collision_2
        jlt  check_collision_2
        mov  @y,r0
        srl  r0,4
-       c    r0,@right_flipper_y
+       c    r0,@right_flipper_bottom_y
        jhe  check_collision_2
        mov  @x,r3
        srl  r3,4
        neg  r3
-       a    @right_flipper_x,r3
+       a    @right_flipper_center_x,r3
+       jlt  check_collision_2
        sla  r3,4
 check_collision_5:
+*      Set velocity to (rx, ry) + r3 * (nx, ny)
        mov  @nx,r0
        mov  r3,r1
        bl   @calc_signed_product
@@ -646,6 +660,8 @@ quit   clr  @>83c4                     ; Reset user ISR address
 *
 check_flipper_collision:
        .proc
+;       li   r0,>0e00
+;       movb r0,@pattern_and_color+1
 *      Check y boundaries
        mov  @y,r1
        srl  r1,4
@@ -667,13 +683,18 @@ check_flipper_collision:
        jmp  check_flipper_collision_3
 *      Left flipper
 check_flipper_collision_1:
+;       li   r0,>0800
+;       movb r0,@pattern_and_color+1
        dec  @collision_type
        mov  @left_flipper_state,r0
        sla  r0,2
        ai   r0,left_flipper_collision_maps
        li   r1,left_flipper_col_map_y
        bl   @get_flipper_collision_map_value
-       jmp  check_flipper_collision_4
+;       jeq  !
+;       li   r0,>0800
+;       movb r0,@pattern_and_color+1
+!      jmp  check_flipper_collision_4
 *      Right flipper
 check_flipper_collision_2:
        inc  @collision_type
@@ -682,7 +703,10 @@ check_flipper_collision_2:
        ai   r0,right_flipper_collision_maps
        li   r1,right_flipper_col_map_y
        bl   @get_flipper_collision_map_value
-       jmp  check_flipper_collision_4
+;       jeq  !
+;       li   r0,>0400
+;       movb r0,@pattern_and_color+1
+!      jmp  check_flipper_collision_4
 check_flipper_collision_3:
        li   r1,0
 check_flipper_collision_4:
