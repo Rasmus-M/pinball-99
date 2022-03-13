@@ -396,9 +396,14 @@ check_collision_1:
        bl   @calc_normal               ; Calculate n
        bl   @calc_dot_product          ; r3=dot product of v and n
        mov  r3,r3
-       jgt  check_collision_6          ; If positive, the ball is inside the wall, moving out
-       jeq  check_collision_6          ; If zero, the ball is moving along the wall
+       jlt  check_collision_1a         ; If negative, the ball is moving towards the wall
+*      Ball is moving away from or parallel to the wall
+       mov  @collision_type,r0
+       jeq  check_collision_6          ; Do nothing for background collisions
+       jmp  check_collision_1b         ; Skip reflection for flipper collisions
+check_collision_1a:
        bl   @reflect
+check_collision_1b:
        mov  @collision_type,r0
        jlt  check_collision_3
        jgt  check_collision_4
@@ -428,7 +433,7 @@ check_collision_3:
        srl  r3,4
        s    @left_flipper_center_x,r3
        jlt  check_collision_2
-       sla  r3,6
+       sla  r3,5
        jmp  check_collision_5
 *      Right flipper collision
 check_collision_4:
@@ -444,7 +449,7 @@ check_collision_4:
        neg  r3
        a    @right_flipper_center_x,r3
        jlt  check_collision_2
-       sla  r3,6
+       sla  r3,5
 check_collision_5:
 *      Set velocity to (rx, ry) + r3 * (nx, ny)
        mov  @nx,r0
