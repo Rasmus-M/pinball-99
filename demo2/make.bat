@@ -1,6 +1,6 @@
 xas99.py -R -L pinball.lst -i -q -o PINBALL source/pinball.a99
 
-java -jar tools/ea5tocart.jar pinball "PINBALL DEMO 2" > make.log
+java -jar tools/ea5tocart.jar pinball "PINBALL DEMO II" > make.log
 
 copy /b pinball8.bin + ^
     coll.bin + ^
