@@ -304,7 +304,7 @@ user_input_4:
        ci   r0,>0040
        jgt  user_input_5
        mov  @launch_speed,r0
-       ci   r0,>0400
+       ci   r0,>0500
        jgt  user_input_7
        ai   r0,>0020
        mov  r0,@launch_speed
@@ -318,8 +318,11 @@ user_input_5:
        jmp  user_input_7
 user_input_6:
 *      Space not pressed
-       c    @x,@x_init
-       jne  user_input_7
+       mov  @x,r0
+       s    @x_init,r0
+       abs  r0
+       ci   r0,>0040
+       jgt  user_input_7
        s    @launch_speed,@vy
        clr  @launch_speed
 user_input_7:
