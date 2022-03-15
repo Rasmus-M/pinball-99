@@ -129,3 +129,19 @@ SPR31  DATA >CFF3,>FCFF,>FF7F,>7FBF    ; Color 10
        DATA >DE6F,>6F37,>1B0C,>0F07    ; 
        DATA >00C0,>F03C,>CEF6,>F7FB    ; 
        DATA >FBFB,>F7F6,>CE3C,>F8E0    ; 
+SPR32  DATA >071F,>3F7E,>79F3,>FDFD    ; Color 13
+       DATA >FBFB,>F777,>6E26,>1907    ; 
+       DATA >E0F8,>8C6E,>EEEF,>EFEF    ; 
+       DATA >8FAF,>7F7E,>FEFC,>F8E0    ; 
+SPR33  DATA >071F,>3F7F,>7FFF,>FFFF    ; Color 1
+       DATA >FFFF,>FF7F,>7F3F,>1F07    ; 
+       DATA >E0F8,>FCFE,>FEFF,>FFFF    ; 
+       DATA >FFFF,>FFFE,>FEFC,>F8E0    ; 
+SPR34  DATA >071F,>3F7F,>7FFF,>FFFF    ; Color 1
+       DATA >FFFF,>FF7F,>7F3F,>1F07    ; 
+       DATA >E0F8,>FCFE,>FEFF,>FFFF    ; 
+       DATA >FFFF,>FFFE,>FEFC,>F8E0    ; 
+SPR35  DATA >071F,>3F7F,>7FFF,>FFFF    ; Color 1
+       DATA >FFFF,>FF7F,>7F3F,>1F07    ; 
+       DATA >E0F8,>FCFE,>FEFF,>FFFF    ; 
+       DATA >FFFF,>FFFE,>FEFC,>F8E0    ; 

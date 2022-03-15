@@ -112,10 +112,12 @@ padcon:
 *
 padvar:                                ; Start of pad variables
        equ  padcon+2
-vdp_status:
+frame:
        equ padvar
+vdp_status:
+       equ frame+2
 double_buffer_flag:
-       equ  vdp_status+>10
+       equ  vdp_status+2
 scroll_y:
        equ  double_buffer_flag+2
 x:                                     ; Ball position x (FP 12.4)
@@ -172,6 +174,7 @@ main:
 restart:
        bl   @init_game
        clr  @double_buffer_flag
+       clr  @frame
 loop:
        bl   @vsync
        bl   @set_vdp_regs
@@ -184,6 +187,7 @@ loop:
        bl   @update_name_table
        bl   @update_sprite_attr_table
        bl   @check_quit
+       inc  @frame
        mov  @player_status,r0
        jeq  loop
        jmp  restart
@@ -630,16 +634,19 @@ update_flipper_sprites_3:
 * Update static sprites
 *
 update_static_sprites:
+       mov  @frame,r4
+       andi r4,>0030
+       srl  r4,4
        mov  @scroll_y,r0
        ai   r0,-16                     ; Sprites with y > this should be displayed
        li   r3,static_sprites
 *      Find first sprite to display
 update_static_sprites_1:
        mov  *r3+,r1                    ; Get y
-       jlt  update_static_sprites_3
-       c    r1,r0                      ; Is y less than the y value where it should be displayed?
+       jlt  update_static_sprites_3    ; -1 = end
+       c    r1,r0                      ; Is y greater than the y value where it should be displayed?
        jgt  update_static_sprites_1a
-       ai   r3,6
+       ai   r3,6                       ; Skip over x, pattern, colors
        jmp  update_static_sprites_1
 update_static_sprites_1a:
 *      Display until out of screen
@@ -652,12 +659,12 @@ update_static_sprites_2:
        dec  r1                         ; Adjust y coordinate
        swpb r1
        movb r1,*r15                    ; Write y
-       inc  r3                         ; To x LSB
-       movb *r3,*r15                   ; Write x
-       inct r3                         ; To pattern LSB
-       movb *r3,*r15                   ; Write pattern
-       inct r3                         ; To color LSB
-       movb *r3+,*r15                  ; Write color
+       movb *r3+,*r15                  ; Write x
+       movb *r3+,*r15                  ; Write pattern
+       mov  r3,r5                      ; Address of first color
+       a    r4,r5                      ; Add offset
+       movb *r5,*r15                   ; Write color
+       ai   r3,4                       ; Skip over colors
        mov  *r3+,r1                    ; Get y
        jgt  update_static_sprites_2
 update_static_sprites_3:
@@ -971,7 +978,7 @@ init_vdp_ram:
 *      Sprite patterns
        li   r0,sprite_pattern_table
        li   r1,sprite_patterns
-       li   r2,32*32
+       li   r2,36*32
        bl   @vmbw
 *      Colors
        li   r0,color_table
@@ -1131,12 +1138,33 @@ w_coll_map_bank_height:
 
 *      Sorted by y
 static_sprites:
-       DATA 72,124,12,2                ; y, x, pattern#, color#
-       DATA 74,156,8,10                ;
-       DATA 144,80,8,4                 ;
-       DATA 160,152,12,8               ;
-       DATA 208,96,8,4                 ;
-       DATA 496,232,4,14               ;
+       data 72                         ; y
+       byte 124,12                     ; x, pattern
+       byte 3,12,3,12                  ; colors
+       data 74                         ; y
+       byte 156,8
+       byte 10,11,10,11
+       data 144                         ; y
+       byte 80,8
+       byte 4,4,5,5
+       data 160                         ; y
+       byte 152,12
+       byte 6,6,9,9
+       data 208                         ; y
+       byte 96,8
+       byte 3,3,12,12
+       data 255                         ; y
+       byte 201,128
+       byte 8,10,2,14
+       data 274                         ; y
+       byte 191,128
+       byte 10,2,14,8
+       data 293                         ; y
+       byte 181,128
+       byte 2,14,8,10
+       data 496                         ; y
+       byte 232,4
+       byte 14,14,14,14
        data -1
 
 ***************************************************************************
