@@ -3,7 +3,6 @@
 /JavaDemo/out/
 /PD/out/
 *.iml
-*.bin
 *.obj
 *.log
 *.lst
@@ -14,3 +13,7 @@
 /demo2/PINBALL
 /demo2/PINBALM
 /c64/
+/demo2/pinball8.bin
+/demo2/pinball-demo2-8.bin
+/demo/pinball8.bin
+/demo/pinball-demo-8.bin
