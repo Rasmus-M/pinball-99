@@ -308,7 +308,7 @@ user_input_4:
        ci   r0,>0040
        jgt  user_input_5
        mov  @launch_speed,r0
-       ci   r0,>0500
+       ci   r0,>0600
        jgt  user_input_7
        ai   r0,>0020
        mov  r0,@launch_speed
@@ -416,13 +416,21 @@ check_collision_2:
        li   r3,damping
 *      Set velocity to r3 * (rx, ry)
        mov  @rx,r0
+       mov  r0,r2
+       abs  r2
+       ci   r2,>0002
+       jle  !
        mov  r3,r1
        bl   @calc_signed_product
        mov r0,@vx
-       mov  @ry,r0
+!      mov  @ry,r0
+       mov  r0,r2
+       abs  r2
+       ci   r2,>0002
+       jle  !
        mov  r3,r1
        bl   @calc_signed_product
-       mov r0,@vy
+!      mov r0,@vy
        jmp  check_collision_6
 *      Left flipper collision
 check_collision_3:
