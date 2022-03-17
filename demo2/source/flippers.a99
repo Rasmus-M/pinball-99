@@ -26,30 +26,30 @@ left_flipper_sprites:
        data left_flipper_sprites_5
 left_flipper_sprites_0:
        data 2
-       byte 0,0,16,8
-       byte 0,16,20,8
+       byte 0,0,16,10
+       byte 0,16,20,10
 left_flipper_sprites_1:
        data 2
-       byte 0,0,24,8
-       byte 0,16,28,8
+       byte 0,0,24,10
+       byte 0,16,28,10
 left_flipper_sprites_2:
        data 2
-       byte 0,0,32,8
-       byte 0,16,36,8
+       byte 0,0,32,10
+       byte 0,16,36,10
 left_flipper_sprites_3:
        data 2
-       byte 0,0,40,8
-       byte -2,16,44,8
+       byte 0,0,40,10
+       byte -2,16,44,10
 left_flipper_sprites_4:
        data 3
-       byte 0,0,48,8
-       byte -16,0,64,8
-       byte -4,16,52,8
+       byte 0,0,48,10
+       byte -16,0,64,10
+       byte -4,16,52,10
 left_flipper_sprites_5:
        data 3
-       byte 0,0,56,8
-       byte -7,16,60,8
-       byte -16,0,68,8
+       byte 0,0,56,10
+       byte -7,16,60,10
+       byte -16,0,68,10
 left_flipper_col_map_y:
        data flippers_area_y_min
 left_flipper_col_map_x:
