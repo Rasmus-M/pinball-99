@@ -1,0 +1,126 @@
+flippers_area_y_min:
+       equ  448
+flippers_area_y_max:
+       equ  488
+left_flipper_area_x_min:
+       equ  64
+left_flipper_area_x_max:
+       equ  112
+right_flipper_area_x_min:
+       equ  120
+right_flipper_area_x_max:
+       equ  168
+
+left_flipper:
+       equ  $
+left_flipper_sprite_y:
+       data 464
+left_flipper_sprite_x:
+       data 72
+left_flipper_sprites:
+       data left_flipper_sprites_0
+       data left_flipper_sprites_1
+       data left_flipper_sprites_2
+       data left_flipper_sprites_3
+       data left_flipper_sprites_4
+       data left_flipper_sprites_5
+left_flipper_sprites_0:
+       data 2
+       byte 0,0,16,10
+       byte 0,16,20,10
+left_flipper_sprites_1:
+       data 2
+       byte 0,0,24,10
+       byte 0,16,28,10
+left_flipper_sprites_2:
+       data 2
+       byte 0,0,32,10
+       byte 0,16,36,10
+left_flipper_sprites_3:
+       data 2
+       byte 0,0,40,10
+       byte -2,16,44,10
+left_flipper_sprites_4:
+       data 3
+       byte 0,0,48,10
+       byte -16,0,64,10
+       byte -4,16,52,10
+left_flipper_sprites_5:
+       data 3
+       byte 0,0,56,10
+       byte -7,16,60,10
+       byte -16,0,68,10
+left_flipper_col_map_y:
+       data flippers_area_y_min
+left_flipper_col_map_x:
+       data left_flipper_area_x_min
+left_flipper_collision_maps:
+       data flipper_col_map_bank,>6000
+       data flipper_col_map_bank,>6000+flipper_col_map_size
+       data flipper_col_map_bank+2,>6000
+       data flipper_col_map_bank+2,>6000+flipper_col_map_size
+       data flipper_col_map_bank+4,>6000
+       data flipper_col_map_bank+4,>6000+flipper_col_map_size
+left_flipper_center_x:
+       data 80
+left_flipper_center_y:
+       data 472
+left_flipper_bottom_y:
+       data 480
+
+right_flipper:
+       equ  $
+right_flipper_sprite_y:
+       data 464
+right_flipper_sprite_x:
+       data 144
+right_flipper_sprites:
+       data right_flipper_sprites_0
+       data right_flipper_sprites_1
+       data right_flipper_sprites_2
+       data right_flipper_sprites_3
+       data right_flipper_sprites_4
+       data right_flipper_sprites_5
+right_flipper_sprites_0:
+       data 2
+       byte 0,0,84,4
+       byte 0,-16,80,4
+right_flipper_sprites_1:
+       data 2
+       byte 0,0,92,4
+       byte 0,-16,88,4
+right_flipper_sprites_2:
+       data 2
+       byte 0,0,100,4
+       byte 0,-16,96,4
+right_flipper_sprites_3:
+       data 2
+       byte 0,0,108,4
+       byte -2,-16,104,4
+right_flipper_sprites_4:
+       data 3
+       byte 0,0,116,4
+       byte -4,-16,112,4
+       byte -16,0,72,4
+right_flipper_sprites_5:
+       data 3
+       byte 0,0,124,4
+       byte -7,-16,120,4
+       byte -16,0,76,4
+right_flipper_col_map_y:
+       data flippers_area_y_min
+right_flipper_col_map_x:
+       data right_flipper_area_x_min
+right_flipper_collision_maps:
+       data flipper_col_map_bank,>6000+(flipper_col_map_width/2)
+       data flipper_col_map_bank,>6000+flipper_col_map_size+(flipper_col_map_width/2)
+       data flipper_col_map_bank+2,>6000+(flipper_col_map_width/2)
+       data flipper_col_map_bank+2,>6000+flipper_col_map_size+(flipper_col_map_width/2)
+       data flipper_col_map_bank+4,>6000+(flipper_col_map_width/2)
+       data flipper_col_map_bank+4,>6000+flipper_col_map_size+(flipper_col_map_width/2)
+right_flipper_center_x:
+       data 151
+right_flipper_center_y:
+       data 472
+right_flipper_bottom_y:
+       data 480

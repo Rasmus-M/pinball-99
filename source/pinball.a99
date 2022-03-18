@@ -1,0 +1,1171 @@
+*********************************************************************
+*
+* Pinbell demo II
+* For the TI-99/4A home computer
+*
+* March 2022 -
+* Rasmus Moustgaard <rasmus.moustgaard@gmail.com>
+*
+
+       copy "macros.a99"
+
+**
+* Constants
+*
+screen_width:
+       equ  256
+screen_height:
+       equ  192
+screen_width_char:
+       equ  32
+screen_height_char:
+       equ  24
+screen_size_char:
+       equ  screen_width_char*screen_height_char
+map_width:
+       equ  256
+map_height:
+       equ  512
+map_width_char:
+       equ  32
+map_height_char:
+       equ  64
+ball_radius:
+       equ  7
+damping:
+       equ  >00d0
+max_flipper_state:
+       equ  5
+scroll_when_y_less_than:
+       equ  48
+scroll_when_y_greater_than:
+       equ  144
+scroll_y_max:
+       equ  map_height-screen_height-2
+coll_map_bank_height:
+       equ  32
+coll_map_bank:
+       equ  >6008
+coll_bank_base:
+       equ  >6000
+flipper_col_map_bank:
+       equ  >6028
+flipper_col_map_width:
+       equ  96
+flipper_col_map_height:
+       equ  40
+flipper_col_map_size:
+       equ  flipper_col_map_width*flipper_col_map_height
+
+**
+* Memory mapped addresses
+*
+vdpwd:                                 ; VDP write data
+       equ  >8c00
+vdpwa:                                 ; VDP set read/write address
+       equ  >8c02
+vdprd:                                 ; VDP read data
+       equ  >8800
+vdpsta:                                ; VDP status
+       equ  >8802
+sound:                                 ; Sound
+       equ  >8400
+
+**
+* VDP memory map
+*
+pattern_table:                         ; Pattern table x 4
+       equ  >0000
+sprite_pattern_table:                  ; Sprite pattern table
+       equ  >2000
+name_table:                            ; Name table x 2
+       equ  >2800
+sprite_attr_table:                     ; Sprite attribute table x 2
+       equ  >2b00
+color_table:                           ; Color table
+       equ  >2f00
+
+**
+* Scratch pad
+*
+pad:
+       equ  >8300
+wrksp:
+       equ  pad                        ; Workspace
+lsb_r0:
+       equ  wrksp+1
+lsb_r1:
+       equ  wrksp+3
+lsb_r2:
+       equ  wrksp+5
+lsb_r3:
+       equ  wrksp+7
+stack:
+       equ  wrksp+>20
+**
+* PAD constants
+*
+padcon:
+       equ  stack+>10                  ; Start of pad constants
+**
+* PAD variables
+*
+padvar:                                ; Start of pad variables
+       equ  padcon+2
+frame:
+       equ padvar
+vdp_status:
+       equ frame+2
+double_buffer_flag:
+       equ  vdp_status+2
+scroll_y:
+       equ  double_buffer_flag+2
+x:                                     ; Ball position x (FP 12.4)
+       equ  scroll_y+2
+y:                                     ; Ball position y (FP 12.4)
+       equ  x+2
+vx:                                    ; Ball velocity x (FP 8.8)
+       equ  y+2
+vy:                                    ; Ball velocity y (FP 8.8)
+       equ  vx+2
+ax:                                    ; Ball acceleration x (FP 8.8)
+       equ  vy+2
+ay:                                    ; Ball acceleration y (FP 8.8)
+       equ  ax+2
+nx:                                    ; Normal vector x (FP 8.8)
+       equ  ay+2
+ny:                                    ; Normal vector y (FP 8.8)
+       equ  nx+2
+rx:                                    ; Reflection vector x (FP 8.8)
+       equ  ny+2
+ry:                                    ; Reflection vector y (FP 8.8)
+       equ  rx+2
+pattern_and_color:
+       equ  ry+2
+left_flipper_state:
+       equ  pattern_and_color+2
+right_flipper_state:
+       equ  left_flipper_state+2
+left_flipper_dir:
+       equ  right_flipper_state+2
+right_flipper_dir:
+       equ  left_flipper_dir+2
+collision_type:                        ; 0=background, -1=left flipper, 1=right flipper
+       equ  right_flipper_dir+2
+launch_speed:
+       equ  collision_type+2
+player_status:
+       equ  launch_speed+2
+pad_max:
+       equ  player_status+2
+
+********************************************************************************
+*
+* Main program
+*
+       aorg >a000
+main:
+       limi 0                          ; Interrupts off
+       lwpi wrksp                      ; Setup workspace
+       li   r10,stack                  ; Setup stack pointer
+       li   r15,vdpwd
+       bl   @graphics_mode
+       bl   @init_vdp_ram
+restart:
+       bl   @init_game
+       clr  @double_buffer_flag
+       clr  @frame
+loop:
+       bl   @vsync
+       bl   @set_vdp_regs
+       bl   @user_input
+       bl   @move_ball
+       bl   @check_collision
+       bl   @move_ball
+       bl   @check_collision
+       bl   @scroll_screen
+       bl   @update_name_table
+       bl   @update_sprite_attr_table
+       bl   @check_quit
+       inc  @frame
+       mov  @player_status,r0
+       jeq  loop
+       jmp  restart
+
+*********************************************************************************
+*
+* Initialize game
+*
+init_game:
+       .proc
+       clr  @scroll_y
+       li   r0,init_values
+       mov  *r0+,@x
+       mov  *r0+,@y
+       mov  *r0+,@vx
+       mov  *r0+,@vy
+       mov  *r0+,@ax
+       mov  *r0+,@ay
+       li   r0,>000e
+       mov  r0,@pattern_and_color
+       clr  @left_flipper_state
+       clr  @right_flipper_state
+       clr  @launch_speed
+       clr  @player_status
+       .endproc
+*// init_game
+
+*********************************************************************
+*
+* Wait for vertical retrace (CRU)
+*
+vsync:
+       movb @vdpsta,@vdp_status
+       clr  r12
+vsync_1:
+       tb   2                          ; Test CRU bit for VDP interrupt
+       jeq  vsync_1
+       movb @vdpsta,@vdp_status
+       rt
+*// vsync
+
+*********************************************************************************
+*
+* Set VDP registers
+*
+set_vdp_regs:
+       .proc
+*      Name table
+       mov  @double_buffer_flag,r0
+       andi r0,1
+       ori  r0,>0200+(name_table/>400)
+       bl   @vwtr                      ; Set name table
+*      Pattern table
+       mov  @scroll_y,r0               ; Scroll position
+       andi r0,>0006                   ; Only offsets 0, 2, 4, 6 supported
+       srl  r0,1                       ; Pattern table no
+       ori  r0,>0400+(pattern_table/>800)
+       bl   @vwtr                      ; Set pattern table
+*      Sprite attribute table
+       mov  @double_buffer_flag,r0
+       andi r0,1
+       ori  r0,>0500+(sprite_attr_table/>80)
+       bl   @vwtr                      ; Set sprite attribute table
+*      Flip flag
+       inv  @double_buffer_flag
+       .endproc
+*// set_vdp_regs
+
+*********************************************************************************
+*
+* Check for user input
+*
+* Modifies r0,r12
+*
+user_input:
+       .proc
+*      Left flipper
+       clr  @left_flipper_dir
+       li   r0,KEY_Z
+       bl   @check_key
+       jeq  user_input_1
+       mov  @left_flipper_state,r0
+       ci   r0,max_flipper_state
+       jeq  user_input_2
+       inc  @left_flipper_state
+       inc  @left_flipper_dir
+       jmp  user_input_2
+user_input_1:
+       mov  @left_flipper_state,r0
+       jeq  user_input_2
+       dec  @left_flipper_state
+       dec  @left_flipper_dir
+user_input_2:
+*      Right flipper
+       clr  @right_flipper_dir
+       li   r0,KEY_M
+       bl   @check_key
+       jeq  user_input_3
+       mov  @right_flipper_state,r0
+       ci   r0,max_flipper_state
+       jeq  user_input_4
+       inc  @right_flipper_state
+       inc  @right_flipper_dir
+       jmp  user_input_4
+user_input_3:
+       mov  @right_flipper_state,r0
+       jeq  user_input_4
+       dec  @right_flipper_state
+       dec  @right_flipper_dir
+user_input_4:
+       li   r0,KEY_SP
+       bl   @check_key
+       jeq  user_input_6
+*      Space pressed
+       mov  @x,r0
+       s    @x_init,r0
+       abs  r0
+       ci   r0,>0040
+       jgt  user_input_5
+       mov  @launch_speed,r0
+       ci   r0,>0600
+       jgt  user_input_7
+       ai   r0,>0020
+       mov  r0,@launch_speed
+       jmp  user_input_7
+user_input_5:
+*      Tilt
+       li   r0,>0080
+       mov  r0,@vx
+       li   r0,->0100
+       mov  r0,@vy
+       jmp  user_input_7
+user_input_6:
+*      Space not pressed
+       mov  @x,r0
+       s    @x_init,r0
+       abs  r0
+       ci   r0,>0040
+       jgt  user_input_7
+       s    @launch_speed,@vy
+       clr  @launch_speed
+user_input_7:
+       .endproc
+*// user_input
+
+*********************************************************************************
+*
+* Move ball
+*
+move_ball:
+       .proc
+*      Accelerate
+       a    @ax,@vx
+       a    @ay,@vy
+*      Move x
+       mov  @vx,r0
+       sra  r0,4
+       mov  @x,r1
+       a    r0,r1
+       jlt  move_ball_1
+       ci   r1,(map_width-ball_radius)*16       ; *16 because of FP 12.4 format
+       jgt  move_ball_1
+       mov  r1,@x
+       jmp  move_ball_3
+move_ball_1:
+       mov  @vx,r0
+       neg  r0
+       li   r1,damping
+       bl   @calc_signed_product
+       mov  r0,@vx
+move_ball_3:
+*      Move y
+       mov  @vy,r0
+       sra  r0,4
+       mov  @y,r1
+       a    r0,r1
+       jlt  move_ball_2
+       ci   r1,(map_height-ball_radius)*16      ; *16 because of FP 12.4 format
+       jgt  move_ball_2
+       mov  r1,@y
+       jmp  move_ball_4
+move_ball_2:
+       mov  @vy,r0
+       neg  r0
+       li   r1,damping
+       bl   @calc_signed_product
+       mov  r0,@vy
+       inc  @player_status
+move_ball_4:
+       .endproc
+*// move_ball
+
+*********************************************************************************
+*
+* Check for collision and rebounce ball according to normal vector.
+*
+* Modifies r0-r3
+*
+check_collision:
+       .proc
+       clr  @collision_type
+       bl   @check_flipper_collision
+       mov  r1,r1                      ; Test colllision map value
+       jne  check_collision_1
+       bl   @get_background_collision_map_value
+       mov  r1,r1                      ; Test colllision map value
+       jeq  check_collision_6          ; Zero means no collision
+check_collision_1:
+       dec  r1                         ; Convert to zero-based
+       bl   @calc_normal               ; Calculate n
+       bl   @calc_dot_product          ; r3=dot product of v and n
+       mov  r3,r3
+       jgt  check_collision_2          ; If positive the ball is moving in the same direction as the normal
+*      Reflection around normal
+       bl   @reflect
+       li   r3,damping
+*      Set velocity to damping * (rx, ry)
+       mov  @rx,r0
+       mov  r0,r2
+       abs  r2
+       ci   r2,>0002
+       jle  !
+       mov  r3,r1
+       bl   @calc_signed_product
+       mov r0,@vx
+!      mov  @ry,r0
+       mov  r0,r2
+       abs  r2
+       ci   r2,>0002
+       jle  !
+       mov  r3,r1
+       bl   @calc_signed_product
+!      mov r0,@vy
+*      Flipper push
+check_collision_2:
+       mov  @collision_type,r0
+       jeq  check_collision_6          ; Wall collision
+       jlt  check_collision_3          ; Left flipper
+       jgt  check_collision_4          ; Right flipper
+*      Left flipper collision
+check_collision_3:
+       mov  @left_flipper_dir,r0
+       jeq  check_collision_6
+       jlt  check_collision_6
+       mov  @y,r0
+       srl  r0,4
+       c    r0,@left_flipper_center_y
+       jhe  check_collision_6
+       mov  @x,r3
+       srl  r3,4
+       s    @left_flipper_center_x,r3
+       jlt  check_collision_6
+       jmp  check_collision_5
+*      Right flipper collision
+check_collision_4:
+       mov  @right_flipper_dir,r0
+       jeq  check_collision_6
+       jlt  check_collision_6
+       mov  @y,r0
+       srl  r0,4
+       c    r0,@right_flipper_bottom_y
+       jhe  check_collision_6
+       mov  @x,r3
+       srl  r3,4
+       neg  r3
+       a    @right_flipper_center_x,r3
+       jlt  check_collision_6
+check_collision_5:
+       sla  r3,4                       ; arm
+*      Add arm * (nx, ny) to velocity
+       mov  @nx,r0
+       mov  r3,r1
+       bl   @calc_signed_product
+       a    r0,@vx
+       mov  @ny,r0
+       mov  r3,r1
+       bl   @calc_signed_product
+       a    r0,@vy
+check_collision_6:
+       .endproc
+*// check_collision
+
+*********************************************************************************
+*
+* Scroll screen depending on ball position
+*
+scroll_screen:
+       mov  @y,r0
+       srl  r0,4
+       s    @scroll_y,r0
+*      Scroll up
+       mov  r0,r1
+       ai   r1,-scroll_when_y_less_than
+       jgt  scroll_screen_1
+       mov  @scroll_y,r2
+       a    r1,r2
+       jgt  scroll_screen_2
+       clr  r2
+       jmp  scroll_screen_2
+scroll_screen_1:
+*      Scroll down
+       mov  r0,r1
+       ai   r1,-scroll_when_y_greater_than
+       jlt  scroll_screen_3
+       mov  @scroll_y,r2
+       a    r1,r2
+       ci   r2,scroll_y_max
+       jlt  scroll_screen_2
+       li   r2,scroll_y_max
+scroll_screen_2:
+       andi r2,>fffe
+       mov  r2,@scroll_y
+scroll_screen_3:
+       rt
+*// scroll_screen
+
+*********************************************************************************
+*
+* Update name table from map
+*
+update_name_table:
+       .proc
+       mov  @double_buffer_flag,r0
+       andi r0,>400
+       ai   r0,name_table              ; VDP write address
+       bl   @vwad                      ; Setup write address
+       mov  @scroll_y,r1               ; Scroll position
+       srl  r1,3                       ; Convert to character rows
+       sla  r1,5                       ; * map_width_char
+       ai   r1,MD0                     ; Add map base address
+       li   r2,screen_size_char/8      ; 8 times unrolled
+update_name_table_1:
+       movb *r1+,*r15                  ; Send by to VDP
+       movb *r1+,*r15                  ; ...
+       movb *r1+,*r15                  ; ...
+       movb *r1+,*r15                  ; ...
+       movb *r1+,*r15                  ; ...
+       movb *r1+,*r15                  ; ...
+       movb *r1+,*r15                  ; ...
+       movb *r1+,*r15                  ; ...
+       dec  r2                         ; Counter
+       jne  update_name_table_1        ; Loop
+       .endproc
+*// update_name_table
+
+*********************************************************************************
+*
+* Update sprites attribute table
+*
+update_sprite_attr_table:
+       .proc
+       mov  @double_buffer_flag,r0
+       andi r0,>80
+       ai   r0,sprite_attr_table
+       bl   @vwad
+*      Ball
+       mov  @y,r0
+       srl  r0,4
+       s    @scroll_y,r0
+       ai   r0,-ball_radius-1
+       swpb r0
+       movb r0,*r15
+       mov  @x,r0
+       srl  r0,4
+       ai   r0,-ball_radius
+       swpb r0
+       movb r0,*r15
+       movb @pattern_and_color,*r15
+       movb @pattern_and_color+1,*r15
+*      Flippers
+       bl   @update_flippers_sprites
+*      Static sprites
+       bl   @update_static_sprites
+*      End marker
+       li   r1,>d000
+       movb r1,*r15
+       .endproc
+*// update_sprite_attr_table
+
+*********************************************************************************
+*
+* Update flipper sprites for all flippers
+*
+update_flippers_sprites:
+       .proc
+       mov  @double_buffer_flag,r0
+       jne  update_flippers_sprites_1
+*      Left then right
+       mov  @left_flipper_state,r0
+       li   r1,left_flipper
+       bl   @update_flipper_sprites
+       mov  @right_flipper_state,r0
+       li   r1,right_flipper
+       bl   @update_flipper_sprites
+       jmp  update_flippers_sprites_2
+update_flippers_sprites_1:
+*      Right then left
+       mov  @right_flipper_state,r0
+       li   r1,right_flipper
+       bl   @update_flipper_sprites
+       mov  @left_flipper_state,r0
+       li   r1,left_flipper
+       bl   @update_flipper_sprites
+update_flippers_sprites_2:
+       .endproc
+*// update_flippers_sprites:
+
+*********************************************************************************
+*
+* Update flipper sprite for one flipper
+*
+* r0: flipper state
+* r1: points to flipper structure
+*
+update_flipper_sprites:
+       mov  *r1+,r2                    ; Get flipper y
+       s    @scroll_y,r2               ; y position on screen
+       ci   r2,screen_height
+       jhe  update_flipper_sprites_3
+       swpb r2
+       mov  *r1+,r3                    ; Get flipper x
+       swpb r3
+       sla  r0,1                       ; Convert flipper state to word
+       a    r0,r1                      ; r1 now points to pointer to sprite list
+       mov  *r1,r1                     ; r1 now points to sprite list
+       mov  *r1+,r4                    ; get number of sprites
+update_flipper_sprites_1:
+       movb *r1+,r5                    ; Get y offset
+       ab   r2,r5                      ; Add screen y
+       movb r5,*r15                    ; Write y
+       movb *r1+,r5                    ; Get x offset
+       ab   r3,r5                      ; Add screen x
+       movb r5,*r15                    ; Write x
+       movb *r1+,*r15                  ; Write pattern
+       movb *r1+,*r15                  ; Write color
+       dec  r4
+       jne  update_flipper_sprites_1
+update_flipper_sprites_3:
+       rt
+*// update_flipper_sprites:
+
+*********************************************************************************
+*
+* Update static sprites
+*
+update_static_sprites:
+       mov  @frame,r4
+       andi r4,>0030
+       srl  r4,4
+       mov  @scroll_y,r0
+       ai   r0,-16                     ; Sprites with y > this should be displayed
+       li   r3,static_sprites
+*      Find first sprite to display
+update_static_sprites_1:
+       mov  *r3+,r1                    ; Get y
+       jlt  update_static_sprites_3    ; -1 = end
+       c    r1,r0                      ; Is y greater than the y value where it should be displayed?
+       jgt  update_static_sprites_1a
+       ai   r3,6                       ; Skip over x, pattern, colors
+       jmp  update_static_sprites_1
+update_static_sprites_1a:
+*      Display until out of screen
+       mov  @scroll_y,r0
+       ai   r0,screen_height           ; Sprites with y > this should not be displayed
+update_static_sprites_2:
+       c    r1,r0
+       jgt  update_static_sprites_3
+       s    @scroll_y,r1
+       dec  r1                         ; Adjust y coordinate
+       swpb r1
+       movb r1,*r15                    ; Write y
+       movb *r3+,*r15                  ; Write x
+       movb *r3+,*r15                  ; Write pattern
+       mov  r3,r5                      ; Address of first color
+       a    r4,r5                      ; Add offset
+       movb *r5,*r15                   ; Write color
+       ai   r3,4                       ; Skip over colors
+       mov  *r3+,r1                    ; Get y
+       jgt  update_static_sprites_2
+update_static_sprites_3:
+       rt
+*// update_static_sprites
+
+***************************************************************************
+*
+* Check quit
+*
+check_quit:
+       clr  r1                         ; Test column 0
+       li   r12,>0024                  ; Address for column selection
+       ldcr r1,3                       ; Select column
+       li   r12,>0006                  ; Address to read rows
+       stcr r1,8
+       andi r1,>1100
+       jeq  quit
+*      Return
+       rt
+*      Quit
+quit   clr  @>83c4                     ; Reset user ISR address
+       blwp @>0000
+*// check_quit
+
+*********************************************************************************
+*
+* Check for collision with flippers
+*
+check_flipper_collision:
+       .proc
+*      Check y boundaries
+       mov  @y,r1
+       srl  r1,4
+       ci   r1,flippers_area_y_min
+       jl   check_flipper_collision_3
+       ci   r1,flippers_area_y_max
+       jhe  check_flipper_collision_3
+*      Check x boundaries
+       mov  @x,r0
+       srl  r0,4
+       ci   r0,left_flipper_area_x_min
+       jl   check_flipper_collision_3
+       ci   r0,left_flipper_area_x_max
+       jle  check_flipper_collision_1
+       ci   r0,right_flipper_area_x_min
+       jl   check_flipper_collision_3
+       ci   r0,right_flipper_area_x_max
+       jle  check_flipper_collision_2
+       jmp  check_flipper_collision_3
+*      Left flipper
+check_flipper_collision_1:
+       dec  @collision_type
+       mov  @left_flipper_state,r0
+       sla  r0,2
+       ai   r0,left_flipper_collision_maps
+       li   r1,left_flipper_col_map_y
+       bl   @get_flipper_collision_map_value
+       jmp  check_flipper_collision_4
+*      Right flipper
+check_flipper_collision_2:
+       inc  @collision_type
+       mov  @right_flipper_state,r0
+       sla  r0,2
+       ai   r0,right_flipper_collision_maps
+       li   r1,right_flipper_col_map_y
+       bl   @get_flipper_collision_map_value
+       jmp  check_flipper_collision_4
+check_flipper_collision_3:
+       li   r1,0
+check_flipper_collision_4:
+       .endproc
+*// check_flipper_collision
+
+*********************************************************************************
+*
+* Get flipper collision map value for ball
+*
+* r0: points to flipper collision map bank and address
+* r1: points to y and x coordinates of flipper collision map area
+*
+get_flipper_collision_map_value:
+       mov  *r0+,r2
+       seto *r2                        ; Select ROM bank
+       mov  *r0,r0                     ; Map address
+       mov  @y,r2                      ; Ball y
+       srl  r2,4                       ; To integer
+       s    *r1+,r2                    ; Ball y - flipper start y
+       li   r3,flipper_col_map_width
+       mpy  r3,r2                      ; Line offset in r3
+       mov  @x,r2                      ; Ball x
+       srl  r2,4                       ; To integer
+       s    *r1,r2                     ; Ball x - flipper start x
+       a    r2,r0
+       a    r3,r0
+       clr  r1
+       movb *r0,@lsb_r1
+       rt
+*// get_flipper_collision_map_value
+
+*********************************************************************************
+*
+* Get collision map value for ball
+*
+* Returns value in r1
+*
+* Modifies r0-r3
+*
+get_background_collision_map_value:
+       .proc
+       mov  @x,r0
+       srl  r0,4
+       mov  @y,r1
+       srl  r1,4
+       bl   @get_coll_value
+       .endproc
+*// get_background_collision_map_value
+
+*********************************************************************************
+*
+* Get background collision map value for given coordinates
+*
+* r0:  X coordinate
+* r1:  Y coordinate
+*
+* Returns value in r1
+*
+* The ROM contains the collision map split into banks of 8K.
+* Each bank contains 48 lines of 160 pixels of data ordered from top to bottom.
+* Each pixel is represented by one byte, which determines the normal angle (1-255),
+* or 0 if there is no collision.
+* The data start at bank offset coll_bank_offset = >200.
+* The first bank is selected by writing to @coll_map_bank.
+*
+* Modifies r0-r2
+*
+get_coll_value:
+       mov  r1,r2                      ; Move y to LSW
+       clr  r1                         ; Clear MSW
+       div  @w_coll_map_bank_height,r1 ; Bank no in r1, line offset in r2
+       sla  r1,1                       ; Convert to bank offset
+       ai   r1,coll_map_bank           ; Add base bank offset
+       seto *r1                        ; Select bank
+       mov  r2,r1                      ; line offset
+       mpy  @w_map_width,r1            ; Multiply line width and line offset
+       a    r0,r2                      ; Add X
+       ai   r2,coll_bank_base          ; Add ROM bank base address
+       clr  r1                         ; Clear result reg
+       movb *r2,@lsb_r1                ; Get byte
+       rt
+*// get_coll_value
+
+*********************************************************************************
+*
+* Calculate normal vector at the given angle 0-254 in FP 8.8 format.
+
+* An angle of 0 corresponds to the normal pointing down (0,-1) and for
+* increasing angles the normals are rotated in a clockwise direction.
+* 0 points down, 64 points left, 128 points up, and 192 points right.
+*
+* r1: angle (0-254)
+*
+* On return @nx contains the X coordinate and @ny contains the Y coordinate.
+*
+calc_normal:
+       sla  r1,2
+       ai   r1,normals
+       mov  *r1+,@nx
+       mov  *r1,@ny
+       rt
+*// calc_normal
+
+*********************************************************************************
+*
+* Calculate the reflection vector r of vector v around normal vector n.
+*
+* r = v − 2(v ⋅ n) n
+*
+* Input:
+* r3: dot product of v and n, i.e. v ⋅ n, in FP 8.8 format.
+* @vx: vx (FP 8.8)
+* @vy: vy (FP 8.8)
+* @nx: nx (FP 8.8)
+* @ny: ny (FP 8.8)
+*
+* On return @rx, @ry contain the reflection vector in in FP 8.8 format.
+*
+* Modified r0-r3
+*
+reflect:
+       .proc
+       sla  r3,1                       ; Multiply dot product by 2
+*      x
+       mov  r3,r0
+       mov  @nx,r1
+       bl   @calc_signed_product       ; r0=2*dot product*nx
+       neg  r0                         ; r0=-(2*dot product*nx)
+       a    @vx,r0                     ; r0=vx-(2*dot product*nx)
+       mov  r0,@rx
+*      y
+       mov  r3,r0
+       mov  @ny,r1
+       bl   @calc_signed_product       ; r0=2*dot product*ny
+       neg  r0                         ; r0=-(2*dot product*ny)
+       a    @vy,r0                     ; r0=vy-(2*dot product*ny)
+       mov  r0,@ry
+       .endproc
+*// reflect
+
+*********************************************************************************
+*
+* Calculate the (scalar) dot product of two vectors v and n in FP 8.8 format.
+*
+* v ⋅ n = vx * nx + vy * ny
+*
+* Input:
+* @vx: vx
+* @vy: vy
+* @nx: nx
+* @ny: ny
+*
+* On return r3 contains the result in FP 8.8 format.
+*
+* Modifies r0-r2
+*
+calc_dot_product:
+       .proc
+       mov  @vx,r0
+       mov  @nx,r1
+       bl   @calc_signed_product
+       mov  r0,r3
+       mov  @vy,r0
+       mov  @ny,r1
+       bl   @calc_signed_product
+       a    r0,r3
+       .endproc
+*// calc_dot_product
+
+*********************************************************************************
+*
+* Multiply two signed numbers in FP 8.8 format.
+*
+* Input:
+* r0: first number
+* r1: second number
+*
+* On return r0 contains the result in FP 8.8 format.
+*
+* Modifies r0-r2
+*
+calc_signed_product:
+       clr  r2                         ; Sign
+       mov  r0,r0                      ; Test sign of first number
+       jgt  !
+       inv  r2                         ; Flip sign
+       neg  r0                         ; Make positive
+!      mov  r1,r1                      ; Test sign of second number
+       jgt  !
+       inv  r2                         ; Flip sign
+       neg  r1                         ; Make positive
+!      mpy  r1,r0                      ; Multiply
+       swpb r0                         ; Move MSB into position
+       movb r1,@lsb_r0                   ; Move LSB into position
+       mov  r2,r2                      ; Test sign
+       jeq  !
+       neg  r0                         ; Negate if sign is minus
+!      rt
+*// calc_signed_product
+
+*********************************************************************************
+*
+* Initialize
+*
+init_vdp_ram:
+       .proc
+       clr  r0
+       clr  r1
+       li   r2,>4000
+       bl   @vsmw
+*      Patterns
+       li   r0,pattern_table
+       li   r1,VPFRM0
+       mov  @TCHNUM,r2
+       sla  r2,3
+       bl   @vmbw
+       li   r0,pattern_table+>800
+       li   r1,VPFRM1
+       mov  @TCHNUM,r2
+       sla  r2,3
+       bl   @vmbw
+       li   r0,pattern_table+>1000
+       li   r1,VPFRM2
+       mov  @TCHNUM,r2
+       sla  r2,3
+       bl   @vmbw
+       li   r0,pattern_table+>1800
+       li   r1,VPFRM3
+       mov  @TCHNUM,r2
+       sla  r2,3
+       bl   @vmbw
+*      Sprite patterns
+       li   r0,sprite_pattern_table
+       li   r1,sprite_patterns
+       li   r2,36*32
+       bl   @vmbw
+*      Colors
+       li   r0,color_table
+       li   r1,CLRSET
+       mov  @CLRNUM,r2
+       bl   @vmbw
+*      Name table
+       li   r0,name_table
+       li   r1,MD0
+       li   r2,screen_size_char
+       bl   @vmbw
+       .endproc
+*// init_vdp_ram
+
+*********************************************************************************
+*
+* Set graphics mode
+*
+graphics_mode:
+       .proc
+       clr  r0
+       li   r1,vregs2
+       li   r2,8
+graphics_mode_1:
+       movb *r1+,@lsb_r0
+       bl   @vwtr                      ; Set register
+       ai   r0,>0100
+       dec  r2
+       jne  graphics_mode_1
+*      Return
+       .endproc
+*      VDP registers
+vregs2:
+       byte >00                        ; Graphics I mode
+       byte >e2                        ; 16K, display on, interrupts enabled
+       byte name_table/>400            ; Name table
+       byte color_table/>40            ; Color table
+       byte pattern_table/>800         ; Pattern table
+       byte sprite_attr_table/>80      ; Sprite attribute table
+       byte sprite_pattern_table/>800  ; Sprite pattern table
+       byte >0e                        ; Backdrop color
+*// graphics_mode
+
+***************************************************************************
+*
+* Check key
+*
+* r0: Column in MSB: >0000 - >0700, Row in LSB: >0006 - >0014
+*
+*       Column   0      1    2    3    4    5     6       7
+*     Row
+*     >0006      =      .    ,    M    N    /    Fire    Fire
+*     >0008    Space    L    K    J    H    ;    Left    Left
+*     >000A    Enter    O    I    U    Y    P    Right   Right
+*     >000C             9    8    7    6    0    Down    Down
+*     >000E    Fctn     2    3    4    5    1    Up      Up
+*     >0010    Shift    S    D    F    G    A
+*     >0012    Ctrl     W    E    R    T    Q
+*     >0014             X    C    V    B    Z
+*
+* On return NEQ means that the key is pressed
+*
+KEY_FI EQU  >0606
+KEY_LF EQU  >0608
+KEY_RG EQU  >060A
+KEY_DN EQU  >060C
+KEY_UP EQU  >060E
+KEY_CM EQU  >0206
+KEY_FS EQU  >0106
+KEY_0  EQU  >050C
+KEY_1  EQU  >050E
+KEY_2  EQU  >010E
+KEY_3  EQU  >020E
+KEY_4  EQU  >030E
+KEY_5  EQU  >040E
+KEY_6  EQU  >040C
+KEY_7  EQU  >030C
+KEY_8  EQU  >020C
+KEY_9  EQU  >010C
+KEY_A  EQU  >0510
+KEY_B  EQU  >0414
+KEY_C  EQU  >0214
+KEY_D  EQU  >0210
+KEY_E  EQU  >0212
+KEY_F  EQU  >0310
+KEY_G  EQU  >0410
+KEY_H  EQU  >0408
+KEY_I  EQU  >020A
+KEY_J  EQU  >0308
+KEY_K  EQU  >0208
+KEY_L  EQU  >0108
+KEY_M  EQU  >0306
+KEY_N  EQU  >0406
+KEY_O  EQU  >010A
+KEY_P  EQU  >050A
+KEY_Q  EQU  >0512
+KEY_R  EQU  >0312
+KEY_S  EQU  >0110
+KEY_T  EQU  >0412
+KEY_U  EQU  >030A
+KEY_V  EQU  >0314
+KEY_W  EQU  >0112
+KEY_X  EQU  >0114
+KEY_Y  EQU  >040A
+KEY_Z  EQU  >0514
+KEY_SP EQU  >0008
+KEY_EN EQU  >000A
+KEY_FN EQU  >000E
+KEY_SH EQU  >0010
+KEY_CT EQU  >0012
+JOY_FI EQU  >0606
+JOY_LT EQU  >0608
+JOY_RT EQU  >060A
+JOY_DN EQU  >060C
+JOY_UP EQU  >060E
+*
+check_key:
+       li   r12,>0024                  ; CRU address of the column decoder
+       ldcr r0,3                       ; Select column
+       andi r0,>00ff
+       mov  r0,r12                     ; Select row
+       tb   0                          ; Test key, EQ if not pressed
+       rt
+*// check_key
+
+***************************************************************************
+*
+* Program includes
+*
+       copy "vdp.a99"
+
+***************************************************************************
+*
+* Data
+*
+init_values:
+       equ  $
+x_init:
+       data >0f00
+y_init:
+       data >1e80
+vx_init:
+       data >0000
+vy_init:
+       data >0000
+ax_init:
+       data >0000
+ay_init:
+       data >0004
+
+w_map_width:
+       data map_width
+w_map_height:
+       data map_height
+w_coll_map_bank_height:
+       data coll_map_bank_height
+
+*      Sorted by y
+static_sprites:
+       data 72                         ; y
+       byte 124,12                     ; x, pattern
+       byte 3,12,3,12                  ; colors
+       data 74                         ; y
+       byte 156,8
+       byte 10,11,10,11
+       data 144                         ; y
+       byte 80,8
+       byte 4,4,5,5
+       data 160                         ; y
+       byte 152,12
+       byte 6,6,9,9
+       data 208                         ; y
+       byte 96,8
+       byte 3,3,12,12
+       data 255                         ; y
+       byte 201,128
+       byte 8,10,2,14
+       data 274                         ; y
+       byte 191,128
+       byte 10,2,14,8
+       data 293                         ; y
+       byte 181,128
+       byte 2,14,8,10
+       data 496                         ; y
+       byte 232,4
+       byte 14,14,14,14
+       data -1
+
+***************************************************************************
+*
+* Data includes
+*
+sprite_patterns:
+       copy "sprite-patterns.a99"
+normals:
+       copy "normals.a99"
+       copy "map.a99"
+       copy "flippers.a99"
+
+       end
