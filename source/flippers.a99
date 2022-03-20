@@ -1,20 +1,20 @@
 flippers_area_y_min:
-       equ  448
+       equ  440
 flippers_area_y_max:
-       equ  488
+       equ  504
 left_flipper_area_x_min:
        equ  64
 left_flipper_area_x_max:
-       equ  112
-right_flipper_area_x_min:
        equ  120
+right_flipper_area_x_min:
+       equ  104
 right_flipper_area_x_max:
        equ  168
 
 left_flipper:
        equ  $
 left_flipper_sprite_y:
-       data 464
+       data 463
 left_flipper_sprite_x:
        data 72
 left_flipper_sprites:
@@ -23,44 +23,36 @@ left_flipper_sprites:
        data left_flipper_sprites_2
        data left_flipper_sprites_3
        data left_flipper_sprites_4
-       data left_flipper_sprites_5
 left_flipper_sprites_0:
        data 2
-       byte 0,0,16,10
-       byte 0,16,20,10
+       byte 6,6,>30,6
+       byte 15,15,>34,6
 left_flipper_sprites_1:
        data 2
-       byte 0,0,24,10
-       byte 0,16,28,10
+       byte 4,9,>28,6
+       byte 10,25,>2c,6
 left_flipper_sprites_2:
        data 2
-       byte 0,0,32,10
-       byte 0,16,36,10
+       byte 0,13,>20,6
+       byte 0,29,>24,6
 left_flipper_sprites_3:
        data 2
-       byte 0,0,40,10
-       byte -2,16,44,10
+       byte -4,9,>18,6
+       byte -10,25,>1c,6
 left_flipper_sprites_4:
-       data 3
-       byte 0,0,48,10
-       byte -16,0,64,10
-       byte -4,16,52,10
-left_flipper_sprites_5:
-       data 3
-       byte 0,0,56,10
-       byte -7,16,60,10
-       byte -16,0,68,10
+       data 2
+       byte -6,6,>10,6
+       byte -15,15,>14,6
 left_flipper_col_map_y:
        data flippers_area_y_min
 left_flipper_col_map_x:
        data left_flipper_area_x_min
 left_flipper_collision_maps:
-       data flipper_col_map_bank,>6000
-       data flipper_col_map_bank,>6000+flipper_col_map_size
-       data flipper_col_map_bank+2,>6000
-       data flipper_col_map_bank+2,>6000+flipper_col_map_size
+       data flipper_col_map_bank+8,>6000
+       data flipper_col_map_bank+6,>6000
        data flipper_col_map_bank+4,>6000
-       data flipper_col_map_bank+4,>6000+flipper_col_map_size
+       data flipper_col_map_bank+2,>6000
+       data flipper_col_map_bank+0,>6000
 left_flipper_center_x:
        data 80
 left_flipper_center_y:
@@ -71,7 +63,7 @@ left_flipper_bottom_y:
 right_flipper:
        equ  $
 right_flipper_sprite_y:
-       data 464
+       data 463
 right_flipper_sprite_x:
        data 144
 right_flipper_sprites:
@@ -80,44 +72,36 @@ right_flipper_sprites:
        data right_flipper_sprites_2
        data right_flipper_sprites_3
        data right_flipper_sprites_4
-       data right_flipper_sprites_5
 right_flipper_sprites_0:
        data 2
-       byte 0,0,84,4
-       byte 0,-16,80,4
+       byte 6,-6,>5c,6
+       byte 15,-15,>58,6
 right_flipper_sprites_1:
        data 2
-       byte 0,0,92,4
-       byte 0,-16,88,4
+       byte 4,-9,>54,6
+       byte 10,-25,>50,6
 right_flipper_sprites_2:
        data 2
-       byte 0,0,100,4
-       byte 0,-16,96,4
+       byte 0,-13,>4c,6
+       byte 0,-29,>48,6
 right_flipper_sprites_3:
        data 2
-       byte 0,0,108,4
-       byte -2,-16,104,4
+       byte -4,-9,>44,6
+       byte -10,-25,>40,6
 right_flipper_sprites_4:
-       data 3
-       byte 0,0,116,4
-       byte -4,-16,112,4
-       byte -16,0,72,4
-right_flipper_sprites_5:
-       data 3
-       byte 0,0,124,4
-       byte -7,-16,120,4
-       byte -16,0,76,4
+       data 2
+       byte -6,-6,>3c,6
+       byte -15,-15,>38,6
 right_flipper_col_map_y:
        data flippers_area_y_min
 right_flipper_col_map_x:
        data right_flipper_area_x_min
 right_flipper_collision_maps:
-       data flipper_col_map_bank,>6000+(flipper_col_map_width/2)
-       data flipper_col_map_bank,>6000+flipper_col_map_size+(flipper_col_map_width/2)
-       data flipper_col_map_bank+2,>6000+(flipper_col_map_width/2)
-       data flipper_col_map_bank+2,>6000+flipper_col_map_size+(flipper_col_map_width/2)
+       data flipper_col_map_bank+8,>6000+(flipper_col_map_width/2)
+       data flipper_col_map_bank+6,>6000+(flipper_col_map_width/2)
        data flipper_col_map_bank+4,>6000+(flipper_col_map_width/2)
-       data flipper_col_map_bank+4,>6000+flipper_col_map_size+(flipper_col_map_width/2)
+       data flipper_col_map_bank+2,>6000+(flipper_col_map_width/2)
+       data flipper_col_map_bank+0,>6000+(flipper_col_map_width/2)
 right_flipper_center_x:
        data 151
 right_flipper_center_y:

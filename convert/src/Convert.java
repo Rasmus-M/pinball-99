@@ -37,9 +37,6 @@ public class Convert {
             int bankSize = 0x2000;
             int headerSize = 0x0000;
             int dataSize = 0x2000;
-            if (file.getName().equals("flippers.gif")) {
-                dataSize = 0x1E00;
-            }
             int banks = (raw.length / dataSize) + (raw.length % dataSize == 0 ? 0 : 1);
             byte[] rom = new byte[banks * bankSize];
             i = 0;

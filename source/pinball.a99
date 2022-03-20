@@ -35,7 +35,7 @@ ball_radius:
 damping:
        equ  >00d0
 max_flipper_state:
-       equ  5
+       equ  4
 scroll_when_y_less_than:
        equ  48
 scroll_when_y_greater_than:
@@ -51,9 +51,9 @@ coll_bank_base:
 flipper_col_map_bank:
        equ  >6028
 flipper_col_map_width:
-       equ  96
+       equ  128
 flipper_col_map_height:
-       equ  40
+       equ  64
 flipper_col_map_size:
        equ  flipper_col_map_width*flipper_col_map_height
 
@@ -968,7 +968,7 @@ init_vdp_ram:
 *      Sprite patterns
        li   r0,sprite_pattern_table
        li   r1,sprite_patterns
-       li   r2,36*32
+       li   r2,28*32
        bl   @vmbw
 *      Colors
        li   r0,color_table
@@ -1144,13 +1144,13 @@ static_sprites:
        byte 96,8
        byte 3,3,12,12
        data 255                         ; y
-       byte 201,128
+       byte 201,96
        byte 8,10,2,14
        data 274                         ; y
-       byte 191,128
+       byte 191,96
        byte 10,2,14,8
        data 293                         ; y
-       byte 181,128
+       byte 181,96
        byte 2,14,8,10
        data 496                         ; y
        byte 232,4
