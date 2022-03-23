@@ -35,7 +35,7 @@ ball_radius:
 damping:
        equ  >00d0
 max_flipper_state:
-       equ  4
+       equ  5
 scroll_when_y_less_than:
        equ  48
 scroll_when_y_greater_than:
@@ -456,7 +456,7 @@ check_collision_4:
        a    @right_flipper_center_x,r3
        jlt  check_collision_6
 check_collision_5:
-       sla  r3,4                       ; arm
+       sla  r3,3                       ; arm
 *      Add arm * (nx, ny) to velocity
        mov  @nx,r0
        mov  r3,r1
@@ -696,6 +696,8 @@ quit   clr  @>83c4                     ; Reset user ISR address
 *
 check_flipper_collision:
        .proc
+       li   r0,>0e00
+       movb r0,@pattern_and_color+1
 *      Check y boundaries
        mov  @y,r1
        srl  r1,4
@@ -708,10 +710,8 @@ check_flipper_collision:
        srl  r0,4
        ci   r0,left_flipper_area_x_min
        jl   check_flipper_collision_3
-       ci   r0,left_flipper_area_x_max
+       ci   r0,flipper_area_x_center
        jle  check_flipper_collision_1
-       ci   r0,right_flipper_area_x_min
-       jl   check_flipper_collision_3
        ci   r0,right_flipper_area_x_max
        jle  check_flipper_collision_2
        jmp  check_flipper_collision_3
@@ -723,6 +723,10 @@ check_flipper_collision_1:
        ai   r0,left_flipper_collision_maps
        li   r1,left_flipper_col_map_y
        bl   @get_flipper_collision_map_value
+       jeq  !
+       li   r0,>0800
+       movb r0,@pattern_and_color+1
+!
        jmp  check_flipper_collision_4
 *      Right flipper
 check_flipper_collision_2:
@@ -732,6 +736,10 @@ check_flipper_collision_2:
        ai   r0,right_flipper_collision_maps
        li   r1,right_flipper_col_map_y
        bl   @get_flipper_collision_map_value
+       jeq  !
+       li   r0,>0400
+       movb r0,@pattern_and_color+1
+!
        jmp  check_flipper_collision_4
 check_flipper_collision_3:
        li   r1,0
@@ -968,7 +976,7 @@ init_vdp_ram:
 *      Sprite patterns
        li   r0,sprite_pattern_table
        li   r1,sprite_patterns
-       li   r2,28*32
+       li   r2,32*32
        bl   @vmbw
 *      Colors
        li   r0,color_table
@@ -1109,7 +1117,7 @@ init_values:
 x_init:
        data >0f00
 y_init:
-       data >1e80
+       data >1b80
 vx_init:
        data >0000
 vy_init:
@@ -1144,15 +1152,15 @@ static_sprites:
        byte 96,8
        byte 3,3,12,12
        data 255                         ; y
-       byte 201,96
+       byte 201,16
        byte 8,10,2,14
        data 274                         ; y
-       byte 191,96
+       byte 191,16
        byte 10,2,14,8
        data 293                         ; y
-       byte 181,96
+       byte 181,16
        byte 2,14,8,10
-       data 496                         ; y
+       data 448                         ; y
        byte 232,4
        byte 14,14,14,14
        data -1
