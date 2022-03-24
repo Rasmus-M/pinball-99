@@ -1,15 +1,15 @@
 flippers_area_y_min:
        equ  440
 flippers_area_y_max:
-       equ  504
+       equ  496
 left_flipper_area_x_min:
-       equ  64
+       equ  56
 left_flipper_area_x_max:
-       equ  120
+       equ  112
 right_flipper_area_x_min:
-       equ  104
+       equ  112
 right_flipper_area_x_max:
-       equ  168
+       equ  176
 flipper_area_x_center:
        equ (left_flipper_area_x_min+right_flipper_area_x_max)/2
 
@@ -18,7 +18,7 @@ left_flipper:
 left_flipper_sprite_y:
        data 463
 left_flipper_sprite_x:
-       data 72
+       data 64
 left_flipper_sprites:
        data left_flipper_sprites_0
        data left_flipper_sprites_1
@@ -62,7 +62,7 @@ left_flipper_collision_maps:
        data flipper_col_map_bank+8,>6000
        data flipper_col_map_bank+10,>6000
 left_flipper_center_x:
-       data 80
+       data 72
 left_flipper_center_y:
        data 472
 left_flipper_bottom_y:
@@ -73,7 +73,7 @@ right_flipper:
 right_flipper_sprite_y:
        data 463
 right_flipper_sprite_x:
-       data 144
+       data 152
 right_flipper_sprites:
        data right_flipper_sprites_0
        data right_flipper_sprites_1
@@ -87,7 +87,7 @@ right_flipper_sprites_0:
        byte 4,-26,>28,6
 right_flipper_sprites_1:
        data 2
-       byte 1,11,>3c,6
+       byte 1,-11,>3c,6
        byte 1,-27,>38,6
 right_flipper_sprites_2:
        data 2
@@ -99,8 +99,8 @@ right_flipper_sprites_3:
        byte -1,-27,>58,6
 right_flipper_sprites_4:
        data 2
-       byte -3,-10,>6c,6
-       byte -4,-26,>68,6
+       byte -1,-10,>6c,6
+       byte -2,-26,>68,6
 right_flipper_sprites_5:
        data 2
        byte -5,-9,>7c,6
@@ -117,7 +117,7 @@ right_flipper_collision_maps:
        data flipper_col_map_bank+8,>6000+(flipper_col_map_width/2)
        data flipper_col_map_bank+10,>6000+(flipper_col_map_width/2)
 right_flipper_center_x:
-       data 151
+       data 160
 right_flipper_center_y:
        data 472
 right_flipper_bottom_y:

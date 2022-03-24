@@ -33,7 +33,9 @@ map_height_char:
 ball_radius:
        equ  7
 damping:
-       equ  >00d0
+       equ  2
+arm:
+       equ  4
 max_flipper_state:
        equ  5
 scroll_when_y_less_than:
@@ -353,11 +355,7 @@ move_ball:
        mov  r1,@x
        jmp  move_ball_3
 move_ball_1:
-       mov  @vx,r0
-       neg  r0
-       li   r1,damping
-       bl   @calc_signed_product
-       mov  r0,@vx
+       neg  @vx
 move_ball_3:
 *      Move y
        mov  @vy,r0
@@ -370,11 +368,7 @@ move_ball_3:
        mov  r1,@y
        jmp  move_ball_4
 move_ball_2:
-       mov  @vy,r0
-       neg  r0
-       li   r1,damping
-       bl   @calc_signed_product
-       mov  r0,@vy
+       neg  @vy
        inc  @player_status
 move_ball_4:
        .endproc
@@ -403,23 +397,16 @@ check_collision_1:
        jgt  check_collision_2          ; If positive the ball is moving in the same direction as the normal
 *      Reflection around normal
        bl   @reflect
-       li   r3,damping
-*      Set velocity to damping * (rx, ry)
+*      Set velocity to (1 - 2^-damping) * (rx, ry)
        mov  @rx,r0
-       mov  r0,r2
-       abs  r2
-       ci   r2,>0002
-       jle  !
-       mov  r3,r1
-       bl   @calc_signed_product
+       mov  r0,r1
+       sra  r1,damping
+       s    r1,r0
        mov r0,@vx
-!      mov  @ry,r0
-       mov  r0,r2
-       abs  r2
-       ci   r2,>0002
-       jle  !
-       mov  r3,r1
-       bl   @calc_signed_product
+       mov  @ry,r0
+       mov  r0,r1
+       sra  r1,damping
+       s    r1,r0
 !      mov r0,@vy
 *      Flipper push
 check_collision_2:
@@ -456,7 +443,7 @@ check_collision_4:
        a    @right_flipper_center_x,r3
        jlt  check_collision_6
 check_collision_5:
-       sla  r3,3                       ; arm
+       sla  r3,arm                     ; arm
 *      Add arm * (nx, ny) to velocity
        mov  @nx,r0
        mov  r3,r1
@@ -710,8 +697,10 @@ check_flipper_collision:
        srl  r0,4
        ci   r0,left_flipper_area_x_min
        jl   check_flipper_collision_3
-       ci   r0,flipper_area_x_center
+       ci   r0,left_flipper_area_x_max
        jle  check_flipper_collision_1
+       ci   r0,right_flipper_area_x_min
+       jl   check_flipper_collision_3
        ci   r0,right_flipper_area_x_max
        jle  check_flipper_collision_2
        jmp  check_flipper_collision_3
