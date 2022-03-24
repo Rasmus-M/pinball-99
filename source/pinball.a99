@@ -400,7 +400,7 @@ check_collision_1:
 *      Set velocity to (1 - 2^-damping) * (rx, ry)
        mov  @rx,r0
        mov  r0,r1
-       sra  r1,damping
+       sra  r1,damping+1
        s    r1,r0
        mov r0,@vx
        mov  @ry,r0
