@@ -144,8 +144,12 @@ rx:                                    ; Reflection vector x (FP 8.8)
        equ  ny+2
 ry:                                    ; Reflection vector y (FP 8.8)
        equ  rx+2
-pattern_and_color:
+x1:                                     ; Ball position x (FP 12.4)
        equ  ry+2
+y1:                                     ; Ball position y (FP 12.4)
+       equ  x1+2
+pattern_and_color:
+       equ  y1+2
 left_flipper_state:
        equ  pattern_and_color+2
 right_flipper_state:
@@ -160,8 +164,10 @@ launch_speed:
        equ  collision_type+2
 player_status:
        equ  launch_speed+2
-pad_max:
+vdp_copy_pad:
        equ  player_status+2
+pad_max:
+       equ  vdp_copy_pad+22
 
 ********************************************************************************
 *
@@ -173,8 +179,7 @@ main:
        lwpi wrksp                      ; Setup workspace
        li   r10,stack                  ; Setup stack pointer
        li   r15,vdpwd
-       bl   @graphics_mode
-       bl   @init_vdp_ram
+       bl   @one_time_init
 restart:
        bl   @init_game
        clr  @double_buffer_flag
@@ -182,13 +187,10 @@ restart:
 loop:
        bl   @vsync
        bl   @set_vdp_regs
-       bl   @user_input
-       bl   @move_ball
-       bl   @check_collision
-       bl   @move_ball
-       bl   @check_collision
+       bl   @interrupt_routine
        bl   @scroll_screen
        bl   @update_name_table
+       bl   @interrupt_check
        bl   @update_sprite_attr_table
        bl   @check_quit
        inc  @frame
@@ -198,16 +200,25 @@ loop:
 
 ********************************************************************************
 *
-* "Interrupt routine"
+* Interrupt check
 *
 * Changes r12 of calling workspace
 *
 interrupt_check:
        clr  r12
        tb   2                          ; Did an interrupt occur?
-       jeq  interrupt_routine_end      ; No - jump
-       movb @vdpsta,@vdp_status
+       jeq  interrupt_check_1          ; No - jump
 *      Interrupt occurred
+       movb @vdpsta,@vdp_status
+       bl   @interrupt_routine
+interrupt_check_1:
+       b    *r11
+*// interrupt_check
+
+********************************************************************************
+*
+* "Interrupt routine"
+*
 interrupt_routine:
        mov  r10,@wrksp2+20             ; Use same SP in new workspace
        lwpi wrksp2                     ; Switch to new workspace
@@ -216,10 +227,11 @@ interrupt_routine:
        bl   @check_collision
        bl   @move_ball
        bl   @check_collision
+       mov  @x,@x1
+       mov  @y,@y1
        lwpi wrksp                      ; Switch to old workspace
-interrupt_routine_end:
        b    *r11
-*// interrupt_check
+*// interrupt_routine
 
 *********************************************************************
 *
@@ -313,6 +325,9 @@ user_input_4:
        abs  r0
        ci   r0,>0040
        jgt  user_input_5
+       mov  @y,r0
+       ci   r0,>1600
+       jlt  user_input_7
        mov  @launch_speed,r0
        ci   r0,>0600
        jgt  user_input_7
@@ -322,6 +337,11 @@ user_input_4:
 user_input_5:
 *      Tilt
        li   r0,>0080
+       mov  @frame,r1
+       andi r1,1
+       jeq  !
+       neg  r0
+!
        mov  r0,@vx
        li   r0,->0100
        mov  r0,@vy
@@ -466,7 +486,7 @@ check_collision_6:
 * Scroll screen depending on ball position
 *
 scroll_screen:
-       mov  @y,r0
+       mov  @y1,r0
        srl  r0,4
        s    @scroll_y,r0
 *      Scroll up
@@ -510,17 +530,7 @@ update_name_table:
        sla  r1,5                       ; * map_width_char
        ai   r1,MD0                     ; Add map base address
        li   r2,screen_size_char/8      ; 8 times unrolled
-update_name_table_1:
-       movb *r1+,*r15                  ; Send by to VDP
-       movb *r1+,*r15                  ; ...
-       movb *r1+,*r15                  ; ...
-       movb *r1+,*r15                  ; ...
-       movb *r1+,*r15                  ; ...
-       movb *r1+,*r15                  ; ...
-       movb *r1+,*r15                  ; ...
-       movb *r1+,*r15                  ; ...
-       dec  r2                         ; Counter
-       jne  update_name_table_1        ; Loop
+       bl   @vdp_copy_pad
        .endproc
 *// update_name_table
 
@@ -535,13 +545,13 @@ update_sprite_attr_table:
        ai   r0,sprite_attr_table
        bl   @vwad
 *      Ball
-       mov  @y,r0
+       mov  @y1,r0
        srl  r0,4
        s    @scroll_y,r0
        ai   r0,-ball_radius-1
        swpb r0
        movb r0,*r15
-       mov  @x,r0
+       mov  @x1,r0
        srl  r0,4
        ai   r0,-ball_radius
        swpb r0
@@ -957,8 +967,57 @@ init_game:
        clr  @right_flipper_state
        clr  @launch_speed
        clr  @player_status
+       mov  @x,@x1
+       mov  @y,@y1
        .endproc
 *// init_game
+
+*********************************************************************************
+*
+* One time initializations
+*
+one_time_init:
+       .proc
+       bl   @graphics_mode
+       bl   @init_vdp_ram
+       li   r0,vdp_copy
+       li   r1,vdp_copy_pad
+       li   r2,vdp_copy_end-vdp_copy
+one_time_init_1:
+       mov  *r0+,*r1+
+       dect r2
+       jne one_time_init_1
+       .endproc
+*// one_time_init
+
+*********************************************************************************
+*
+* Set graphics mode
+*
+graphics_mode:
+       .proc
+       clr  r0
+       li   r1,vregs2
+       li   r2,8
+graphics_mode_1:
+       movb *r1+,@lsb_r0
+       bl   @vwtr                      ; Set register
+       ai   r0,>0100
+       dec  r2
+       jne  graphics_mode_1
+*      Return
+       .endproc
+*      VDP registers
+vregs2:
+       byte >00                        ; Graphics I mode
+       byte >e2                        ; 16K, display on, interrupts enabled
+       byte name_table/>400            ; Name table
+       byte color_table/>40            ; Color table
+       byte pattern_table/>800         ; Pattern table
+       byte sprite_attr_table/>80      ; Sprite attribute table
+       byte sprite_pattern_table/>800  ; Sprite pattern table
+       byte >0e                        ; Backdrop color
+*// graphics_mode
 
 *********************************************************************************
 *
@@ -1008,35 +1067,6 @@ init_vdp_ram:
        bl   @vmbw
        .endproc
 *// init_vdp_ram
-
-*********************************************************************************
-*
-* Set graphics mode
-*
-graphics_mode:
-       .proc
-       clr  r0
-       li   r1,vregs2
-       li   r2,8
-graphics_mode_1:
-       movb *r1+,@lsb_r0
-       bl   @vwtr                      ; Set register
-       ai   r0,>0100
-       dec  r2
-       jne  graphics_mode_1
-*      Return
-       .endproc
-*      VDP registers
-vregs2:
-       byte >00                        ; Graphics I mode
-       byte >e2                        ; 16K, display on, interrupts enabled
-       byte name_table/>400            ; Name table
-       byte color_table/>40            ; Color table
-       byte pattern_table/>800         ; Pattern table
-       byte sprite_attr_table/>80      ; Sprite attribute table
-       byte sprite_pattern_table/>800  ; Sprite pattern table
-       byte >0e                        ; Backdrop color
-*// graphics_mode
 
 ***************************************************************************
 *

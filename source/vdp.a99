@@ -136,3 +136,23 @@ vmbr_1:
        jne  vmbr_1                     ; Check if finished
        rt
 *// vmbr
+
+*********************************************************************
+*
+* Unrolled VDP copy loop
+*
+vdp_copy:
+       movb *r1+,*r15                  ; Send by to VDP
+       movb *r1+,*r15                  ; ...
+       movb *r1+,*r15                  ; ...
+       movb *r1+,*r15                  ; ...
+       movb *r1+,*r15                  ; ...
+       movb *r1+,*r15                  ; ...
+       movb *r1+,*r15                  ; ...
+       movb *r1+,*r15                  ; ...
+       dec  r2                         ; Counter
+       jne  vdp_copy                   ; Loop
+       rt
+vdp_copy_end:
+       equ  $
+*// vdp_copy
