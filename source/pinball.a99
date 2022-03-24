@@ -102,8 +102,10 @@ lsb_r2:
        equ  wrksp+5
 lsb_r3:
        equ  wrksp+7
-stack:
+wrksp2:
        equ  wrksp+>20
+stack:
+       equ  wrksp2+>20
 **
 * PAD constants
 *
@@ -194,28 +196,30 @@ loop:
        jeq  loop
        jmp  restart
 
-*********************************************************************************
+********************************************************************************
 *
-* Initialize game
+* "Interrupt routine"
 *
-init_game:
-       .proc
-       clr  @scroll_y
-       li   r0,init_values
-       mov  *r0+,@x
-       mov  *r0+,@y
-       mov  *r0+,@vx
-       mov  *r0+,@vy
-       mov  *r0+,@ax
-       mov  *r0+,@ay
-       li   r0,>000e
-       mov  r0,@pattern_and_color
-       clr  @left_flipper_state
-       clr  @right_flipper_state
-       clr  @launch_speed
-       clr  @player_status
-       .endproc
-*// init_game
+* Changes r12 of calling workspace
+*
+interrupt_check:
+       clr  r12
+       tb   2                          ; Did an interrupt occur?
+       jeq  interrupt_routine_end      ; No - jump
+       movb @vdpsta,@vdp_status
+*      Interrupt occurred
+interrupt_routine:
+       mov  r10,@wrksp2+20             ; Use same SP in new workspace
+       lwpi wrksp2                     ; Switch to new workspace
+       bl   @user_input
+       bl   @move_ball
+       bl   @check_collision
+       bl   @move_ball
+       bl   @check_collision
+       lwpi wrksp                      ; Switch to old workspace
+interrupt_routine_end:
+       b    *r11
+*// interrupt_check
 
 *********************************************************************
 *
@@ -684,7 +688,7 @@ quit   clr  @>83c4                     ; Reset user ISR address
 check_flipper_collision:
        .proc
        li   r0,>0e00
-       movb r0,@pattern_and_color+1
+;       movb r0,@pattern_and_color+1
 *      Check y boundaries
        mov  @y,r1
        srl  r1,4
@@ -712,9 +716,9 @@ check_flipper_collision_1:
        ai   r0,left_flipper_collision_maps
        li   r1,left_flipper_col_map_y
        bl   @get_flipper_collision_map_value
-       jeq  !
-       li   r0,>0800
-       movb r0,@pattern_and_color+1
+;       jeq  !
+;       li   r0,>0800
+;       movb r0,@pattern_and_color+1
 !
        jmp  check_flipper_collision_4
 *      Right flipper
@@ -725,9 +729,9 @@ check_flipper_collision_2:
        ai   r0,right_flipper_collision_maps
        li   r1,right_flipper_col_map_y
        bl   @get_flipper_collision_map_value
-       jeq  !
-       li   r0,>0400
-       movb r0,@pattern_and_color+1
+;       jeq  !
+;       li   r0,>0400
+;       movb r0,@pattern_and_color+1
 !
        jmp  check_flipper_collision_4
 check_flipper_collision_3:
@@ -758,7 +762,8 @@ get_flipper_collision_map_value:
        a    r2,r0
        a    r3,r0
        clr  r1
-       movb *r0,@lsb_r1
+       movb *r0,r1
+       swpb r1
        rt
 *// get_flipper_collision_map_value
 
@@ -810,7 +815,8 @@ get_coll_value:
        a    r0,r2                      ; Add X
        ai   r2,coll_bank_base          ; Add ROM bank base address
        clr  r1                         ; Clear result reg
-       movb *r2,@lsb_r1                ; Get byte
+       movb *r2,r1                     ; Get byte
+       swpb r1
        rt
 *// get_coll_value
 
@@ -923,13 +929,36 @@ calc_signed_product:
        inv  r2                         ; Flip sign
        neg  r1                         ; Make positive
 !      mpy  r1,r0                      ; Multiply
-       swpb r0                         ; Move MSB into position
-       movb r1,@lsb_r0                   ; Move LSB into position
+       movb r1,r0
+       swpb r0
        mov  r2,r2                      ; Test sign
        jeq  !
        neg  r0                         ; Negate if sign is minus
 !      rt
 *// calc_signed_product
+
+*********************************************************************************
+*
+* Initialize game
+*
+init_game:
+       .proc
+       clr  @scroll_y
+       li   r0,init_values
+       mov  *r0+,@x
+       mov  *r0+,@y
+       mov  *r0+,@vx
+       mov  *r0+,@vy
+       mov  *r0+,@ax
+       mov  *r0+,@ay
+       li   r0,>000e
+       mov  r0,@pattern_and_color
+       clr  @left_flipper_state
+       clr  @right_flipper_state
+       clr  @launch_speed
+       clr  @player_status
+       .endproc
+*// init_game
 
 *********************************************************************************
 *
