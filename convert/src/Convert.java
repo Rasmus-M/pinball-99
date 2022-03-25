@@ -45,7 +45,7 @@ public class Convert {
                     rom[b * bankSize + headerSize + j] = i < raw.length ? raw[i++] : 0;
                 }
             }
-            String outputFilename = file.getName().replaceAll("\\.(png|gif)", ".bin");
+            String outputFilename = "..\\bin\\" + file.getName().replaceAll("\\.(png|gif)", ".bin");
             FileOutputStream fos = new FileOutputStream(outputFilename);
             fos.write(rom);
             fos.close();
