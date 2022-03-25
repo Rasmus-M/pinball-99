@@ -1,0 +1,121 @@
+*********************************************************************
+*
+* Mute sound
+*
+mute_sound:
+       li   r0,mute_table              ; Mute all
+       li   r2,4
+mute_sound_1:
+       movb *r0+,@sound
+       dec  r2
+       jne  mute_sound_1
+       clr  @snd_channel_1
+       clr  @snd_channel_2
+       clr  @snd_channel_3
+       clr  @snd_channel_4
+*      Return
+       rt
+mute_table:
+       byte >9f, >bf, >df, >ff
+*// mute_sound
+
+*********************************************************************
+*
+* Play shot
+*
+play_shot:
+       .proc
+       li   r0,snd_shot
+       li   r1,snd_channel_1
+       li   r2,>0020
+       bl   @play_snd
+       .endproc
+*// play_shot
+
+*********************************************************************
+*
+* Play shield
+*
+play_shield:
+       .proc
+       li   r0,snd_shield
+       li   r1,snd_channel_2
+       li   r2,C4
+       bl   @play_snd
+       .endproc
+*// play_shield
+
+*********************************************************************
+*
+* Play warning
+*
+play_warning:
+       .proc
+       li   r0,snd_warning
+       li   r1,snd_channel_3
+       li   r2,A4
+       bl   @play_snd
+       .endproc
+*// play_warning
+
+*********************************************************************
+*
+* Play extra
+*
+play_extra:
+       .proc
+       li   r0,snd_extra
+       li   r1,snd_channel_3
+       li   r2,A5
+       bl   @play_snd
+       .endproc
+*// play_extra
+
+*********************************************************************
+*
+* Play boss
+*
+play_boss:
+       .proc
+       li   r0,snd_boss
+       li   r1,snd_channel_3
+       li   r2,>3ff
+       bl   @play_snd
+       .endproc
+*// play_boss
+
+*********************************************************************
+*
+* Play explosion_1
+*
+play_explosion_1:
+       .proc
+       li   r0,snd_explosion_1
+       li   r1,snd_channel_4
+       bl   @play_snd
+       .endproc
+*// play_explosion_1
+
+*********************************************************************
+*
+* Play explosion_2
+*
+play_explosion_2:
+       .proc
+       li   r0,snd_explosion_2
+       li   r1,snd_channel_4
+       bl   @play_snd
+       .endproc
+*// play_explosion_2
+
+*********************************************************************
+*
+* Play explosion_3
+*
+play_explosion_3:
+       .proc
+       li   r0,snd_explosion_3
+       li   r1,snd_channel_4
+       bl   @play_snd
+       .endproc
+*// play_explosion_3

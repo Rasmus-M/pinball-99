@@ -1,0 +1,50 @@
+**
+* Sound FXs
+*
+snd_shot:
+       byte T1
+       byte 16                         ; Frames
+       byte 0                          ; Attn start
+       byte 16                         ; Attn step
+       data 4                          ; Freq step
+snd_shield:
+       byte T2
+       byte 16                         ; Frames
+       byte 6                          ; Attn start
+       byte 0                          ; Attn step
+       data 6                          ; Freq step
+snd_warning:
+       byte T3
+       byte 16                         ; Frames
+       byte 0                          ; Attn start
+       byte 0                          ; Attn step
+       data 0                          ; Freq step
+snd_extra:
+       byte T3
+       byte 64                         ; Frames
+       byte 0                          ; Attn start
+       byte 4                          ; Attn step
+       data 0                          ; Freq step
+snd_boss:
+       byte T3
+       byte 8                          ; Frames
+       byte 8                          ; Attn start
+       byte 0                          ; Attn step
+       data 0                          ; Freq step
+snd_explosion_1:
+       byte W2
+       byte 48                         ; Frames
+       byte 0                          ; Attn start
+       byte 5                          ; Attn step
+snd_explosion_2:
+       byte W1
+       byte 32                         ; Frames
+       byte 0                          ; Attn start
+       byte 10                         ; Attn step
+snd_explosion_3:
+       byte W0
+       byte 16                         ; Frames
+       byte 0                          ; Attn start
+       byte 15                         ; Attn step
+
+       even

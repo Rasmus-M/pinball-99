@@ -8,6 +8,7 @@
 *
 
        copy "macros.a99"
+       copy "sound-defs.a99"
 
 **
 * Constants
@@ -111,11 +112,13 @@ stack:
 *
 padcon:
        equ  stack+>10                  ; Start of pad constants
+one:
+       equ  padcon
 **
 * PAD variables
 *
 padvar:                                ; Start of pad variables
-       equ  padcon+2
+       equ  one+2
 frame:
        equ padvar
 vdp_status:
@@ -140,8 +143,10 @@ nx:                                    ; Normal vector x (FP 8.8)
        equ  ay+2
 ny:                                    ; Normal vector y (FP 8.8)
        equ  nx+2
-rx:                                    ; Reflection vector x (FP 8.8)
+dp:                                    ; Dot product of (vx,vy) and (nx,ny)
        equ  ny+2
+rx:                                    ; Reflection vector x (FP 8.8)
+       equ  dp+2
 ry:                                    ; Reflection vector y (FP 8.8)
        equ  rx+2
 x1:                                     ; Ball position x (FP 12.4)
@@ -164,8 +169,24 @@ launch_speed:
        equ  collision_type+2
 player_status:
        equ  launch_speed+2
-vdp_copy_pad:
+snd_channel_1:
        equ  player_status+2
+snd_channel_2:
+       equ  snd_channel_1+snd_channel_size
+snd_channel_3:
+       equ  snd_channel_2+snd_channel_size
+snd_channel_4:
+       equ  snd_channel_3+snd_channel_size
+snd_track_1:
+       equ  snd_channel_4+snd_channel_size
+snd_track_2:
+       equ  snd_track_1+snd_track_size
+snd_track_3:
+       equ  snd_track_2+snd_track_size
+module_speed:
+       equ  snd_track_3+snd_track_size
+vdp_copy_pad:
+       equ  module_speed+2
 pad_max:
        equ  vdp_copy_pad+22
 
@@ -222,6 +243,7 @@ interrupt_check_1:
 interrupt_routine:
        mov  r10,@wrksp2+20             ; Use same SP in new workspace
        lwpi wrksp2                     ; Switch to new workspace
+       bl   @snd_player
        bl   @user_input
        bl   @move_ball
        bl   @check_collision
@@ -348,13 +370,16 @@ user_input_5:
        jmp  user_input_7
 user_input_6:
 *      Space not pressed
-       mov  @x,r0
-       s    @x_init,r0
-       abs  r0
-       ci   r0,>0040
+       mov  @launch_speed,r0
+       jeq  user_input_7
+       mov  @x,r1
+       s    @x_init,r1
+       abs  r1
+       ci   r1,>0040
        jgt  user_input_7
-       s    @launch_speed,@vy
+       s    r0,@vy
        clr  @launch_speed
+       bl   @play_extra
 user_input_7:
        .endproc
 *// user_input
@@ -417,7 +442,7 @@ check_collision_1:
        dec  r1                         ; Convert to zero-based
        bl   @calc_normal               ; Calculate n
        bl   @calc_dot_product          ; r3=dot product of v and n
-       mov  r3,r3
+       mov  @dp,r3
        jgt  check_collision_2          ; If positive the ball is moving in the same direction as the normal
 *      Reflection around normal
        bl   @reflect
@@ -432,6 +457,11 @@ check_collision_1:
        sra  r1,damping
        s    r1,r0
 !      mov r0,@vy
+*      Play sound
+       mov  @dp,r3
+       ci   r3,->0100
+       jgt  check_collision_2
+       bl   @play_explosion_3
 *      Flipper push
 check_collision_2:
        mov  @collision_type,r0
@@ -477,6 +507,8 @@ check_collision_5:
        mov  r3,r1
        bl   @calc_signed_product
        a    r0,@vy
+*      Play sound
+       bl   @play_shot
 check_collision_6:
        .endproc
 *// check_collision
@@ -899,7 +931,7 @@ reflect:
 * @nx: nx
 * @ny: ny
 *
-* On return r3 contains the result in FP 8.8 format.
+* On return @dp contains the result in FP 8.8 format.
 *
 * Modifies r0-r2
 *
@@ -908,11 +940,11 @@ calc_dot_product:
        mov  @vx,r0
        mov  @nx,r1
        bl   @calc_signed_product
-       mov  r0,r3
+       mov  r0,@dp
        mov  @vy,r0
        mov  @ny,r1
        bl   @calc_signed_product
-       a    r0,r3
+       a    r0,@dp
        .endproc
 *// calc_dot_product
 
@@ -978,15 +1010,23 @@ init_game:
 *
 one_time_init:
        .proc
-       bl   @graphics_mode
-       bl   @init_vdp_ram
+       li   r0,1
+       mov  r0,@one
+       li   r1,padvar
+       li   r2,pad_max-padvar
+one_time_init_1:
+       clr  *r1+
+       dect r2
+       jne  one_time_init_1
        li   r0,vdp_copy
        li   r1,vdp_copy_pad
        li   r2,vdp_copy_end-vdp_copy
-one_time_init_1:
+one_time_init_2:
        mov  *r0+,*r1+
        dect r2
-       jne one_time_init_1
+       jne one_time_init_2
+       bl   @graphics_mode
+       bl   @init_vdp_ram
        .endproc
 *// one_time_init
 
@@ -1155,6 +1195,8 @@ check_key:
 * Program includes
 *
        copy "vdp.a99"
+       copy "sound-player.a99"
+       copy "sound-fx-routines.a99"
 
 ***************************************************************************
 *
@@ -1223,5 +1265,6 @@ normals:
        copy "normals.a99"
        copy "map.a99"
        copy "flippers.a99"
+       copy "sound-fx.a99"
 
        end
