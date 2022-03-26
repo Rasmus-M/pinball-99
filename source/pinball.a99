@@ -13,24 +13,46 @@
 **
 * Constants
 *
-screen_width:
-       equ  256
-screen_height:
-       equ  192
 screen_width_char:
        equ  32
 screen_height_char:
        equ  24
 screen_size_char:
        equ  screen_width_char*screen_height_char
-map_width:
-       equ  256
-map_height:
-       equ  512
+screen_width:
+       equ  screen_width_char*8
+screen_height:
+       equ  screen_height_char*8
 map_width_char:
        equ  32
 map_height_char:
        equ  64
+map_width:
+       equ  map_width_char*8
+map_height:
+       equ  map_height_char*8
+map_window_width_char:
+       equ  screen_width_char
+map_window_top_char:
+       equ  5
+map_window_height_char:
+       equ  screen_height_char-map_window_top_char
+map_window_size_char:
+       equ  map_window_height_char*screen_width_char
+map_window_width:
+       equ  map_window_width_char*8
+map_window_top:
+       equ  map_window_top_char*8
+map_window_height:
+       equ  map_window_height_char*8
+scroll_when_y_less_than:
+       equ  map_window_top+48
+scroll_when_y_greater_than:
+       equ  screen_height-48
+scroll_y_max:
+       equ  map_height-map_window_height
+sprite_y_offset:
+       equ  map_window_top
 ball_radius:
        equ  7
 damping:
@@ -39,12 +61,6 @@ arm:
        equ  4
 max_flipper_state:
        equ  5
-scroll_when_y_less_than:
-       equ  48
-scroll_when_y_greater_than:
-       equ  144
-scroll_y_max:
-       equ  map_height-screen_height-2
 coll_map_bank_height:
        equ  32
 coll_map_bank:
@@ -521,6 +537,7 @@ scroll_screen:
        mov  @y1,r0
        srl  r0,4
        s    @scroll_y,r0
+       ai   r0,sprite_y_offset
 *      Scroll up
        mov  r0,r1
        ai   r1,-scroll_when_y_less_than
@@ -551,18 +568,26 @@ scroll_screen_3:
 *
 * Update name table from map
 *
+*
+half_window_size:
+       equ  map_window_size_char/2
+*
 update_name_table:
        .proc
        mov  @double_buffer_flag,r0
        andi r0,>400
-       ai   r0,name_table              ; VDP write address
+       ai   r0,name_table+(map_window_top_char*screen_width_char)
        bl   @vwad                      ; Setup write address
        mov  @scroll_y,r1               ; Scroll position
        srl  r1,3                       ; Convert to character rows
        sla  r1,5                       ; * map_width_char
        ai   r1,MD0                     ; Add map base address
-       li   r2,screen_size_char/8      ; 8 times unrolled
+       li   r2,half_window_size/8      ; 8 times unrolled
        bl   @vdp_copy_pad
+       bl   @interrupt_check
+       li   r2,half_window_size/8      ; 8 times unrolled
+       bl   @vdp_copy_pad
+       bl   @interrupt_check
        .endproc
 *// update_name_table
 
@@ -574,13 +599,13 @@ update_sprite_attr_table:
        .proc
        mov  @double_buffer_flag,r0
        andi r0,>80
-       ai   r0,sprite_attr_table
+       ai   r0,sprite_attr_table+16    ; +16 for cover sprites
        bl   @vwad
 *      Ball
        mov  @y1,r0
        srl  r0,4
        s    @scroll_y,r0
-       ai   r0,-ball_radius-1
+       ai   r0,-ball_radius-1+sprite_y_offset
        swpb r0
        movb r0,*r15
        mov  @x1,r0
@@ -638,6 +663,7 @@ update_flippers_sprites_2:
 update_flipper_sprites:
        mov  *r1+,r2                    ; Get flipper y
        s    @scroll_y,r2               ; y position on screen
+       ai   r2,sprite_y_offset
        ci   r2,screen_height
        jhe  update_flipper_sprites_3
        swpb r2
@@ -684,12 +710,13 @@ update_static_sprites_1:
 update_static_sprites_1a:
 *      Display until out of screen
        mov  @scroll_y,r0
-       ai   r0,screen_height           ; Sprites with y > this should not be displayed
+       ai   r0,map_window_height       ; Sprites with y > this should not be displayed
 update_static_sprites_2:
        c    r1,r0
        jgt  update_static_sprites_3
        s    @scroll_y,r1
        dec  r1                         ; Adjust y coordinate
+       ai   r1,sprite_y_offset
        swpb r1
        movb r1,*r15                    ; Write y
        movb *r3+,*r15                  ; Write x
@@ -1095,15 +1122,19 @@ init_vdp_ram:
        li   r1,sprite_patterns
        li   r2,32*32
        bl   @vmbw
+*      Cover sprites
+       li   r0,sprite_attr_table
+       li   r1,cover_sprites
+       li   r2,18
+       bl   @vmbw
+       li   r0,sprite_attr_table+>80
+       li   r1,cover_sprites
+       li   r2,18
+       bl   @vmbw
 *      Colors
        li   r0,color_table
        li   r1,CLRSET
        mov  @CLRNUM,r2
-       bl   @vmbw
-*      Name table
-       li   r0,name_table
-       li   r1,MD0
-       li   r2,screen_size_char
        bl   @vmbw
        .endproc
 *// init_vdp_ram
@@ -1224,7 +1255,13 @@ w_map_height:
 w_coll_map_bank_height:
        data coll_map_bank_height
 
-*      Sorted by y
+cover_sprites:
+       byte map_window_top-17,0,0,0
+       byte map_window_top-17,0,0,0
+       byte map_window_top-17,0,0,0
+       byte map_window_top-17,0,0,0
+       byte >d0,>00
+
 static_sprites:
        data 72                         ; y
        byte 124,12                     ; x, pattern
@@ -1232,25 +1269,25 @@ static_sprites:
        data 74                         ; y
        byte 156,8
        byte 10,11,10,11
-       data 144                         ; y
+       data 144                        ; y
        byte 80,8
        byte 4,4,5,5
-       data 160                         ; y
+       data 160                        ; y
        byte 152,12
        byte 6,6,9,9
-       data 208                         ; y
+       data 208                        ; y
        byte 96,8
        byte 3,3,12,12
-       data 255                         ; y
+       data 255                        ; y
        byte 201,16
        byte 8,10,2,14
-       data 274                         ; y
+       data 274                        ; y
        byte 191,16
        byte 10,2,14,8
-       data 293                         ; y
+       data 293                        ; y
        byte 181,16
        byte 2,14,8,10
-       data 448                         ; y
+       data 448                        ; y
        byte 232,4
        byte 14,14,14,14
        data -1
@@ -1266,5 +1303,8 @@ normals:
        copy "map.a99"
        copy "flippers.a99"
        copy "sound-fx.a99"
+
+upper_memory_max:
+       equ  $
 
        end

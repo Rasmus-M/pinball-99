@@ -1,4 +1,4 @@
-xas99.py -R -L pinball.lst -i -q -o bin/PINBALL source/pinball.a99
+xas99.py -R -S -L pinball.lst -i -q -o bin/PINBALL source/pinball.a99
 
 java -jar tools/ea5tocart.jar bin\pinball "PINBALL" > make.log
 
