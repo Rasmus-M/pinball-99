@@ -31,28 +31,40 @@ map_width:
        equ  map_width_char*8
 map_height:
        equ  map_height_char*8
-map_window_width_char:
-       equ  screen_width_char
-map_window_top_char:
+info_panel_width_char:
+       equ  32
+info_panel_height_char:
        equ  5
-map_window_height_char:
-       equ  screen_height_char-map_window_top_char
-map_window_size_char:
-       equ  map_window_height_char*screen_width_char
-map_window_width:
-       equ  map_window_width_char*8
-map_window_top:
-       equ  map_window_top_char*8
-map_window_height:
-       equ  map_window_height_char*8
+info_panel_char_width:
+       equ  4
+info_panel_char_height:
+       equ  5
+info_panel_char_size:
+       equ  info_panel_char_width*info_panel_char_height
+info_panel_n_chars:
+       equ  info_panel_width_char/info_panel_char_width
+play_field_width_char:
+       equ  screen_width_char
+play_field_top_char:
+       equ  info_panel_height_char
+play_field_height_char:
+       equ  screen_height_char-play_field_top_char
+play_field_size_char:
+       equ  play_field_height_char*screen_width_char
+play_field_width:
+       equ  play_field_width_char*8
+play_field_top:
+       equ  play_field_top_char*8
+play_field_height:
+       equ  play_field_height_char*8
 scroll_when_y_less_than:
-       equ  map_window_top+48
+       equ  play_field_top+48
 scroll_when_y_greater_than:
        equ  screen_height-48
 scroll_y_max:
-       equ  map_height-map_window_height
+       equ  map_height-play_field_height
 sprite_y_offset:
-       equ  map_window_top
+       equ  play_field_top
 ball_radius:
        equ  7
 damping:
@@ -225,8 +237,9 @@ loop:
        bl   @vsync
        bl   @set_vdp_regs
        bl   @interrupt_routine
-       bl   @scroll_screen
-       bl   @update_name_table
+       bl   @set_scroll_position
+       bl   @draw_info_panel
+       bl   @draw_play_field
        bl   @interrupt_check
        bl   @update_sprite_attr_table
        bl   @check_quit
@@ -491,7 +504,7 @@ check_collision_3:
        jlt  check_collision_6
        mov  @y,r0
        srl  r0,4
-       c    r0,@left_flipper_center_y
+       c    r0,@left_flipper_bottom_y
        jhe  check_collision_6
        mov  @x,r3
        srl  r3,4
@@ -531,9 +544,9 @@ check_collision_6:
 
 *********************************************************************************
 *
-* Scroll screen depending on ball position
+* Set scroll position depending on ball position
 *
-scroll_screen:
+set_scroll_position:
        mov  @y1,r0
        srl  r0,4
        s    @scroll_y,r0
@@ -541,55 +554,87 @@ scroll_screen:
 *      Scroll up
        mov  r0,r1
        ai   r1,-scroll_when_y_less_than
-       jgt  scroll_screen_1
+       jgt  set_scroll_position_1
        mov  @scroll_y,r2
        a    r1,r2
-       jgt  scroll_screen_2
+       jgt  set_scroll_position_2
        clr  r2
-       jmp  scroll_screen_2
-scroll_screen_1:
+       jmp  set_scroll_position_2
+set_scroll_position_1:
 *      Scroll down
        mov  r0,r1
        ai   r1,-scroll_when_y_greater_than
-       jlt  scroll_screen_3
+       jlt  set_scroll_position_3
        mov  @scroll_y,r2
        a    r1,r2
        ci   r2,scroll_y_max
-       jlt  scroll_screen_2
+       jlt  set_scroll_position_2
        li   r2,scroll_y_max
-scroll_screen_2:
+set_scroll_position_2:
        andi r2,>fffe
        mov  r2,@scroll_y
-scroll_screen_3:
+set_scroll_position_3:
        rt
-*// scroll_screen
+*// set_scroll_position
 
 *********************************************************************************
 *
-* Update name table from map
+* Draw info panel
 *
-*
-half_window_size:
-       equ  map_window_size_char/2
-*
-update_name_table:
+draw_info_panel:
        .proc
        mov  @double_buffer_flag,r0
        andi r0,>400
-       ai   r0,name_table+(map_window_top_char*screen_width_char)
+       ai   r0,name_table
+       bl   @vwad                      ; Setup write address
+       li   r3,info_panel_height_char  ; Number of rows to display
+       li   r4,MD2
+draw_info_panel_1:
+       li   r2,info_panel_n_chars
+       li   r5,info_panel_buffer
+draw_info_panel_2:
+       clr  r0
+       movb *r5+,r0                    ; Get char number
+       swpb r0
+       mpy  @w_info_panel_char_size,r0 ; Multiply by char size
+       a    r4,r1
+       movb *r1+,*r15                  ; write to VDP
+       movb *r1+,*r15
+       movb *r1+,*r15
+       movb *r1+,*r15
+       dec  r2
+       jne  draw_info_panel_2
+       ai   r4,info_panel_char_width
+       dec  r3
+       jne  draw_info_panel_1
+       .endproc
+*// draw_info_panel
+
+*********************************************************************************
+*
+* Update play field part of name table from map
+*
+half_field_size:
+       equ  play_field_size_char/2
+*
+draw_play_field:
+       .proc
+       mov  @double_buffer_flag,r0
+       andi r0,>400
+       ai   r0,name_table+(play_field_top_char*screen_width_char)
        bl   @vwad                      ; Setup write address
        mov  @scroll_y,r1               ; Scroll position
        srl  r1,3                       ; Convert to character rows
        sla  r1,5                       ; * map_width_char
        ai   r1,MD0                     ; Add map base address
-       li   r2,half_window_size/8      ; 8 times unrolled
+       li   r2,half_field_size/8       ; 8 times unrolled
        bl   @vdp_copy_pad
        bl   @interrupt_check
-       li   r2,half_window_size/8      ; 8 times unrolled
+       li   r2,half_field_size/8       ; 8 times unrolled
        bl   @vdp_copy_pad
        bl   @interrupt_check
        .endproc
-*// update_name_table
+*// draw_play_field
 
 *********************************************************************************
 *
@@ -710,7 +755,7 @@ update_static_sprites_1:
 update_static_sprites_1a:
 *      Display until out of screen
        mov  @scroll_y,r0
-       ai   r0,map_window_height       ; Sprites with y > this should not be displayed
+       ai   r0,play_field_height       ; Sprites with y > this should not be displayed
 update_static_sprites_2:
        c    r1,r0
        jgt  update_static_sprites_3
@@ -771,11 +816,11 @@ check_flipper_collision:
        ci   r0,left_flipper_area_x_min
        jl   check_flipper_collision_3
        ci   r0,left_flipper_area_x_max
-       jle  check_flipper_collision_1
+       jl   check_flipper_collision_1
        ci   r0,right_flipper_area_x_min
        jl   check_flipper_collision_3
        ci   r0,right_flipper_area_x_max
-       jle  check_flipper_collision_2
+       jl   check_flipper_collision_2
        jmp  check_flipper_collision_3
 *      Left flipper
 check_flipper_collision_1:
@@ -788,7 +833,7 @@ check_flipper_collision_1:
 ;       jeq  !
 ;       li   r0,>0800
 ;       movb r0,@pattern_and_color+1
-!
+;!
        jmp  check_flipper_collision_4
 *      Right flipper
 check_flipper_collision_2:
@@ -801,7 +846,7 @@ check_flipper_collision_2:
 ;       jeq  !
 ;       li   r0,>0400
 ;       movb r0,@pattern_and_color+1
-!
+;!
        jmp  check_flipper_collision_4
 check_flipper_collision_3:
        li   r1,0
@@ -1117,6 +1162,16 @@ init_vdp_ram:
        mov  @TCHNUM,r2
        sla  r2,3
        bl   @vmbw
+*      Info panel patterns
+       li   r0,240*8+pattern_table
+       li   r3,4
+init_vdp_ram_1:
+       li   r1,PAT240
+       li   r2,16*8
+       bl   @vmbw
+       ai   r0,>800
+       dec  r3
+       jne  init_vdp_ram_1
 *      Sprite patterns
        li   r0,sprite_pattern_table
        li   r1,sprite_patterns
@@ -1136,6 +1191,10 @@ init_vdp_ram:
        li   r1,CLRSET
        mov  @CLRNUM,r2
        bl   @vmbw
+       li   r0,color_table+30
+       li   r1,>b100
+       bl   @vsbw
+       movb r1,*r15
        .endproc
 *// init_vdp_ram
 
@@ -1254,12 +1313,17 @@ w_map_height:
        data map_height
 w_coll_map_bank_height:
        data coll_map_bank_height
+w_info_panel_char_size:
+       data  info_panel_char_size
+
+info_panel_buffer:
+       byte 0,1,2,3,4,5,6,7
 
 cover_sprites:
-       byte map_window_top-17,0,0,0
-       byte map_window_top-17,0,0,0
-       byte map_window_top-17,0,0,0
-       byte map_window_top-17,0,0,0
+       byte play_field_top-17,0,0,0
+       byte play_field_top-17,0,0,0
+       byte play_field_top-17,0,0,0
+       byte play_field_top-17,0,0,0
        byte >d0,>00
 
 static_sprites:
@@ -1303,6 +1367,7 @@ normals:
        copy "map.a99"
        copy "flippers.a99"
        copy "sound-fx.a99"
+       copy "chars.a99"
 
 upper_memory_max:
        equ  $

@@ -25,102 +25,102 @@ MCOUNT DATA 1                          ;
 MC2    DATA 15                         ;
 MS2    DATA >0004,>0032,>00C8          ; Width, Height, Size
 * -- Map Row 0 --                       
-MD2    DATA >F8FF,>F4F0                ;
+MD2    DATA >F0FC,>FCF0                ;
 * -- Map Row 1 --                       
-       DATA >FFF0,>FFF0                ;
+       DATA >FAF5,>FAF5                ;
 * -- Map Row 2 --                       
-       DATA >FFF0,>FFF0                ;
+       DATA >FAF5,>FAF5                ;
 * -- Map Row 3 --                       
-       DATA >FFF0,>FFF0                ;
+       DATA >FAF5,>FAF5                ;
 * -- Map Row 4 --                       
-       DATA >F2FF,>F1F0                ;
+       DATA >F0F3,>F3F0                ;
 * -- Map Row 5 --                       
-       DATA >F8FF,>F0F0                ;
+       DATA >F0F8,>F4F0                ;
 * -- Map Row 6 --                       
-       DATA >FFFF,>F0F0                ;
-* -- Map Row 7 --                       
-       DATA >F0FF,>F0F0                ;
-* -- Map Row 8 --                       
-       DATA >F0FF,>F0F0                ;
-* -- Map Row 9 --                       
-       DATA >FFFF,>FFF0                ;
-* -- Map Row 10 --                      
-       DATA >FEFF,>F4F0                ;
-* -- Map Row 11 --                      
-       DATA >F3F0,>FFF0                ;
-* -- Map Row 12 --                      
-       DATA >F0FE,>F5F0                ;
-* -- Map Row 13 --                      
-       DATA >FAF7,>F0F0                ;
-* -- Map Row 14 --                      
-       DATA >FFFF,>FFF0                ;
-* -- Map Row 15 --                      
-       DATA >FEFF,>F4F0                ;
-* -- Map Row 16 --                      
-       DATA >F3F0,>FFF0                ;
-* -- Map Row 17 --                      
-       DATA >F0FF,>F5F0                ;
-* -- Map Row 18 --                      
-       DATA >FCF0,>FFF0                ;
-* -- Map Row 19 --                      
-       DATA >FBFF,>F1F0                ;
-* -- Map Row 20 --                      
-       DATA >FFF0,>FFF0                ;
-* -- Map Row 21 --                      
-       DATA >FFF0,>FFF0                ;
-* -- Map Row 22 --                      
-       DATA >FFFF,>FFF0                ;
-* -- Map Row 23 --                      
-       DATA >F0F0,>FFF0                ;
-* -- Map Row 24 --                      
-       DATA >F0F0,>FFF0                ;
-* -- Map Row 25 --                      
-       DATA >FFFF,>FFF0                ;
-* -- Map Row 26 --                      
-       DATA >FFF0,>F0F0                ;
-* -- Map Row 27 --                      
-       DATA >FFFF,>FFF0                ;
-* -- Map Row 28 --                      
-       DATA >F0F0,>FFF0                ;
-* -- Map Row 29 --                      
-       DATA >FBFF,>F1F0                ;
-* -- Map Row 30 --                      
-       DATA >F8FF,>FDF0                ;
-* -- Map Row 31 --                      
-       DATA >FFF0,>F0F0                ;
-* -- Map Row 32 --                      
-       DATA >FFFF,>FDF0                ;
-* -- Map Row 33 --                      
-       DATA >FFF0,>FFF0                ;
-* -- Map Row 34 --                      
-       DATA >FBFF,>F7F0                ;
-* -- Map Row 35 --                      
-       DATA >FFFF,>FFF0                ;
-* -- Map Row 36 --                      
-       DATA >F3F0,>FFF0                ;
-* -- Map Row 37 --                      
-       DATA >F0FA,>F5F0                ;
-* -- Map Row 38 --                      
-       DATA >F0FF,>F0F0                ;
-* -- Map Row 39 --                      
-       DATA >F0FF,>F0F0                ;
-* -- Map Row 40 --                      
-       DATA >FEFF,>FDF0                ;
-* -- Map Row 41 --                      
-       DATA >FFF0,>FFF0                ;
-* -- Map Row 42 --                      
        DATA >FAFF,>F5F0                ;
-* -- Map Row 43 --                      
-       DATA >FFF0,>FFF0                ;
-* -- Map Row 44 --                      
-       DATA >FBFF,>F7F0                ;
-* -- Map Row 45 --                      
-       DATA >FEFF,>FDF0                ;
-* -- Map Row 46 --                      
-       DATA >FFF0,>FFF0                ;
-* -- Map Row 47 --                      
-       DATA >FBFF,>FFF0                ;
-* -- Map Row 48 --                      
+* -- Map Row 7 --                       
+       DATA >F0FA,>F5F0                ;
+* -- Map Row 8 --                       
+       DATA >F0FA,>F5F0                ;
+* -- Map Row 9 --                       
+       DATA >F2F3,>F3F1                ;
+* -- Map Row 10 --                      
+       DATA >F0FC,>FCF0                ;
+* -- Map Row 11 --                      
+       DATA >FAF5,>FAF5                ;
+* -- Map Row 12 --                      
        DATA >F0F0,>FFF0                ;
+* -- Map Row 13 --                      
+       DATA >F0FF,>F0F0                ;
+* -- Map Row 14 --                      
+       DATA >F2F3,>F3F1                ;
+* -- Map Row 15 --                      
+       DATA >F0FC,>FCF0                ;
+* -- Map Row 16 --                      
+       DATA >FAF5,>FAF5                ;
+* -- Map Row 17 --                      
+       DATA >F0F0,>FFF0                ;
+* -- Map Row 18 --                      
+       DATA >FAF5,>FAF5                ;
+* -- Map Row 19 --                      
+       DATA >F0F3,>F3F0                ;
+* -- Map Row 20 --                      
+       DATA >F8F4,>F8F4                ;
+* -- Map Row 21 --                      
+       DATA >FAF5,>FAF5                ;
+* -- Map Row 22 --                      
+       DATA >FAFF,>FFF5                ;
+* -- Map Row 23 --                      
+       DATA >F0F0,>FAF5                ;
+* -- Map Row 24 --                      
+       DATA >F0F0,>F2F1                ;
+* -- Map Row 25 --                      
+       DATA >F8FC,>FCF4                ;
+* -- Map Row 26 --                      
+       DATA >FAF5,>F0F0                ;
+* -- Map Row 27 --                      
+       DATA >FAFF,>FFF0                ;
+* -- Map Row 28 --                      
+       DATA >F0F0,>FAF5                ;
+* -- Map Row 29 --                      
+       DATA >F2F3,>F3F0                ;
+* -- Map Row 30 --                      
+       DATA >F0FC,>FCF0                ;
+* -- Map Row 31 --                      
+       DATA >FAF5,>F0F0                ;
+* -- Map Row 32 --                      
+       DATA >FAFF,>FFF0                ;
+* -- Map Row 33 --                      
+       DATA >FAF5,>FAF5                ;
+* -- Map Row 34 --                      
+       DATA >F0F3,>F3F0                ;
+* -- Map Row 35 --                      
+       DATA >F8FC,>FCF4                ;
+* -- Map Row 36 --                      
+       DATA >F0F0,>FAF5                ;
+* -- Map Row 37 --                      
+       DATA >F0F0,>FFF0                ;
+* -- Map Row 38 --                      
+       DATA >F0FA,>F5F0                ;
+* -- Map Row 39 --                      
+       DATA >F0F2,>F1F0                ;
+* -- Map Row 40 --                      
+       DATA >F0FC,>FCF0                ;
+* -- Map Row 41 --                      
+       DATA >FAF5,>FAF5                ;
+* -- Map Row 42 --                      
+       DATA >F0FF,>FFF0                ;
+* -- Map Row 43 --                      
+       DATA >FAF5,>FAF5                ;
+* -- Map Row 44 --                      
+       DATA >F0F3,>F3F0                ;
+* -- Map Row 45 --                      
+       DATA >F0FC,>FCF0                ;
+* -- Map Row 46 --                      
+       DATA >FAF5,>FAF5                ;
+* -- Map Row 47 --                      
+       DATA >F0FF,>FFF5                ;
+* -- Map Row 48 --                      
+       DATA >F0F0,>FAF5                ;
 * -- Map Row 49 --                      
-       DATA >FBFF,>F7F0                ;
+       DATA >F0F3,>F3F0                ;

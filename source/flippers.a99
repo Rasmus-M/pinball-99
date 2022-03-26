@@ -44,8 +44,8 @@ left_flipper_sprites_3:
        byte -1,27,>54,6
 left_flipper_sprites_4:
        data 2
-       byte -1,10,>60,6
-       byte -2,26,>64,6
+       byte -3,10,>60,6
+       byte -4,26,>64,6
 left_flipper_sprites_5:
        data 2
        byte -5,9,>70,6
@@ -99,8 +99,8 @@ right_flipper_sprites_3:
        byte -1,-27,>58,6
 right_flipper_sprites_4:
        data 2
-       byte -1,-10,>6c,6
-       byte -2,-26,>68,6
+       byte -3,-10,>6c,6
+       byte -4,-26,>68,6
 right_flipper_sprites_5:
        data 2
        byte -5,-9,>7c,6
