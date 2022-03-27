@@ -197,8 +197,12 @@ launch_speed:
        equ  collision_type+2
 player_status:
        equ  launch_speed+2
-snd_channel_1:
+score_msw:                             ; Low word of score
        equ  player_status+2
+score_lsw:                             ; High word of score
+       equ  score_msw+2
+snd_channel_1:
+       equ  score_lsw+2
 snd_channel_2:
        equ  snd_channel_1+snd_channel_size
 snd_channel_3:
@@ -257,12 +261,14 @@ loop:
 interrupt_check:
        clr  r12
        tb   2                          ; Did an interrupt occur?
-       jeq  interrupt_check_1          ; No - jump
+       jne  interrupt_check_1          ; No - jump
+       rt
 *      Interrupt occurred
+interrupt_check_1:
+       .proc
        movb @vdpsta,@vdp_status
        bl   @interrupt_routine
-interrupt_check_1:
-       b    *r11
+       .endproc
 *// interrupt_check
 
 ********************************************************************************
@@ -491,6 +497,8 @@ check_collision_1:
        ci   r3,->0100
        jgt  check_collision_2
        bl   @play_explosion_3
+       li   r0,1
+       bl   @add_score
 *      Flipper push
 check_collision_2:
        mov  @collision_type,r0
@@ -1051,6 +1059,49 @@ calc_signed_product:
 !      rt
 *// calc_signed_product
 
+*********************************************************************
+*
+* Add score
+*
+* r0 contains the score to add
+*
+* Modifies r0-r4
+*
+add_score:
+       .proc
+       a    r0,@score_lsw
+       jnc  add_score_1
+       inc  @score_msw
+add_score_1:
+       bl   @display_score
+       .endproc
+*// add_score
+
+*********************************************************************
+*
+* Display score
+*
+* Modifies r0-r4
+*
+display_score:
+       mov  @score_msw,r0
+       mov  @score_lsw,r1
+       li   r2,8                       ; Counter
+       li   r3,10                      ; Divisor
+       li   r4,info_panel_buffer+7     ; Start backwards
+*      Digit loop
+display_score_1:
+       div  r3,r0                      ; Divide to get digit as remainder in r1
+       swpb r1                         ; Swap to high byte
+       movb r1,*r4                     ; Store digit in buffer
+       dec  r4                         ; Next digit in buffer (working backwards)
+       mov  r0,r1
+       clr  r0
+       dec  r2                         ; Count down
+       jne  display_score_1            ; Digit loop
+       .endproc
+*// display_score
+
 *********************************************************************************
 *
 * Initialize game
@@ -1073,6 +1124,10 @@ init_game:
        clr  @player_status
        mov  @x,@x1
        mov  @y,@y1
+       clr  @score_lsw
+       clr  @score_msw
+       clr  r0
+       bl   @add_score
        .endproc
 *// init_game
 
