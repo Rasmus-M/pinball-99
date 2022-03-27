@@ -2,7 +2,7 @@ public class Normal {
 
     public static void main(String[] args) {
 
-        for (int angle = 0; angle < 255; angle++) {
+        for (int angle = 0; angle < 255; angle += 2) {
             Vec2 normal = new Vec2(0, -50);
             double a = (2 * Math.PI) * (angle / 255d);
             normal.rotate(-a);

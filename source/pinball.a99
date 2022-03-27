@@ -917,23 +917,21 @@ get_background_collision_map_value:
 * Returns value in r1
 *
 * The ROM contains the collision map split into banks of 8K.
-* Each bank contains 48 lines of 160 pixels of data ordered from top to bottom.
+* Each bank contains 32 lines of 256 pixels of data ordered from top to bottom.
 * Each pixel is represented by one byte, which determines the normal angle (1-255),
 * or 0 if there is no collision.
-* The data start at bank offset coll_bank_offset = >200.
 * The first bank is selected by writing to @coll_map_bank.
 *
 * Modifies r0-r2
 *
 get_coll_value:
-       mov  r1,r2                      ; Move y to LSW
-       clr  r1                         ; Clear MSW
-       div  @w_coll_map_bank_height,r1 ; Bank no in r1, line offset in r2
-       sla  r1,1                       ; Convert to bank offset
+       mov  r1,r2                      ; Copy y
+       andi r1,>01e0
+       srl  r1,4                       ; Bank
        ai   r1,coll_map_bank           ; Add base bank offset
        seto *r1                        ; Select bank
-       mov  r2,r1                      ; line offset
-       mpy  @w_map_width,r1            ; Multiply line width and line offset
+       andi r2,>001f                   ; Line
+       swpb r2                         ; Line offset
        a    r0,r2                      ; Add X
        ai   r2,coll_bank_base          ; Add ROM bank base address
        clr  r1                         ; Clear result reg
@@ -946,16 +944,16 @@ get_coll_value:
 *
 * Calculate normal vector at the given angle 0-254 in FP 8.8 format.
 
-* An angle of 0 corresponds to the normal pointing down (0,-1) and for
-* increasing angles the normals are rotated in a clockwise direction.
-* 0 points down, 64 points left, 128 points up, and 192 points right.
+* An angle of 0 corresponds to the normal pointing up (0,-1) and for
+* increasing angles the normals are rotated in a counter-clockwise direction.
+* 0 points up, 64 points left, 128 points down, and 192 points right.
 *
-* r1: angle (0-254)
+* r1: angle (0-254, only even values)
 *
 * On return @nx contains the X coordinate and @ny contains the Y coordinate.
 *
 calc_normal:
-       sla  r1,2
+       sla  r1,1
        ai   r1,normals
        mov  *r1+,@nx
        mov  *r1,@ny
