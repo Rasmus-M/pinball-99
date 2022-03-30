@@ -7,6 +7,7 @@
 * Rasmus Moustgaard <rasmus.moustgaard@gmail.com>
 *
 
+       copy "r.a99"
        copy "macros.a99"
        copy "sound-defs.a99"
 
@@ -87,6 +88,8 @@ flipper_col_map_height:
        equ  64
 flipper_col_map_size:
        equ  flipper_col_map_width*flipper_col_map_height
+plunger_y:
+       equ  448
 
 **
 * Memory mapped addresses
@@ -193,8 +196,10 @@ right_flipper_dir:
        equ  left_flipper_dir+2
 collision_type:                        ; 0=background, -1=left flipper, 1=right flipper
        equ  right_flipper_dir+2
-launch_speed:
+special_collision:
        equ  collision_type+2
+launch_speed:
+       equ  special_collision+2
 player_status:
        equ  launch_speed+2
 score_msw:                             ; Low word of score
@@ -250,6 +255,13 @@ loop:
        inc  @frame
        mov  @player_status,r0
        jeq  loop
+*      Ball lost
+       bl   @play_explosion_1
+       li   r9,120
+!      bl   @vsync
+       bl   @snd_player
+       dec  r9
+       jne  -!
        jmp  restart
 
 ********************************************************************************
@@ -375,47 +387,57 @@ user_input_3:
 user_input_4:
        li   r0,KEY_SP
        bl   @check_key
-       jeq  user_input_6
+       jeq  user_input_5
 *      Space pressed
        mov  @x,r0
        s    @x_init,r0
        abs  r0
        ci   r0,>0040
-       jgt  user_input_5
+       jgt  user_input_6
        mov  @y,r0
-       ci   r0,>1600
-       jlt  user_input_7
+       ci   r0,>1900
+       jlt  user_input_6
        mov  @launch_speed,r0
        ci   r0,>0600
-       jgt  user_input_7
+       jgt  user_input_6
+*      Add launch speed
        ai   r0,>0020
        mov  r0,@launch_speed
-       jmp  user_input_7
+       srl  r0,5
+       ai   r0,plunger_y
+       mov  r0,@plunger
+       jmp  user_input_8
 user_input_5:
-*      Tilt
-       li   r0,>0080
-       mov  @frame,r1
-       andi r1,1
-       jeq  !
-       neg  r0
-!
-       mov  r0,@vx
-       li   r0,->0100
-       mov  r0,@vy
-       jmp  user_input_7
-user_input_6:
 *      Space not pressed
        mov  @launch_speed,r0
-       jeq  user_input_7
+       jeq  user_input_6
        mov  @x,r1
        s    @x_init,r1
        abs  r1
        ci   r1,>0040
-       jgt  user_input_7
+       jgt  user_input_6
+*      Launch
        s    r0,@vy
        clr  @launch_speed
        bl   @play_extra
+       li   r0,plunger_y
+       mov  r0,@plunger
+       jmp  user_input_8
+user_input_6:
+       li   r0,KEY_T
+       bl   @check_key
+       jeq  user_input_8
+*      Tilt
+       li   r0,>0080
+       mov  @frame,r1
+       andi r1,1
+       jeq  user_input_7
+       neg  r0
 user_input_7:
+       mov  r0,@vx
+       li   r0,->0100
+       mov  r0,@vy
+user_input_8:
        .endproc
 *// user_input
 
@@ -468,10 +490,10 @@ check_collision:
        .proc
        clr  @collision_type
        bl   @check_flipper_collision
-       mov  r1,r1                      ; Test colllision map value
+       mov  r1,r1                      ; Test colllision map value for flippers
        jne  check_collision_1
        bl   @get_background_collision_map_value
-       mov  r1,r1                      ; Test colllision map value
+       mov  r1,r1                      ; Test colllision map value for background
        jeq  check_collision_6          ; Zero means no collision
 check_collision_1:
        dec  r1                         ; Convert to zero-based
@@ -547,6 +569,10 @@ check_collision_5:
 *      Play sound
        bl   @play_shot
 check_collision_6:
+       mov  @special_collision,r0
+       jeq  check_collision_7
+       bl   @handle_special_collision
+check_collision_7:
        .endproc
 *// check_collision
 
@@ -803,6 +829,20 @@ quit   clr  @>83c4                     ; Reset user ISR address
        blwp @>0000
 *// check_quit
 
+
+
+*********************************************************************************
+*
+* Handle special collision
+*
+handle_special_collision
+       .proc
+       li   r0,50
+       bl   @add_score
+       bl   @play_shield
+       .endproc
+*// handle_special_collision
+
 *********************************************************************************
 *
 * Check for collision with flippers
@@ -904,6 +944,10 @@ get_background_collision_map_value:
        mov  @y,r1
        srl  r1,4
        bl   @get_coll_value
+       mov  r1,r0
+       andi r0,>0080
+       mov r0,@special_collision
+       andi r1,>007f
        .endproc
 *// get_background_collision_map_value
 
@@ -942,18 +986,18 @@ get_coll_value:
 
 *********************************************************************************
 *
-* Calculate normal vector at the given angle 0-254 in FP 8.8 format.
+* Calculate normal vector at the given angle 0-127 in FP 8.8 format.
 
 * An angle of 0 corresponds to the normal pointing up (0,-1) and for
 * increasing angles the normals are rotated in a counter-clockwise direction.
-* 0 points up, 64 points left, 128 points down, and 192 points right.
+* 0 points up, 32 points left, 64 points down, and 96 points right.
 *
-* r1: angle (0-254, only even values)
+* r1: angle (0-127)
 *
 * On return @nx contains the X coordinate and @ny contains the Y coordinate.
 *
 calc_normal:
-       sla  r1,1
+       sla  r1,2
        ai   r1,normals
        mov  *r1+,@nx
        mov  *r1,@ny
@@ -1404,7 +1448,8 @@ static_sprites:
        data 293                        ; y
        byte 181,16
        byte 2,14,8,10
-       data 448                        ; y
+plunger:
+       data plunger_y                  ; y
        byte 232,4
        byte 14,14,14,14
        data -1

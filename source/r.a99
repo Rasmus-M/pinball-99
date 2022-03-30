@@ -1,0 +1,18 @@
+r0     equ  0
+r1     equ  1
+r2     equ  2
+r3     equ  3
+r4     equ  4
+r5     equ  5
+r6     equ  6
+r7     equ  7
+r8     equ  8
+r9     equ  9
+r10    equ  10
+r11    equ  11
+r12    equ  12
+r13    equ  13
+r14    equ  14
+r15    equ  15
+
+
