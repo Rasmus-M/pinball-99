@@ -44,6 +44,10 @@ info_panel_char_size:
        equ  info_panel_char_width*info_panel_char_height
 info_panel_n_chars:
        equ  info_panel_width_char/info_panel_char_width
+chr_space:
+       equ  0
+chr_zero:
+       equ  16
 play_field_width_char:
        equ  screen_width_char
 play_field_top_char:
@@ -89,7 +93,15 @@ flipper_col_map_height:
 flipper_col_map_size:
        equ  flipper_col_map_width*flipper_col_map_height
 plunger_y:
-       equ  448
+       equ  496
+collision_type_none:
+       equ  0
+collision_type_background:
+       equ  1
+collision_type_left_flipper:
+       equ  2
+collision_type_right_flipper:
+       equ  3
 
 **
 * Memory mapped addresses
@@ -156,8 +168,10 @@ vdp_status:
        equ frame+2
 double_buffer_flag:
        equ  vdp_status+2
-scroll_y:
+info_panel_updates:
        equ  double_buffer_flag+2
+scroll_y:
+       equ  info_panel_updates+2
 x:                                     ; Ball position x (FP 12.4)
        equ  scroll_y+2
 y:                                     ; Ball position y (FP 12.4)
@@ -194,12 +208,14 @@ left_flipper_dir:
        equ  right_flipper_state+2
 right_flipper_dir:
        equ  left_flipper_dir+2
-collision_type:                        ; 0=background, -1=left flipper, 1=right flipper
+collision_type:                        ; See collision_type equates
        equ  right_flipper_dir+2
 special_collision:
        equ  collision_type+2
-launch_speed:
+last_special:
        equ  special_collision+2
+launch_speed:
+       equ  last_special+2
 player_status:
        equ  launch_speed+2
 score_msw:                             ; Low word of score
@@ -238,9 +254,11 @@ main:
        li   r10,stack                  ; Setup stack pointer
        li   r15,vdpwd
        bl   @one_time_init
+       clr  @double_buffer_flag
 restart:
        bl   @init_game
-       clr  @double_buffer_flag
+       li   r0,txt_pinball
+       bl   @display_text_now
        clr  @frame
 loop:
        bl   @vsync
@@ -249,20 +267,38 @@ loop:
        bl   @set_scroll_position
        bl   @draw_info_panel
        bl   @draw_play_field
-       bl   @interrupt_check
        bl   @update_sprite_attr_table
+       bl   @interrupt_check
        bl   @check_quit
        inc  @frame
        mov  @player_status,r0
        jeq  loop
 *      Ball lost
+       clr  @vx
+       clr  @vy
        bl   @play_explosion_1
-       li   r9,120
-!      bl   @vsync
-       bl   @snd_player
-       dec  r9
-       jne  -!
+       li   r0,120
+       bl   @pause
        jmp  restart
+
+********************************************************************************
+*
+* Pause
+*
+* r0: number of frames to pause
+*
+pause:
+       .proc
+       mov  r0,@pause_frames
+pause_1:
+       bl   @vsync
+       bl   @interrupt_routine
+       dec  @pause_frames
+       jne  pause_1
+       .endproc
+pause_frames:
+       data 0
+*// pause
 
 ********************************************************************************
 *
@@ -290,7 +326,7 @@ interrupt_check_1:
 interrupt_routine:
        mov  r10,@wrksp2+20             ; Use same SP in new workspace
        lwpi wrksp2                     ; Switch to new workspace
-       bl   @snd_player
+       bl   @module_player
        bl   @user_input
        bl   @move_ball
        bl   @check_collision
@@ -395,7 +431,7 @@ user_input_4:
        ci   r0,>0040
        jgt  user_input_6
        mov  @y,r0
-       ci   r0,>1900
+       ci   r0,>1c00
        jlt  user_input_6
        mov  @launch_speed,r0
        ci   r0,>0600
@@ -403,10 +439,10 @@ user_input_4:
 *      Add launch speed
        ai   r0,>0020
        mov  r0,@launch_speed
-       srl  r0,5
+       srl  r0,7
        ai   r0,plunger_y
        mov  r0,@plunger
-       jmp  user_input_8
+       jmp  user_input_9
 user_input_5:
 *      Space not pressed
        mov  @launch_speed,r0
@@ -422,22 +458,25 @@ user_input_5:
        bl   @play_extra
        li   r0,plunger_y
        mov  r0,@plunger
-       jmp  user_input_8
+       jmp  user_input_9
 user_input_6:
-       li   r0,KEY_T
+       li   r0,KEY_X
        bl   @check_key
        jeq  user_input_8
-*      Tilt
        li   r0,>0080
-       mov  @frame,r1
-       andi r1,1
-       jeq  user_input_7
-       neg  r0
-user_input_7:
        mov  r0,@vx
        li   r0,->0100
        mov  r0,@vy
+       jmp  user_input_9
 user_input_8:
+       li   r0,KEY_n
+       bl   @check_key
+       jeq  user_input_9
+       li   r0,->0080
+       mov  r0,@vx
+       li   r0,->0100
+       mov  r0,@vy
+user_input_9:
        .endproc
 *// user_input
 
@@ -524,9 +563,11 @@ check_collision_1:
 *      Flipper push
 check_collision_2:
        mov  @collision_type,r0
-       jeq  check_collision_6          ; Wall collision
-       jlt  check_collision_3          ; Left flipper
-       jgt  check_collision_4          ; Right flipper
+       ci   r0,collision_type_left_flipper
+       jeq  check_collision_3          ; Left flipper
+       ci   r0,collision_type_right_flipper
+       jeq  check_collision_4          ; Right flipper
+       jmp  check_collision_6          ; Wall collision
 *      Left flipper collision
 check_collision_3:
        mov  @left_flipper_dir,r0
@@ -617,6 +658,9 @@ set_scroll_position_3:
 *
 draw_info_panel:
        .proc
+       mov  @info_panel_updates,r0
+       jeq draw_info_panel_3
+       dec  @info_panel_updates
        mov  @double_buffer_flag,r0
        andi r0,>400
        ai   r0,name_table
@@ -641,6 +685,7 @@ draw_info_panel_2:
        ai   r4,info_panel_char_width
        dec  r3
        jne  draw_info_panel_1
+draw_info_panel_3:
        .endproc
 *// draw_info_panel
 
@@ -829,17 +874,53 @@ quit   clr  @>83c4                     ; Reset user ISR address
        blwp @>0000
 *// check_quit
 
-
-
 *********************************************************************************
 *
 * Handle special collision
 *
 handle_special_collision
        .proc
-       li   r0,50
+       mov  @collision_type,r0
+       jeq  handle_special_collision_3
+       mov  @x,r0
+       srl  r0,4
+       mov  @y,r1
+       srl  r1,4
+*      Check bumpers
+       li   r2,bumpers
+handle_special_collision_1
+       mov  *r2,r3
+       jlt  handle_special_collision_3
+       c    r0,@bumper_x1(r2)
+       jl   handle_special_collision_2
+       c    r0,@bumper_x2(r2)
+       jhe  handle_special_collision_2
+       c    r1, @bumper_y1(r2)
+       jl   handle_special_collision_2
+       c    r1,@bumper_y2(r2)
+       jhe  handle_special_collision_2
+*      Bumper found
+       c    r2,@last_special
+       jeq  handle_special_collision_4
+       mov  r2,@last_special
+       mov  @vx,r0
+       sra  r0,1
+       a    r0,@vx
+       mov  @vy,r0
+       sra  r0,1
+       a    r0,@vy
+       mov   @bumper_score(r2),r0
        bl   @add_score
        bl   @play_shield
+       jmp handle_special_collision_4
+handle_special_collision_2:
+       ai   r2,bumper_size
+       jmp  handle_special_collision_1
+handle_special_collision_3:
+       li   r0,20
+       bl   @add_score
+       bl   @play_warning
+handle_special_collision_4:
        .endproc
 *// handle_special_collision
 
@@ -872,7 +953,8 @@ check_flipper_collision:
        jmp  check_flipper_collision_3
 *      Left flipper
 check_flipper_collision_1:
-       dec  @collision_type
+       li   r0,collision_type_left_flipper
+       mov  r0,@collision_type
        mov  @left_flipper_state,r0
        sla  r0,2
        ai   r0,left_flipper_collision_maps
@@ -885,7 +967,8 @@ check_flipper_collision_1:
        jmp  check_flipper_collision_4
 *      Right flipper
 check_flipper_collision_2:
-       inc  @collision_type
+       li   r0,collision_type_right_flipper
+       mov  r0,@collision_type
        mov  @right_flipper_state,r0
        sla  r0,2
        ai   r0,right_flipper_collision_maps
@@ -948,6 +1031,10 @@ get_background_collision_map_value:
        andi r0,>0080
        mov r0,@special_collision
        andi r1,>007f
+       jeq  get_background_collision_map_value_1
+       li   r0,collision_type_background
+       mov  r0,@collision_type
+get_background_collision_map_value_1:
        .endproc
 *// get_background_collision_map_value
 
@@ -1115,34 +1202,90 @@ add_score:
        jnc  add_score_1
        inc  @score_msw
 add_score_1:
-       bl   @display_score
+       bl   @update_score_buffer
        .endproc
 *// add_score
 
 *********************************************************************
 *
-* Display score
+* Update score buffer
 *
 * Modifies r0-r4
 *
-display_score:
+update_score_buffer:
+       .proc
        mov  @score_msw,r0
        mov  @score_lsw,r1
        li   r2,8                       ; Counter
        li   r3,10                      ; Divisor
-       li   r4,info_panel_buffer+7     ; Start backwards
+       li   r4,score_buffer+7     ; Start backwards
 *      Digit loop
-display_score_1:
+update_score_buffer_1:
        div  r3,r0                      ; Divide to get digit as remainder in r1
+       ai   r1,chr_zero
        swpb r1                         ; Swap to high byte
        movb r1,*r4                     ; Store digit in buffer
        dec  r4                         ; Next digit in buffer (working backwards)
        mov  r0,r1
+       jeq  update_score_buffer_2
        clr  r0
        dec  r2                         ; Count down
-       jne  display_score_1            ; Digit loop
+       jne  update_score_buffer_1            ; Digit loop
+update_score_buffer_2:
+       bl   @display_score_buffer
        .endproc
-*// display_score
+*// update_score_buffer
+
+*********************************************************************
+*
+* Display score buffer
+*
+display_score_buffer:
+       li   r0,score_buffer
+       li   r1,info_panel_buffer
+       mov  *r0+,*r1+
+       mov  *r0+,*r1+
+       mov  *r0+,*r1+
+       mov  *r0+,*r1+
+       inct @info_panel_updates
+       rt
+*// display_score_buffer
+
+*********************************************************************
+*
+* Display text
+*
+* r0: 8 characters of text to display
+*
+display_text:
+       li   r1,info_panel_buffer
+       li   r2,info_panel_n_chars
+       li   r3,32*256
+display_text_1:
+       movb *r0+,r4
+       sb   r3,r4
+       movb r4,*r1+
+       dec  r2
+       jne  display_text_1
+       inct @info_panel_updates
+       rt
+*// display_text
+
+*********************************************************************
+*
+* Display text to both double buffers
+*
+* r0: 8 characters of text to display
+*
+display_text_now:
+       .proc
+       bl   @display_text
+       bl   @draw_info_panel
+       inv  @double_buffer_flag
+       bl   @draw_info_panel
+       inv  @double_buffer_flag
+       .endproc
+*// display_text_now
 
 *********************************************************************************
 *
@@ -1168,10 +1311,24 @@ init_game:
        mov  @y,@y1
        clr  @score_lsw
        clr  @score_msw
-       clr  r0
-       bl   @add_score
+       bl   @reset_score_buffer
+       bl   @display_score_buffer
        .endproc
 *// init_game
+
+*********************************************************************
+*
+* Reset score buffer
+*
+reset_score_buffer:
+       li   r0,score_buffer
+       li   r1,chr_zero*256+chr_zero
+       mov  r1,*r0+
+       mov  r1,*r0+
+       mov  r1,*r0+
+       mov  r1,*r0+
+       rt
+*// reset_score_buffer
 
 *********************************************************************************
 *
@@ -1196,6 +1353,10 @@ one_time_init_2:
        jne one_time_init_2
        bl   @graphics_mode
        bl   @init_vdp_ram
+       clr  @info_panel_updates
+*      Play music
+       li   r0,bipbop_module
+       bl   @play_module
        .endproc
 *// one_time_init
 
@@ -1383,18 +1544,22 @@ check_key:
 *
        copy "vdp.a99"
        copy "sound-player.a99"
+       copy "music-player.a99"
        copy "sound-fx-routines.a99"
 
 ***************************************************************************
 *
 * Data
 *
+txt_pinball:
+       text 'PINBALL!'
+
 init_values:
        equ  $
 x_init:
-       data >0f00
+       data >0f00                      ; >0f00
 y_init:
-       data >1b80
+       data >1e80                      ; >1e80
 vx_init:
        data >0000
 vy_init:
@@ -1414,7 +1579,30 @@ w_info_panel_char_size:
        data  info_panel_char_size
 
 info_panel_buffer:
-       byte 0,1,2,3,4,5,6,7
+       byte chr_space,chr_space,chr_space,chr_space
+       byte chr_space,chr_space,chr_space,chr_space
+score_buffer:
+       byte chr_zero,chr_zero,chr_zero,chr_zero
+       byte chr_zero,chr_zero,chr_zero,chr_zero
+
+bumper_x1:
+       equ  0
+bumper_y1:
+       equ  2
+bumper_x2:
+       equ  4
+bumper_y2:
+       equ  6
+bumper_score:
+       equ  8
+bumper_size:
+       equ  10
+
+bumpers:
+       data 64,128,112,176,50
+       data 136,144,184,192,20
+       data 80,192,128,240,50
+       data -1
 
 cover_sprites:
        byte play_field_top-17,0,0,0
@@ -1465,6 +1653,7 @@ normals:
        copy "map.a99"
        copy "flippers.a99"
        copy "sound-fx.a99"
+       copy "music.a99"
        copy "chars.a99"
 
 upper_memory_max:
