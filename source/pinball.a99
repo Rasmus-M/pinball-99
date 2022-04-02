@@ -222,8 +222,10 @@ launch_speed:
        equ  last_special+2
 player_status:
        equ  launch_speed+2
-score_msw:                             ; Low word of score
+balls:
        equ  player_status+2
+score_msw:                             ; Low word of score
+       equ  balls+2
 score_lsw:                             ; High word of score
        equ  score_msw+2
 snd_channel_1:
@@ -258,11 +260,12 @@ main:
        li   r10,stack                  ; Setup stack pointer
        li   r15,vdpwd
        bl   @one_time_init
-       clr  @double_buffer_flag
-restart:
+restart_game:
        bl   @init_game
        li   r0,txt_pinball
        bl   @display_text_now
+restart_ball:
+       bl   @init_ball
        clr  @frame
 loop:
        bl   @vsync
@@ -285,7 +288,20 @@ loop:
        bl   @play_explosion_1
        li   r0,120
        bl   @pause
-       jmp  restart
+       dec  @balls
+       jeq  game_over
+       mov  @balls,r0
+       ci   r0,2
+       jne  !
+       li   r0,txt_ball_2
+       jmp  !!
+!      li   r0,txt_ball_3
+!      bl   @display_text
+       jmp  restart_ball
+game_over:
+       li   r0,240
+       bl   @pause
+       jmp  restart_game
 
 ********************************************************************************
 *
@@ -1321,6 +1337,19 @@ display_text_now:
 *
 init_game:
        .proc
+       clr  @score_lsw
+       clr  @score_msw
+       li   r0,3
+       mov  r0,@balls
+       .endproc
+*// init_game
+
+*********************************************************************************
+*
+* Initialize ball
+*
+init_ball:
+       .proc
        clr  @scroll_y
        li   r0,init_values
        mov  *r0+,@x
@@ -1335,12 +1364,10 @@ init_game:
        clr  @right_flipper_state
        clr  @launch_speed
        clr  @player_status
-       clr  @score_lsw
-       clr  @score_msw
        bl   @reset_score_buffer
        mov  @two,@play_field_updates
        .endproc
-*// init_game
+*// init_ball
 
 *********************************************************************
 *
@@ -1382,6 +1409,8 @@ one_time_init_2:
        bl   @graphics_mode
        bl   @init_vdp_ram
        clr  @info_panel_updates
+       clr  @play_field_updates
+       clr  @double_buffer_flag
 *      Play music
        li   r0,bipbop_module
        bl   @play_module
@@ -1585,6 +1614,10 @@ txt_launch:
        text ' LAUNCH '
 txt_kapow:
        text ' KAPOW! '
+txt_ball_2:
+       text ' BALL 2 '
+txt_ball_3:
+       text ' BALL 3 '
 
 init_values:
        equ  $
