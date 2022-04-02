@@ -615,6 +615,8 @@ check_collision_5:
        a    r0,@vy
 *      Play sound
        bl   @play_shot
+       li   r0,txt_kapow
+       bl   @display_text
 check_collision_6:
        mov  @special_collision,r0
        jeq  check_collision_7
@@ -1581,6 +1583,8 @@ txt_pinball:
        text 'PINBALL!'
 txt_launch:
        text ' LAUNCH '
+txt_kapow:
+       text ' KAPOW! '
 
 init_values:
        equ  $
