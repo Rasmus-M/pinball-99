@@ -157,11 +157,13 @@ padcon:
        equ  stack+>10                  ; Start of pad constants
 one:
        equ  padcon
+two:
+       equ  one+2
 **
 * PAD variables
 *
 padvar:                                ; Start of pad variables
-       equ  one+2
+       equ  two+2
 frame:
        equ padvar
 vdp_status:
@@ -170,8 +172,10 @@ double_buffer_flag:
        equ  vdp_status+2
 info_panel_updates:
        equ  double_buffer_flag+2
-scroll_y:
+play_field_updates:
        equ  info_panel_updates+2
+scroll_y:
+       equ  play_field_updates+2
 x:                                     ; Ball position x (FP 12.4)
        equ  scroll_y+2
 y:                                     ; Ball position y (FP 12.4)
@@ -264,6 +268,8 @@ loop:
        bl   @vsync
        bl   @set_vdp_regs
        bl   @interrupt_routine
+       mov  @x,@x1
+       mov  @y,@y1
        bl   @set_scroll_position
        bl   @draw_info_panel
        bl   @draw_play_field
@@ -332,8 +338,6 @@ interrupt_routine:
        bl   @check_collision
        bl   @move_ball
        bl   @check_collision
-       mov  @x,@x1
-       mov  @y,@y1
        lwpi wrksp                      ; Switch to old workspace
        b    *r11
 *// interrupt_routine
@@ -458,6 +462,8 @@ user_input_5:
        bl   @play_extra
        li   r0,plunger_y
        mov  r0,@plunger
+       li   r0,txt_launch
+       bl   @display_text
        jmp  user_input_9
 user_input_6:
        li   r0,KEY_X
@@ -647,7 +653,10 @@ set_scroll_position_1:
        li   r2,scroll_y_max
 set_scroll_position_2:
        andi r2,>fffe
+       c    r2,@scroll_y
+       jeq  set_scroll_position_3
        mov  r2,@scroll_y
+       mov  @two,@play_field_updates
 set_scroll_position_3:
        rt
 *// set_scroll_position
@@ -698,6 +707,9 @@ half_field_size:
 *
 draw_play_field:
        .proc
+       mov  @play_field_updates,r0
+       jeq  draw_play_field_1
+       dec  @play_field_updates
        mov  @double_buffer_flag,r0
        andi r0,>400
        ai   r0,name_table+(play_field_top_char*screen_width_char)
@@ -712,6 +724,7 @@ draw_play_field:
        li   r2,half_field_size/8       ; 8 times unrolled
        bl   @vdp_copy_pad
        bl   @interrupt_check
+draw_play_field_1:
        .endproc
 *// draw_play_field
 
@@ -1247,7 +1260,7 @@ display_score_buffer:
        mov  *r0+,*r1+
        mov  *r0+,*r1+
        mov  *r0+,*r1+
-       inct @info_panel_updates
+       mov  @two,@info_panel_updates
        rt
 *// display_score_buffer
 
@@ -1267,7 +1280,7 @@ display_text_1:
        movb r4,*r1+
        dec  r2
        jne  display_text_1
-       inct @info_panel_updates
+       mov  @two,@info_panel_updates
        rt
 *// display_text
 
@@ -1307,12 +1320,10 @@ init_game:
        clr  @right_flipper_state
        clr  @launch_speed
        clr  @player_status
-       mov  @x,@x1
-       mov  @y,@y1
        clr  @score_lsw
        clr  @score_msw
        bl   @reset_score_buffer
-       bl   @display_score_buffer
+       mov  @two,@play_field_updates
        .endproc
 *// init_game
 
@@ -1338,6 +1349,8 @@ one_time_init:
        .proc
        li   r0,1
        mov  r0,@one
+       inc  r0
+       mov  r0,@two
        li   r1,padvar
        li   r2,pad_max-padvar
 one_time_init_1:
@@ -1553,6 +1566,8 @@ check_key:
 *
 txt_pinball:
        text 'PINBALL!'
+txt_launch:
+       text ' LAUNCH '
 
 init_values:
        equ  $
