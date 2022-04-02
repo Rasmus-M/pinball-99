@@ -916,12 +916,8 @@ handle_special_collision_1
        c    r2,@last_special
        jeq  handle_special_collision_4
        mov  r2,@last_special
-       mov  @vx,r0
-       sra  r0,1
-       a    r0,@vx
-       mov  @vy,r0
-       sra  r0,1
-       a    r0,@vy
+       a    @nx,@vx
+       a    @ny,@vy
        mov   @bumper_score(r2),r0
        bl   @add_score
        bl   @play_shield
