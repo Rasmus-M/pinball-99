@@ -893,43 +893,60 @@ quit   clr  @>83c4                     ; Reset user ISR address
 *
 handle_special_collision
        .proc
-       mov  @collision_type,r0
-       jeq  handle_special_collision_3
+*      Find special
        mov  @x,r0
        srl  r0,4
        mov  @y,r1
        srl  r1,4
-*      Check bumpers
-       li   r2,bumpers
+       li   r2,specials
 handle_special_collision_1
        mov  *r2,r3
-       jlt  handle_special_collision_3
-       c    r0,@bumper_x1(r2)
+       jlt  handle_special_collision_6
+       c    r0,@special_x1(r2)
        jl   handle_special_collision_2
-       c    r0,@bumper_x2(r2)
+       c    r0,@special_x2(r2)
        jhe  handle_special_collision_2
-       c    r1, @bumper_y1(r2)
+       c    r1, @special_y1(r2)
        jl   handle_special_collision_2
-       c    r1,@bumper_y2(r2)
+       c    r1,@special_y2(r2)
        jhe  handle_special_collision_2
-*      Bumper found
-       c    r2,@last_special
+*      Special found
+       mov  @special_type(r2),r0
+       ci   r0,special_type_bumper
+       jeq  handle_special_collision_3
+       ci   r0,special_type_rollover
        jeq  handle_special_collision_4
+       jmp  handle_special_collision_5
+handle_special_collision_2:
+       ai   r2,special_size
+       jmp  handle_special_collision_1
+handle_special_collision_3:
+*      Bumper
+       mov  @collision_type,r0
+       jeq  handle_special_collision_6
+       c    r2,@last_special
+       jeq  handle_special_collision_6
        mov  r2,@last_special
        a    @nx,@vx
        a    @ny,@vy
-       mov   @bumper_score(r2),r0
+       mov  @special_score(r2),r0
        bl   @add_score
        bl   @play_shield
-       jmp handle_special_collision_4
-handle_special_collision_2:
-       ai   r2,bumper_size
-       jmp  handle_special_collision_1
-handle_special_collision_3:
-       li   r0,20
+       jmp handle_special_collision_6
+handle_special_collision_4:
+*      Rollover
+       c    r2,@last_special
+       jeq  handle_special_collision_6
+       mov  r2,@last_special
+       mov  @special_score(r2),r0
        bl   @add_score
        bl   @play_warning
-handle_special_collision_4:
+       jmp handle_special_collision_6
+handle_special_collision_5:
+*      Other
+       mov  @special_score(r2),r0
+       bl   @add_score
+handle_special_collision_6:
        .endproc
 *// handle_special_collision
 
@@ -1596,23 +1613,31 @@ score_buffer:
        byte chr_zero,chr_zero,chr_zero,chr_zero
        byte chr_zero,chr_zero,chr_zero,chr_zero
 
-bumper_x1:
+special_type:
        equ  0
-bumper_y1:
+special_x1:
        equ  2
-bumper_x2:
+special_y1:
        equ  4
-bumper_y2:
+special_x2:
        equ  6
-bumper_score:
+special_y2:
        equ  8
-bumper_size:
+special_score:
        equ  10
-
-bumpers:
-       data 64,128,112,176,50
-       data 136,144,184,192,20
-       data 80,192,128,240,50
+special_size:
+       equ  12
+special_type_bumper:
+       equ  1
+special_type_rollover:
+       equ  2
+specials:
+       data special_type_bumper,64,128,112,176,50
+       data special_type_bumper,136,144,184,192,20
+       data special_type_bumper,80,192,128,240,50
+       data special_type_rollover,124,72,140,88,20
+       data special_type_rollover,156,72,172,88,50
+       data special_type_rollover,191,274,207,290,10000
        data -1
 
 cover_sprites:
