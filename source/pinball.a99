@@ -1490,7 +1490,7 @@ init_vdp_ram_1:
 *      Sprite patterns
        li   r0,sprite_pattern_table
        li   r1,sprite_patterns
-       li   r2,32*32
+       li   r2,64*32
        bl   @vmbw
 *      Cover sprites
        li   r0,sprite_attr_table
@@ -1622,7 +1622,7 @@ txt_ball_3:
 init_values:
        equ  $
 x_init:
-       data >0f00                      ; >0f00
+       data >0f40                      ; >0f00
 y_init:
        data >1e80                      ; >1e80
 vx_init:
@@ -1669,12 +1669,14 @@ special_type_bumper:
 special_type_rollover:
        equ  2
 specials:
-       data special_type_bumper,64,128,112,176,50
-       data special_type_bumper,136,144,184,192,20
-       data special_type_bumper,80,192,128,240,50
-       data special_type_rollover,124,72,140,88,20
-       data special_type_rollover,156,72,172,88,50
-       data special_type_rollover,191,274,207,290,10000
+       data special_type_bumper,72,104,128,160,50
+       data special_type_bumper,120,152,176,208,20
+       data special_type_rollover,104,56,120,72,100
+       data special_type_rollover,128,64,144,80,200
+       data special_type_rollover,152,64,168,80,300
+       data special_type_rollover,176,56,192,72,400
+*      SAMS tunnel
+       data special_type_rollover,196,278,211,293,1000
        data -1
 
 cover_sprites:
@@ -1685,34 +1687,11 @@ cover_sprites:
        byte >d0,>00
 
 static_sprites:
-       data 72                         ; y
-       byte 124,12                     ; x, pattern
-       byte 3,12,3,12                  ; colors
-       data 74                         ; y
-       byte 156,8
-       byte 10,11,10,11
-       data 144                        ; y
-       byte 80,8
-       byte 4,4,5,5
-       data 160                        ; y
-       byte 152,12
-       byte 6,6,9,9
-       data 208                        ; y
-       byte 96,8
-       byte 3,3,12,12
-       data 255                        ; y
-       byte 201,16
-       byte 8,10,2,14
-       data 274                        ; y
-       byte 191,16
-       byte 10,2,14,8
-       data 293                        ; y
-       byte 181,16
-       byte 2,14,8,10
+       copy "static-sprites.a99"
 plunger:
        data plunger_y                  ; y
-       byte 232,4
-       byte 14,14,14,14
+       byte 236,4
+       byte 15,15,15,15
        data -1
 
 ***************************************************************************

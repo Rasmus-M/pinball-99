@@ -1,7 +1,7 @@
 flippers_area_y_min:
-       equ  440
+       equ  432
 flippers_area_y_max:
-       equ  496
+       equ  488
 left_flipper_area_x_min:
        equ  56
 left_flipper_area_x_max:
@@ -16,7 +16,7 @@ flipper_area_x_center:
 left_flipper:
        equ  $
 left_flipper_sprite_y:
-       data 463
+       data 455
 left_flipper_sprite_x:
        data 64
 left_flipper_sprites:
@@ -28,28 +28,28 @@ left_flipper_sprites:
        data left_flipper_sprites_5
 left_flipper_sprites_0:
        data 2
-       byte 3,10,>20,6
-       byte 4,26,>24,6
+       byte 3,10,>20,4
+       byte 4,26,>24,4
 left_flipper_sprites_1:
        data 2
-       byte 1,11,>30,6
-       byte 1,27,>34,6
+       byte 1,11,>30,4
+       byte 1,27,>34,4
 left_flipper_sprites_2:
        data 2
-       byte 0,13,>40,6
-       byte 0,29,>44,6
+       byte 0,13,>40,4
+       byte 0,29,>44,4
 left_flipper_sprites_3:
        data 2
-       byte -1,11,>50,6
-       byte -1,27,>54,6
+       byte -1,11,>50,4
+       byte -1,27,>54,4
 left_flipper_sprites_4:
        data 2
-       byte -3,10,>60,6
-       byte -4,26,>64,6
+       byte -3,10,>60,4
+       byte -4,26,>64,4
 left_flipper_sprites_5:
        data 2
-       byte -5,9,>70,6
-       byte -9,25,>74,6
+       byte -5,9,>70,4
+       byte -9,25,>74,4
 left_flipper_col_map_y:
        data flippers_area_y_min
 left_flipper_col_map_x:
@@ -64,14 +64,14 @@ left_flipper_collision_maps:
 left_flipper_center_x:
        data 72
 left_flipper_center_y:
-       data 472
+       data 464
 left_flipper_bottom_y:
-       data 480
+       data 472
 
 right_flipper:
        equ  $
 right_flipper_sprite_y:
-       data 463
+       data 455
 right_flipper_sprite_x:
        data 152
 right_flipper_sprites:
@@ -83,28 +83,28 @@ right_flipper_sprites:
        data right_flipper_sprites_5
 right_flipper_sprites_0:
        data 2
-       byte 3,-10,>2c,6
-       byte 4,-26,>28,6
+       byte 3,-10,>2c,4
+       byte 4,-26,>28,4
 right_flipper_sprites_1:
        data 2
-       byte 1,-11,>3c,6
-       byte 1,-27,>38,6
+       byte 1,-11,>3c,4
+       byte 1,-27,>38,4
 right_flipper_sprites_2:
        data 2
-       byte 0,-13,>4c,6
-       byte 0,-29,>48,6
+       byte 0,-13,>4c,4
+       byte 0,-29,>48,4
 right_flipper_sprites_3:
        data 2
-       byte -1,-11,>5c,6
-       byte -1,-27,>58,6
+       byte -1,-11,>5c,4
+       byte -1,-27,>58,4
 right_flipper_sprites_4:
        data 2
-       byte -3,-10,>6c,6
-       byte -4,-26,>68,6
+       byte -3,-10,>6c,4
+       byte -4,-26,>68,4
 right_flipper_sprites_5:
        data 2
-       byte -5,-9,>7c,6
-       byte -9,-25,>78,6
+       byte -5,-9,>7c,4
+       byte -9,-25,>78,4
 right_flipper_col_map_y:
        data flippers_area_y_min
 right_flipper_col_map_x:
@@ -119,6 +119,6 @@ right_flipper_collision_maps:
 right_flipper_center_x:
        data 160
 right_flipper_center_y:
-       data 472
+       data 464
 right_flipper_bottom_y:
-       data 480
+       data 472
