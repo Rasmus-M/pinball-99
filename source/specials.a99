@@ -1,0 +1,144 @@
+special_type:
+       equ  0
+special_x1:
+       equ  2
+special_y1:
+       equ  4
+special_x2:
+       equ  6
+special_y2:
+       equ  8
+special_score:
+       equ  10
+special_static_sprite:
+       equ  12
+special_group:
+       equ  14
+special_size:
+       equ  16
+
+special_type_none:
+       equ  0
+special_type_bumper:
+       equ  1
+special_type_rollover:
+       equ  2
+special_type_target:
+       equ  3
+special_type_saucer:
+       equ  4
+special_type_gate:
+       equ  5
+
+*      Bumpers
+       data special_type_bumper,72,104,128,160,50,static_bumper_50,0
+       data special_type_bumper,120,152,176,208,20,static_bumper_20,0
+*      Bonus
+       data special_type_rollover,104,56,120,72,100,static_rollover_bonus_t,special_group_bonus_rollovers
+       data special_type_rollover,128,64,144,80,200,static_rollover_bonus_i,special_group_bonus_rollovers
+       data special_type_rollover,152,64,168,80,300,static_rollover_bonus_9_1st,special_group_bonus_rollovers
+       data special_type_rollover,176,56,192,72,400,static_rollover_bonus_9_2nd,special_group_bonus_rollovers
+*      SAMS path
+       data special_type_rollover,196,278,211,293,1000,static_arrow_sams,special_group_sams_path
+*      Games path
+       data special_type_rollover,6,152,22,168,100,static_arrow_games,special_group_games_path
+*      PEB targets
+       data special_type_target,198,89,218,119,200,static_target_peb_p,special_group_peb_targets
+       data special_type_target,206,122,225,151,200,static_target_peb_e,special_group_peb_targets
+       data special_type_target,214,154,238,264,200,static_target_peb_b,special_group_peb_targets
+*      F18a targets
+       data special_type_target,1,233,17,249,100,static_target_f18a_f,special_group_f18a_targets
+       data special_type_target,1,257,17,273,100,static_target_f18a_1,special_group_f18a_targets
+       data special_type_target,1,281,17,297,100,static_target_f18a_8,special_group_f18a_targets
+       data special_type_target,1,305,17,321,100,static_target_f18a_a,special_group_f18a_targets
+*      32K targets
+       data special_type_target,110,218,126,135,50,static_target_32k_3,special_group_32k_targets
+       data special_type_target,127,227,143,243,50,static_target_32k_2,special_group_32k_targets
+       data special_type_target,143,236,159,252,50,static_target_32k_k,special_group_32k_targets
+*      500 targets
+       data special_type_target,66,74,82,90,500,static_target_500_1,0
+       data special_type_target,50,90,66,106,500,static_target_500_2,0
+*      Apps ramp
+       data special_type_saucer,27,153,43,170,2000,static_saucer_app,special_group_apps_ramp
+*      Launch gate
+       data special_type_gate,197,33,213,49,0,static_launch_gate,special_group_apps_ramp
+*      End
+       data -1
+
+special_group_type:
+       equ  0
+special_group_state:
+       equ  0
+special_group_n_sprites:
+       equ  4
+special_group_static_sprites:
+       equ  6
+
+special_group_type_none:
+       equ  0
+special_group_type_rollovers:
+       equ  1
+special_group_type_targets:
+       equ  2
+special_group_type_path:
+       equ  3
+special_group_type_ramp:
+       equ  4
+
+special_groups:
+       equ  $
+special_group_bonus_rollovers:
+       data special_group_type_rollovers
+       data 0
+       data 5
+       data static_bonus_x2
+       data static_bonus_x3
+       data static_bonus_x4
+       data static_bonus_x6
+       data static_bonus_x8
+special_group_sams_path:
+       data special_group_type_path
+       data 0
+       data 4
+       data static_sams_s_1st
+       data static_sams_a
+       data static_sams_m
+       data static_sams_s_2nd
+special_group_games_path:
+       data special_group_type_path
+       data 0
+       data 5
+       data static_game_wumpus
+       data static_game_tombstone
+       data static_game_munchman
+       data static_game_invaders
+       data static_game_parsec
+special_group_peb_targets:
+       data special_group_type_targets
+       data 0
+       data 3
+       data static_target_peb_p
+       data static_target_peb_e
+       data static_target_peb_b
+special_group_f18a_targets:
+       data special_group_type_targets
+       data 0
+       data 4
+       data static_target_f18a_f
+       data static_target_f18a_1
+       data static_target_f18a_8
+       data static_target_f18a_a
+special_group_32k_targets:
+       data special_group_type_targets
+       data 0
+       data 3
+       data static_target_32k_3
+       data static_target_32k_2
+       data static_target_32k_k
+special_group_apps_ramp:
+       data special_group_type_ramp
+       data 0
+       data 3
+       data static_app_xb
+       data static_app_minimen
+       data static_app_ea

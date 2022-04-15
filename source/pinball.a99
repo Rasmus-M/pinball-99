@@ -857,7 +857,7 @@ update_static_sprites:
 *      Find first sprite to display
 update_static_sprites_1:
        mov  *r3+,r1                    ; Get y
-       jlt  update_static_sprites_3    ; -1 = end
+       jlt  update_static_sprites_6    ; -1 = end
        c    r1,r0                      ; Is y greater than the y value where it should be displayed?
        jgt  update_static_sprites_1a
        ai   r3,6                       ; Skip over x, pattern, colors
@@ -868,7 +868,7 @@ update_static_sprites_1a:
        ai   r0,play_field_height       ; Sprites with y > this should not be displayed
 update_static_sprites_2:
        c    r1,r0
-       jgt  update_static_sprites_3
+       jgt  update_static_sprites_6
        s    @scroll_y,r1
        dec  r1                         ; Adjust y coordinate
        ai   r1,sprite_y_offset
@@ -876,13 +876,23 @@ update_static_sprites_2:
        movb r1,*r15                    ; Write y
        movb *r3+,*r15                  ; Write x
        movb *r3+,*r15                  ; Write pattern
+       movb *r3,r5                     ; Get color
+       jlt  update_static_sprites_4
+       movb r5,*r15
+       jmp  update_static_sprites_5
+*      Blink
+update_static_sprites_4:
        mov  r3,r5                      ; Address of first color
        a    r4,r5                      ; Add offset
-       movb *r5,*r15                   ; Write color
+       movb *r5,r5
+       andi r5,>7f00
+       movb r5,*r15                    ; Write color
+*      Next sprite
+update_static_sprites_5:
        ai   r3,4                       ; Skip over colors
        mov  *r3+,r1                    ; Get y
        jgt  update_static_sprites_2
-update_static_sprites_3:
+update_static_sprites_6:
        rt
 *// update_static_sprites
 
@@ -919,7 +929,7 @@ handle_special_collision
        li   r2,specials
 handle_special_collision_1
        mov  *r2,r3
-       jlt  handle_special_collision_6
+       jlt  handle_special_collision_3
        c    r0,@special_x1(r2)
        jl   handle_special_collision_2
        c    r0,@special_x2(r2)
@@ -929,44 +939,92 @@ handle_special_collision_1
        c    r1,@special_y2(r2)
        jhe  handle_special_collision_2
 *      Special found
-       mov  @special_type(r2),r0
-       ci   r0,special_type_bumper
+       mov  @special_type(r2),r3
+       sla  r3,1
+       mov  @special_branch_table(r3),r3
        jeq  handle_special_collision_3
-       ci   r0,special_type_rollover
-       jeq  handle_special_collision_4
-       jmp  handle_special_collision_5
+       bl   *r3
+       jmp  handle_special_collision_3
 handle_special_collision_2:
        ai   r2,special_size
        jmp  handle_special_collision_1
 handle_special_collision_3:
-*      Bumper
+       .endproc
+special_branch_table:
+       data 0
+       data handle_special_bumper
+       data handle_special_rollover
+       data handle_special_target
+       data handle_special_saucer
+       data handle_special_gate
+*// handle_special_collision
+
+*********************************************************************************
+*
+* Handle special bumper
+*
+handle_special_bumper
+       .proc
        mov  @collision_type,r0
-       jeq  handle_special_collision_6
+       jeq  handle_special_collision_3
        c    r2,@last_special
-       jeq  handle_special_collision_6
+       jeq  handle_special_collision_3
        mov  r2,@last_special
        a    @nx,@vx
        a    @ny,@vy
        mov  @special_score(r2),r0
        bl   @add_score
        bl   @play_shield
-       jmp handle_special_collision_6
-handle_special_collision_4:
-*      Rollover
+       .endproc
+*// handle_special_bumper
+
+*********************************************************************************
+*
+* Handle special rollover
+*
+handle_special_rollover
+       .proc
        c    r2,@last_special
-       jeq  handle_special_collision_6
+       jeq  handle_special_collision_3
        mov  r2,@last_special
        mov  @special_score(r2),r0
        bl   @add_score
        bl   @play_warning
-       jmp handle_special_collision_6
-handle_special_collision_5:
-*      Other
+       .endproc
+*// handle_special_rollover
+
+*********************************************************************************
+*
+* Handle special target
+*
+handle_special_target
+       .proc
        mov  @special_score(r2),r0
        bl   @add_score
-handle_special_collision_6:
        .endproc
-*// handle_special_collision
+*// handle_special_target
+
+*********************************************************************************
+*
+* Handle special saucer
+*
+handle_special_saucer
+       .proc
+       mov  @special_score(r2),r0
+       bl   @add_score
+       .endproc
+*// handle_special_saucer
+
+*********************************************************************************
+*
+* Handle special gate
+*
+handle_special_gate
+       .proc
+       mov  @special_score(r2),r0
+       bl   @add_score
+       .endproc
+*// handle_special_gate
 
 *********************************************************************************
 *
@@ -1650,35 +1708,6 @@ score_buffer:
        byte chr_zero,chr_zero,chr_zero,chr_zero
        byte chr_zero,chr_zero,chr_zero,chr_zero
 
-special_type:
-       equ  0
-special_x1:
-       equ  2
-special_y1:
-       equ  4
-special_x2:
-       equ  6
-special_y2:
-       equ  8
-special_score:
-       equ  10
-special_size:
-       equ  12
-special_type_bumper:
-       equ  1
-special_type_rollover:
-       equ  2
-specials:
-       data special_type_bumper,72,104,128,160,50
-       data special_type_bumper,120,152,176,208,20
-       data special_type_rollover,104,56,120,72,100
-       data special_type_rollover,128,64,144,80,200
-       data special_type_rollover,152,64,168,80,300
-       data special_type_rollover,176,56,192,72,400
-*      SAMS tunnel
-       data special_type_rollover,196,278,211,293,1000
-       data -1
-
 cover_sprites:
        byte play_field_top-17,0,0,0
        byte play_field_top-17,0,0,0
@@ -1693,6 +1722,8 @@ plunger:
        byte 236,4
        byte 15,15,15,15
        data -1
+specials:
+       copy "specials.a99"
 
 ***************************************************************************
 *
