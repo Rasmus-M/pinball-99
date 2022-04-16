@@ -19,23 +19,23 @@ static_size:
 static_bonus_x4:
        data 5
        byte 140,136
-       byte 6,6,6,6
+       byte 14,6,14,6
 static_bonus_x3:
        data 13
        byte 117,132
-       byte 12,12,12,12              ;
+       byte 14,12,14,12              ;
 static_bonus_x6:
        data 13
        byte 163,140
-       byte 10,10,10,10              ;
+       byte 14,10,14,10              ;
 static_bonus_x2:
        data 29
        byte 96,128
-       byte 4,4,4,4                ;
+       byte 14,4,14,4                ;
 static_bonus_x8:
        data 29
        byte 184,144
-       byte 13,13,13,13              ;
+       byte 14,13,14,13              ;
 static_launch_gate:
        data 38
        byte 202,152
@@ -43,43 +43,43 @@ static_launch_gate:
 static_rollover_bonus_t:
        data 48
        byte 103,160
-       byte 7,7,7,7               ;
+       byte 14,7,14,7               ;
 static_rollover_bonus_9_2nd:
        data 48
        byte 176,168
-       byte 7,7,7,7               ;
+       byte 14,7,14,7               ;
 static_game_parsec:
        data 64
        byte 48,224
-       byte 15,15,15,15               ;
+       byte 14,15,14,15               ;
 static_rollover_bonus_i:
        data 64
        byte 128,164
-       byte 7,7,7,7               ;
+       byte 14,7,14,7               ;
 static_rollover_bonus_9_1st:
        data 64
        byte 152,168
-       byte 7,7,7,7               ;
+       byte 14,7,14,7               ;
 static_target_500_1:
        data 81
        byte 73,148
-       byte 13,13,13,13               ;
+       byte 14,13,14,13               ;
 static_game_invaders:
        data 86
        byte 29,228
-       byte 15,15,15,15               ;
+       byte 14,15,14,15               ;
 static_target_500_2:
        data 97
        byte 57,148
-       byte 13,13,13,13               ;
+       byte 14,13,14,13               ;
 static_target_peb_p:
        data 100
        byte 189,172
-       byte 13,13,13,13             ;
+       byte 12,3,12,3             ;
 static_game_munchman:
        data 114
        byte 14,232
-       byte 15,15,15,15              ;
+       byte 14,15,14,15              ;
 static_bumper_50:
        data 124
        byte 92,8
@@ -87,15 +87,15 @@ static_bumper_50:
 static_target_peb_e:
        data 131
        byte 197,176
-       byte 11,11,11,11             ;
+       byte 12,3,12,3             ;
 static_app_ea:
        data 134
        byte 44,28
-       byte 15,15,15,15               ;
+       byte 14,15,14,15               ;
 static_game_tombstone:
        data 145
        byte 6,236
-       byte 15,15,15,15               ;
+       byte 14,15,14,15               ;
 static_saucer_app:
        data 154
        byte 28,156
@@ -103,15 +103,15 @@ static_saucer_app:
 static_app_minimen:
        data 157
        byte 56,220
-       byte 15,15,15,15              ;
+       byte 14,15,14,15              ;
 static_target_peb_b:
        data 162
        byte 205,180
-       byte 3,3,3,3              ;
+       byte 12,3,12,3              ;
 static_game_wumpus:
        data 172
        byte 140,12
-       byte 15,15,15,15              ;
+       byte 14,15,14,15              ;
 static_bumper_20:
        data 173
        byte 8,240
@@ -119,7 +119,7 @@ static_bumper_20:
 static_app_xb:
        data 181
        byte 68,24
-       byte 15,15,15,15               ;
+       byte 14,15,14,15               ;
 static_arrow_games:
        data 200
        byte 19,20
@@ -131,47 +131,47 @@ static_arrow_app:
 static_target_32k_3:
        data 231
        byte 105,184
-       byte 11,11,11,11             ;
+       byte 4,5,4,5             ;
 static_target_f18a_f:
        data 232
        byte 14,196
-       byte 8,8,8,8               ;
+       byte 6,8,6,8               ;
 static_target_32k_2:
        data 239
        byte 122,188
-       byte 2,2,2,2              ;
+       byte 4,5,4,5              ;
 static_sams_s_2nd:
        data 247
        byte 211,216
-       byte 7,7,7,7              ;
+       byte 10,11,11,11              ;
 static_target_32k_k:
        data 248
        byte 140,192
-       byte 4,4,4,4              ;
+       byte 4,5,4,5              ;
 static_target_f18a_1:
        data 256
        byte 14,200
-       byte 11,11,11,11              ;
+       byte 6,8,6,8              ;
 static_sams_m:
        data 263
        byte 203,212
-       byte 5,5,5,5              ;
+       byte 10,11,10,11              ;
 static_sams_a:
        data 279
        byte 195,208
-       byte 4,4,4,4              ;
+       byte 10,11,10,11              ;
 static_target_f18a_8:
        data 280
        byte 14,204
-       byte 2,2,2,2               ;
+       byte 6,8,6,8               ;
 static_sams_s_1st:
        data 295
        byte 187,216
-       byte 7,7,7,7              ;
+       byte 10,11,10,11              ;
 static_target_f18a_a:
        data 304
        byte 14,208
-       byte 4,4,4,4               ;
+       byte 6,8,6,8               ;
 static_arrow_sams:
        data 314
        byte 177,16

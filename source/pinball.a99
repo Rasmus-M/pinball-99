@@ -919,7 +919,7 @@ quit   clr  @>83c4                     ; Reset user ISR address
 *
 * Handle special collision
 *
-handle_special_collision
+handle_special_collision:
        .proc
 *      Find special
        mov  @x,r0
@@ -963,18 +963,21 @@ special_branch_table:
 *
 * Handle special bumper
 *
-handle_special_bumper
+* r2 points to special structure
+*
+handle_special_bumper:
        .proc
        mov  @collision_type,r0
-       jeq  handle_special_collision_3
+       jeq  handle_special_bumper_1
        c    r2,@last_special
-       jeq  handle_special_collision_3
+       jeq  handle_special_bumper_1
        mov  r2,@last_special
        a    @nx,@vx
        a    @ny,@vy
        mov  @special_score(r2),r0
        bl   @add_score
        bl   @play_shield
+handle_special_bumper_1:
        .endproc
 *// handle_special_bumper
 
@@ -982,14 +985,17 @@ handle_special_bumper
 *
 * Handle special rollover
 *
-handle_special_rollover
+* r2 points to special structure
+*
+handle_special_rollover:
        .proc
        c    r2,@last_special
-       jeq  handle_special_collision_3
+       jeq  handle_special_rollover_1
        mov  r2,@last_special
        mov  @special_score(r2),r0
        bl   @add_score
        bl   @play_warning
+handle_special_rollover_1:
        .endproc
 *// handle_special_rollover
 
@@ -997,16 +1003,45 @@ handle_special_rollover
 *
 * Handle special target
 *
-handle_special_target
+* r2 points to special structure
+*
+handle_special_target:
        .proc
+       mov  @collision_type,r0
+       jeq  handle_special_target_4
+       c    r2,@last_special
+       jeq  handle_special_target_4
+       mov  r2,@last_special
+       mov  @special_static_sprite(r2),r3
+       cb   @static_alt_color_1(r3),@static_color(r3)
+       jeq  handle_special_target_4
+       movb @static_alt_color_1(r3),@static_color(r3)
+       mov  @special_group(r2),r3
+       inc  @special_group_state(r3)
+       c    @special_group_state(r3),@special_group_n_sprites(r3)
+       jlt  handle_special_target_2
+       mov  @special_group_static_sprites(r3),r0
+handle_special_target_1:
+       mov  *r0+,r1
+       movb @static_alt_color_2(r1),@static_color(r1)
+       ai   r1,static_size
+       dec  @special_group_state(r3)
+       jne  handle_special_target_1
+       mov  @special_group_score(r3),r0
+       jmp  handle_special_target_3
+handle_special_target_2:
        mov  @special_score(r2),r0
+handle_special_target_3:
        bl   @add_score
+handle_special_target_4:
        .endproc
 *// handle_special_target
 
 *********************************************************************************
 *
 * Handle special saucer
+*
+* r2 points to special structure
 *
 handle_special_saucer
        .proc
@@ -1018,6 +1053,8 @@ handle_special_saucer
 *********************************************************************************
 *
 * Handle special gate
+*
+* r2 points to special structure
 *
 handle_special_gate
        .proc

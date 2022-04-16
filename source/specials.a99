@@ -47,17 +47,17 @@ special_type_gate:
        data special_type_target,206,122,225,151,200,static_target_peb_e,special_group_peb_targets
        data special_type_target,214,154,238,264,200,static_target_peb_b,special_group_peb_targets
 *      F18a targets
-       data special_type_target,1,233,17,249,100,static_target_f18a_f,special_group_f18a_targets
-       data special_type_target,1,257,17,273,100,static_target_f18a_1,special_group_f18a_targets
-       data special_type_target,1,281,17,297,100,static_target_f18a_8,special_group_f18a_targets
-       data special_type_target,1,305,17,321,100,static_target_f18a_a,special_group_f18a_targets
+       data special_type_target,5,233,21,249,100,static_target_f18a_f,special_group_f18a_targets
+       data special_type_target,5,257,21,273,100,static_target_f18a_1,special_group_f18a_targets
+       data special_type_target,5,281,21,297,100,static_target_f18a_8,special_group_f18a_targets
+       data special_type_target,5,305,21,321,100,static_target_f18a_a,special_group_f18a_targets
 *      32K targets
-       data special_type_target,110,218,126,135,50,static_target_32k_3,special_group_32k_targets
-       data special_type_target,127,227,143,243,50,static_target_32k_2,special_group_32k_targets
-       data special_type_target,143,236,159,252,50,static_target_32k_k,special_group_32k_targets
+       data special_type_target,110,223,126,239,50,static_target_32k_3,special_group_32k_targets
+       data special_type_target,127,231,143,247,50,static_target_32k_2,special_group_32k_targets
+       data special_type_target,144,239,160,255,50,static_target_32k_k,special_group_32k_targets
 *      500 targets
-       data special_type_target,66,74,82,90,500,static_target_500_1,0
-       data special_type_target,50,90,66,106,500,static_target_500_2,0
+       data special_type_target,66,74,82,90,500,static_target_500_1,special_group_500_targets
+       data special_type_target,50,90,66,106,500,static_target_500_2,special_group_500_targets
 *      Apps ramp
        data special_type_saucer,27,153,43,170,2000,static_saucer_app,special_group_apps_ramp
 *      Launch gate
@@ -69,10 +69,14 @@ special_group_type:
        equ  0
 special_group_state:
        equ  0
-special_group_n_sprites:
+special_group_score:
        equ  4
-special_group_static_sprites:
+special_group_n_sprites:
        equ  6
+special_group_static_sprites:
+       equ  8
+special_group_size:
+       equ  10
 
 special_group_type_none:
        equ  0
@@ -90,55 +94,95 @@ special_groups:
 special_group_bonus_rollovers:
        data special_group_type_rollovers
        data 0
+       data 0
        data 5
+       data special_group_bonus_statics
+special_group_sams_path:
+       data special_group_type_path
+       data 0
+       data 0
+       data 4
+       data special_group_sams_statics
+special_group_games_path:
+       data special_group_type_path
+       data 0
+       data 0
+       data 5
+       data special_group_games_statics
+special_group_peb_targets:
+       data special_group_type_targets
+       data 0
+       data 5000
+       data 3
+       data special_group_peb_statics
+special_group_f18a_targets:
+       data special_group_type_targets
+       data 0
+       data 4000
+       data 4
+       data special_group_f18a_statics
+special_group_32k_targets:
+       data special_group_type_targets
+       data 0
+       data 3000
+       data 3
+       data special_group_32k_statics
+special_group_500_targets:
+       data special_group_type_targets
+       data 0
+       data 2000
+       data 2
+       data special_group_500_statics
+special_group_apps_ramp:
+       data special_group_type_ramp
+       data 0
+       data 0
+       data 3
+       data special_group_apps_statics
+*      End
+       data -1
+
+special_group_bonus_statics:
        data static_bonus_x2
        data static_bonus_x3
        data static_bonus_x4
        data static_bonus_x6
        data static_bonus_x8
-special_group_sams_path:
-       data special_group_type_path
-       data 0
-       data 4
+
+special_group_sams_statics:
        data static_sams_s_1st
        data static_sams_a
        data static_sams_m
        data static_sams_s_2nd
-special_group_games_path:
-       data special_group_type_path
-       data 0
-       data 5
+
+special_group_games_statics:
        data static_game_wumpus
        data static_game_tombstone
        data static_game_munchman
        data static_game_invaders
        data static_game_parsec
-special_group_peb_targets:
-       data special_group_type_targets
-       data 0
-       data 3
+
+special_group_peb_statics:
        data static_target_peb_p
        data static_target_peb_e
        data static_target_peb_b
-special_group_f18a_targets:
-       data special_group_type_targets
-       data 0
-       data 4
+
+special_group_f18a_statics:
        data static_target_f18a_f
        data static_target_f18a_1
        data static_target_f18a_8
        data static_target_f18a_a
-special_group_32k_targets:
-       data special_group_type_targets
-       data 0
-       data 3
+
+special_group_32k_statics:
        data static_target_32k_3
        data static_target_32k_2
        data static_target_32k_k
-special_group_apps_ramp:
-       data special_group_type_ramp
-       data 0
-       data 3
+
+special_group_500_statics:
+       data static_target_500_1
+       data static_target_500_2
+
+special_group_apps_statics:
        data static_app_xb
        data static_app_minimen
        data static_app_ea
