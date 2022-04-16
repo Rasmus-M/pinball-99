@@ -79,8 +79,7 @@ public class Convert {
         for (int y = 0; y < image.getHeight(); y++) {
             for (int x = 0; x < image.getWidth(); x++) {
                 int rgb = image.getRGB(x, y);
-                int red = (rgb >> 16) & 0xff;
-                int value = red != 0 ? 128 : 0;
+                int value = (rgb & 0x00ffffff) == 0x00ff00ff ? 128 : 0;
                 raw[i++] = (byte) value;
             }
         }
