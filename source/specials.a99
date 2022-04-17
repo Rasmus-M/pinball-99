@@ -34,9 +34,13 @@ special_type_gate:
        data special_type_bumper,73,105,128,160,50,static_bumper_50,0
        data special_type_bumper,121,153,176,208,20,static_bumper_20,0
 *      Bonus
+special_rollover_bonus_t:
        data special_type_rollover,110,56,115,76,100,static_rollover_bonus_t,special_group_bonus_rollovers
+special_rollover_bonus_i:
        data special_type_rollover,134,64,139,80,200,static_rollover_bonus_i,special_group_bonus_rollovers
+special_rollover_bonus_9_1st:
        data special_type_rollover,158,65,163,79,300,static_rollover_bonus_9_1st,special_group_bonus_rollovers
+special_rollover_bonus_9_2nd:
        data special_type_rollover,182,57,187,77,400,static_rollover_bonus_9_2nd,special_group_bonus_rollovers
 *      SAMS path
        data special_type_rollover,194,286,207,298,1000,static_arrow_sams,special_group_sams_path
@@ -68,15 +72,19 @@ special_type_gate:
 special_group_type:
        equ  0
 special_group_state:
-       equ  0
+       equ  2
 special_group_score:
        equ  4
-special_group_n_sprites:
+special_group_n_specials:
        equ  6
-special_group_static_sprites:
+special_group_specials:
        equ  8
-special_group_size:
+special_group_n_sprites:
        equ  10
+special_group_static_sprites:
+       equ  12
+special_group_size:
+       equ  14
 
 special_group_type_none:
        equ  0
@@ -95,18 +103,24 @@ special_group_bonus_rollovers:
        data special_group_type_rollovers
        data 0
        data 0
+       data 4
+       data special_group_bonus_specials
        data 5
        data special_group_bonus_statics
 special_group_sams_path:
        data special_group_type_path
        data 0
        data 0
+       data 1
+       data 0                          ; specials
        data 4
        data special_group_sams_statics
 special_group_games_path:
        data special_group_type_path
        data 0
        data 0
+       data 1
+       data 0                          ; specials
        data 5
        data special_group_games_statics
 special_group_peb_targets:
@@ -114,11 +128,15 @@ special_group_peb_targets:
        data 0
        data 5000
        data 3
+       data 0                          ; specials
+       data 3
        data special_group_peb_statics
 special_group_f18a_targets:
        data special_group_type_targets
        data 0
        data 4000
+       data 4
+       data 0                          ; specials
        data 4
        data special_group_f18a_statics
 special_group_32k_targets:
@@ -126,21 +144,33 @@ special_group_32k_targets:
        data 0
        data 3000
        data 3
+       data 0                          ; specials
+       data 3
        data special_group_32k_statics
 special_group_500_targets:
        data special_group_type_targets
        data 0
        data 2000
        data 2
+       data 0                          ; specials
+       data 2
        data special_group_500_statics
 special_group_apps_ramp:
        data special_group_type_ramp
        data 0
        data 0
+       data 1
+       data 0                          ; specials
        data 3
        data special_group_apps_statics
 *      End
        data -1
+
+special_group_bonus_specials:
+       data special_rollover_bonus_t
+       data special_rollover_bonus_i
+       data special_rollover_bonus_9_1st
+       data special_rollover_bonus_9_2nd
 
 special_group_bonus_statics:
        data static_bonus_x2
