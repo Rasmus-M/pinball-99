@@ -563,6 +563,7 @@ check_collision_1:
        bl   @calc_normal               ; Calculate n
        bl   @calc_dot_product          ; r3=dot product of v and n
        mov  @dp,r3
+       ci   r3,>fffe
        jgt  check_collision_2          ; If positive the ball is moving in the same direction as the normal
 *      Reflection around normal
        bl   @reflect
@@ -1769,7 +1770,7 @@ txt_ball_3:
 init_values:
        equ  $
 x_init:
-       data >0f40                      ; >0f00
+       data >0f40                      ; >0f40
 y_init:
        data >1e80                      ; >1e80
 vx_init:
