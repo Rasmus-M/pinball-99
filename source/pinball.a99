@@ -414,7 +414,11 @@ user_input:
        li   r0,KEY_Z
        bl   @check_key
        jeq  user_input_1
-       mov  @left_flipper_state,r0
+       mov  @frame,r0
+       andi r0,7
+       jne  !
+       bl   @roll_bonus_specials_left
+!      mov  @left_flipper_state,r0
        ci   r0,max_flipper_state
        jeq  user_input_2
        inc  @left_flipper_state
@@ -431,7 +435,11 @@ user_input_2:
        li   r0,KEY_M
        bl   @check_key
        jeq  user_input_3
-       mov  @right_flipper_state,r0
+       mov  @frame,r0
+       andi r0,7
+       jne  !
+       bl   @roll_bonus_specials_right
+!      mov  @right_flipper_state,r0
        ci   r0,max_flipper_state
        jeq  user_input_4
        inc  @right_flipper_state
@@ -1005,40 +1013,44 @@ handle_special_rollover:
        jmp  handle_special_rollover_3                  ; None of the above, just add score
 *      Rollovers
 handle_special_rollover_1:
-       mov  @special_static_sprite(r2),r3             ; Get sprite
-       cb   @static_alt_color_1(r3),@static_color(r3) ; Is it already lit?
-       jeq  handle_special_rollover_4                 ; If yes then stop
-       movb @static_alt_color_1(r3),@static_color(r3) ; Change color
-       inc  @special_group_state(r4)                  ; Count one as lit
-       mov  @special_group_state(r4),r0               ; Get the new state
-       andi r0,>000f                                  ; Last nybble is the number of specials lit
-       c    r0,@special_group_n_specials(r4)          ; All specials lit?
-       jlt  handle_special_rollover_3                 ; If no skip ahead
-       mov  @special_group_specials(r4),r0            ; Prepare to reset all specials
-       mov  @special_group_n_specials(r4),r2          ; Number of special to reset
+       mov  @special_state(r2),r0                      ; Get state
+       jne  handle_special_rollover_4                  ; Stop if already lit
+       mov  @special_static_sprite(r2),r3              ; Get sprite
+       movb @static_alt_color_1(r3),@static_color(r3)  ; Change color
+       inc  @special_state(r2)                         ; Record as lit
+       inc  @special_group_state(r4)                   ; Count one as lit
+       mov  @special_group_state(r4),r0                ; Get the new state
+       andi r0,>000f                                   ; Last nybble is the number of specials lit
+       c    r0,@special_group_n_specials(r4)           ; All specials lit?
+       jlt  handle_special_rollover_3                  ; If no skip ahead
+       mov  @special_group_specials(r4),r0             ; Prepare to reset all specials
+       mov  @special_group_n_specials(r4),r2           ; Number of special to reset
 handle_special_rollover_1a:
-       mov  *r0+,r1                                   ; Get a special
-       mov  @special_static_sprite(r1),r1             ; Get its sprite
-       movb @static_alt_color_2(r1),@static_color(r1) ; Reset sprite color
-       dec  @special_group_state(r4)                  ; Count state backwards
+       mov  *r0+,r1                                    ; Get a special
+       dec  @special_state(r1)                         ; Record as unlit
+       mov  @special_static_sprite(r1),r1              ; Get its sprite
+       movb @static_alt_color_2(r1),@static_color(r1)  ; Reset sprite color
+       dec  @special_group_state(r4)                   ; Count state backwards
        dec  r2
-       jne  handle_special_rollover_1a                ; Loop until all done
+       jne  handle_special_rollover_1a                 ; Loop until all done
 *      Light next sprite
-       mov  @special_group_static_sprites(r4),r0      ; Pointer to list of sprites
-       mov  @special_group_state(r4),r1               ; Group state
-       andi r1,>00f0                                  ; 2nd last nybble is the number of sprites lit
-       srl  r1,4                                      ; To integer
-       c    r1,@special_group_n_sprites(r4)           ; All lit?
-       jhe  handle_special_rollover_4                 ; If yes just stop
-       sla  r1,1                                      ; To word offset
-       mov  @bonus_multipliers(r1),@bonus_multiplier  ; Record bonus multiplier
-       a    r0,r1                                     ; Pointer to sprite
-       mov *r1,r1                                     ; Get sprite
-       movb @static_alt_color_1(r1),@static_color(r1) ; Change color
-       li   r0,>0010                                  ; Record in state
-       a    r0,@special_group_state(r4)               ; Record in state
+       mov  @special_group_state(r4),r1                ; Group state
+       andi r1,>00f0                                   ; 2nd last nybble is the number of sprites lit
+       srl  r1,4                                       ; To integer
+       c    r1,@special_group_n_sprites(r4)            ; All lit?
+       jhe  handle_special_rollover_4                  ; If yes just stop
+       sla  r1,1                                       ; To word offset
+       mov  @bonus_multipliers(r1),@bonus_multiplier   ; Record bonus multiplier
+       mov  @special_group_static_sprites(r4),r2       ; Pointer to list of sprites
+       a    r1,r2                                      ; Pointer to sprite
+       mov *r2,r2                                      ; Get sprite
+       movb @static_alt_color_1(r2),@static_color(r2)  ; Change color
+       li   r0,>0010                                   ; Record in state
+       a    r0,@special_group_state(r4)                ; Record in state
+       mov  @bonus_texts(r1),r0                        ; Text to display
+       bl   @display_text                              ; Display text
        jmp  handle_special_rollover_4
-*      Ramp
+*      Path
 handle_special_rollover_2:
        jmp  handle_special_rollover_3
 handle_special_rollover_3:
@@ -1047,10 +1059,86 @@ handle_special_rollover_3:
        bl   @play_warning                              ; Play a sound
 handle_special_rollover_4:
        .endproc
-bonus_multipliers:
-       data 2,3,4,6,8
-
 *// handle_special_rollover
+
+*********************************************************************************
+*
+* Roll bonus specials left
+*
+roll_bonus_specials_left:
+       li   r1,special_group_bonus_rollovers
+       mov  @special_group_n_specials(r1),r2
+       mov  @special_group_specials(r1),r0
+       mov  *r0,r3                         ; Get first special in list
+       mov  @special_state(r3),r6          ; Save state
+roll_bonus_specials_left_1:
+       mov  *r0+,r3                        ; Get first special
+       ci   r2,1                           ; Is it the last?
+       jne  roll_bonus_specials_left_2     ; No, jump
+       mov  @special_group_specials(r1),r0 ; Roll around
+       mov  *r0,r4                         ; Get next special
+       mov  r6,r5                          ; Get saved state
+       jmp  roll_bonus_specials_left_3
+roll_bonus_specials_left_2:
+       mov  *r0,r4                         ; Get next special
+       mov  @special_state(r4),r5          ; Get state
+roll_bonus_specials_left_3:
+       mov  @special_static_sprite(r3),r7  ; Get first sprite
+       mov  r5,r5                          ; Is next lit?
+       jne  roll_bonus_specials_left_4     ; Jump if lit
+       clr  @special_state(r3)
+       movb @static_alt_color_2(r7),@static_color(r7)
+       jmp  roll_bonus_specials_left_5
+roll_bonus_specials_left_4:
+       mov  @one,@special_state(r3)
+       movb @static_alt_color_1(r7),@static_color(r7)
+roll_bonus_specials_left_5:
+       dec  r2
+       jne  roll_bonus_specials_left_1
+       rt
+*// roll_bonus_specials_left
+
+*********************************************************************************
+*
+* Roll bonus specials right
+*
+roll_bonus_specials_right:
+       li   r1,special_group_bonus_rollovers
+       mov  @special_group_n_specials(r1),r2
+       mov  r2,r0
+       dec  r0
+       sla  r0,1
+       a  @special_group_specials(r1),r0
+       mov  r0,r7
+       mov  *r0,r3                         ; Get last special in list
+       mov  @special_state(r3),r6          ; Save state
+roll_bonus_specials_right_1:
+       mov  *r0,r3                         ; Get first special
+       ci   r2,1                           ; Is it the last?
+       jne  roll_bonus_specials_right_2    ; No, jump
+       mov  r7,r0                          ; Roll around
+       mov  *r0,r4                         ; Get next special
+       mov  r6,r5                          ; Get saved state
+       jmp  roll_bonus_specials_right_3
+roll_bonus_specials_right_2:
+       dect r0
+       mov  *r0,r4                         ; Get next special
+       mov  @special_state(r4),r5          ; Get state
+roll_bonus_specials_right_3:
+       mov  @special_static_sprite(r3),r7  ; Get first sprite
+       mov  r5,r5                          ; Is next lit?
+       jne  roll_bonus_specials_right_4    ; Jump if lit
+       clr  @special_state(r3)
+       movb @static_alt_color_2(r7),@static_color(r7)
+       jmp  roll_bonus_specials_right_5
+roll_bonus_specials_right_4:
+       mov  @one,@special_state(r3)
+       movb @static_alt_color_1(r7),@static_color(r7)
+roll_bonus_specials_right_5:
+       dec  r2
+       jne  roll_bonus_specials_right_1
+       rt
+*// roll_bonus_specials_right
 
 *********************************************************************************
 *
@@ -1766,6 +1854,16 @@ txt_ball_2:
        text ' BALL 2 '
 txt_ball_3:
        text ' BALL 3 '
+txt_bonus_x2:
+       text 'BONUS X2'
+txt_bonus_x3:
+       text 'BONUS X3'
+txt_bonus_x4:
+       text 'BONUS X4'
+txt_bonus_x6:
+       text 'BONUS X6'
+txt_bonus_x8:
+       text 'BONUS X8'
 
 init_values:
        equ  $

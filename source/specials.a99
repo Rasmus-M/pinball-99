@@ -14,8 +14,10 @@ special_static_sprite:
        equ  12
 special_group:
        equ  14
-special_size:
+special_state:
        equ  16
+special_size:
+       equ  18
 
 special_type_none:
        equ  0
@@ -31,41 +33,41 @@ special_type_gate:
        equ  5
 
 *      Bumpers
-       data special_type_bumper,73,105,128,160,50,static_bumper_50,0
-       data special_type_bumper,121,153,176,208,20,static_bumper_20,0
+       data special_type_bumper,73,105,128,160,50,static_bumper_50,0,0
+       data special_type_bumper,121,153,176,208,20,static_bumper_20,0,0
 *      Bonus
 special_rollover_bonus_t:
-       data special_type_rollover,110,56,115,76,100,static_rollover_bonus_t,special_group_bonus_rollovers
+       data special_type_rollover,110,56,115,76,100,static_rollover_bonus_t,special_group_bonus_rollovers,0
 special_rollover_bonus_i:
-       data special_type_rollover,134,64,139,80,200,static_rollover_bonus_i,special_group_bonus_rollovers
+       data special_type_rollover,134,64,139,80,200,static_rollover_bonus_i,special_group_bonus_rollovers,0
 special_rollover_bonus_9_1st:
-       data special_type_rollover,158,65,163,79,300,static_rollover_bonus_9_1st,special_group_bonus_rollovers
+       data special_type_rollover,158,65,163,79,300,static_rollover_bonus_9_1st,special_group_bonus_rollovers,0
 special_rollover_bonus_9_2nd:
-       data special_type_rollover,182,57,187,77,400,static_rollover_bonus_9_2nd,special_group_bonus_rollovers
+       data special_type_rollover,182,57,187,77,400,static_rollover_bonus_9_2nd,special_group_bonus_rollovers,0
 *      SAMS path
-       data special_type_rollover,194,286,207,298,1000,static_arrow_sams,special_group_sams_path
+       data special_type_rollover,194,286,207,298,1000,static_arrow_sams,special_group_sams_path,0
 *      Games path
-       data special_type_rollover,11,146,17,158,100,static_arrow_games,special_group_games_path
+       data special_type_rollover,11,146,17,158,100,static_arrow_games,special_group_games_path,0
 *      PEB targets
-       data special_type_target,197,90,205,119,200,static_target_peb_p,special_group_peb_targets
-       data special_type_target,205,122,214,151,200,static_target_peb_e,special_group_peb_targets
-       data special_type_target,213,154,222,184,200,static_target_peb_b,special_group_peb_targets
+       data special_type_target,197,90,205,119,200,static_target_peb_p,special_group_peb_targets,0
+       data special_type_target,205,122,214,151,200,static_target_peb_e,special_group_peb_targets,0
+       data special_type_target,213,154,222,184,200,static_target_peb_b,special_group_peb_targets,0
 *      F18a targets
-       data special_type_target,12,224,20,253,100,static_target_f18a_f,special_group_f18a_targets
-       data special_type_target,16,253,20,277,100,static_target_f18a_1,special_group_f18a_targets
-       data special_type_target,16,277,20,301,100,static_target_f18a_8,special_group_f18a_targets
-       data special_type_target,16,301,20,324,100,static_target_f18a_a,special_group_f18a_targets
+       data special_type_target,12,224,20,253,100,static_target_f18a_f,special_group_f18a_targets,0
+       data special_type_target,16,253,20,277,100,static_target_f18a_1,special_group_f18a_targets,0
+       data special_type_target,16,277,20,301,100,static_target_f18a_8,special_group_f18a_targets,0
+       data special_type_target,16,301,20,324,100,static_target_f18a_a,special_group_f18a_targets,0
 *      32K targets
-       data special_type_target,106,226,124,239,50,static_target_32k_3,special_group_32k_targets
-       data special_type_target,124,237,140,247,50,static_target_32k_2,special_group_32k_targets
-       data special_type_target,140,245,158,254,50,static_target_32k_k,special_group_32k_targets
+       data special_type_target,106,226,124,239,50,static_target_32k_3,special_group_32k_targets,0
+       data special_type_target,124,237,140,247,50,static_target_32k_2,special_group_32k_targets,0
+       data special_type_target,140,245,158,254,50,static_target_32k_k,special_group_32k_targets,0
 *      500 targets
-       data special_type_target,74,81,87,94,500,static_target_500_1,special_group_500_targets
-       data special_type_target,58,97,71,110,500,static_target_500_2,special_group_500_targets
+       data special_type_target,74,81,87,94,500,static_target_500_1,special_group_500_targets,0
+       data special_type_target,58,97,71,110,500,static_target_500_2,special_group_500_targets,0
 *      Apps ramp
-       data special_type_saucer,35,159,41,167,2000,static_saucer_app,special_group_apps_ramp
+       data special_type_saucer,35,159,41,167,2000,static_saucer_app,special_group_apps_ramp,0
 *      Launch gate
-       data special_type_gate,206,41,213,47,0,static_launch_gate,special_group_apps_ramp
+       data special_type_gate,206,41,213,47,0,static_launch_gate,special_group_apps_ramp,0
 *      End
        data -1
 
@@ -216,3 +218,12 @@ special_group_apps_statics:
        data static_app_xb
        data static_app_minimen
        data static_app_ea
+
+bonus_multipliers:
+       data 2,3,4,6,8
+bonus_texts:
+       data txt_bonus_x2
+       data txt_bonus_x3
+       data txt_bonus_x4
+       data txt_bonus_x6
+       data txt_bonus_x8

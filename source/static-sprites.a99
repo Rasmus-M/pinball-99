@@ -6,9 +6,9 @@ static_pattern:
        equ  3
 static_color:
        equ  4
-static_alt_color_1:
+static_alt_color_1:                    ; Lit color
        equ  5
-static_alt_color_2:
+static_alt_color_2:                    ; Unlit color
        equ  6
 static_alt_color_3:
        equ  7
