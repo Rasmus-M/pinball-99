@@ -230,8 +230,12 @@ score_lsw:                             ; High word of score
        equ  score_msw+2
 bonus_multiplier:
        equ  score_lsw+2
-snd_channel_1:
+event_queue_head:
        equ  bonus_multiplier+2
+event_queue_tail:
+       equ  event_queue_head+2
+snd_channel_1:
+       equ  event_queue_tail+2
 snd_channel_2:
        equ  snd_channel_1+snd_channel_size
 snd_channel_3:
@@ -281,7 +285,6 @@ loop:
        bl   @update_sprite_attr_table
        bl   @interrupt_check
        bl   @check_quit
-       inc  @frame
        mov  @player_status,r0
        jeq  loop
 *      Ball lost
@@ -356,6 +359,8 @@ interrupt_routine:
        bl   @check_collision
        bl   @move_ball
        bl   @check_collision
+       bl   @perform_events
+       inc  @frame
        lwpi wrksp                      ; Switch to old workspace
        b    *r11
 *// interrupt_routine
@@ -651,6 +656,32 @@ check_collision_6:
 check_collision_7:
        .endproc
 *// check_collision
+
+*********************************************************************
+*
+* Perform events
+*
+perform_events:
+       .proc
+       mov  @event_queue_head,r3
+       c    r3,@event_queue_tail
+       jeq  perform_events_2
+       mov  @event_frame(r3),r1
+       c    r1,@frame
+       jh   perform_events_2
+       mov  @event_function(r3),r1
+       mov  @event_param(r3),r0
+       bl   *r1                        ; Call function
+       mov  @event_queue_head,r3
+       ai   r3,event_size
+       ci   r3,event_queue_end
+       jl   perform_events_1
+       li   r3,event_queue
+perform_events_1:
+       mov  r3,@event_queue_head
+perform_events_2:
+       .endproc
+*// perform events
 
 *********************************************************************************
 *
@@ -1161,21 +1192,40 @@ handle_special_target:
        inc  @special_group_state(r4)
        c    @special_group_state(r4),@special_group_n_sprites(r4)
        jlt  handle_special_target_2
-       mov  @special_group_static_sprites(r4),r0
-handle_special_target_1:
-       mov  *r0+,r1
-       movb @static_alt_color_2(r1),@static_color(r1)
-       dec  @special_group_state(r4)
-       jne  handle_special_target_1
-       mov  @special_group_score(r4),r0
-       jmp  handle_special_target_3
+       li   r0,60
+       li   r1,reset_target_group
+       mov  r4,r2
+       bl   @schedule_event
+       mov  @special_group_text(r4),r0
+       jeq  handle_special_target_4
+       bl   @display_text
+       jmp  handle_special_target_4
 handle_special_target_2:
        mov  @special_score(r2),r0
-handle_special_target_3:
        bl   @add_score
 handle_special_target_4:
        .endproc
 *// handle_special_target
+
+*********************************************************************************
+*
+* Reset target group
+*
+* r0 points to special group structure
+*
+reset_target_group:
+       .proc
+       mov  r0,r2
+       mov  @special_group_static_sprites(r2),r0
+reset_target_group_1:
+       mov  *r0+,r1
+       movb @static_alt_color_2(r1),@static_color(r1)
+       dec  @special_group_state(r2)
+       jne  reset_target_group_1
+       mov  @special_group_score(r2),r0
+       bl   @add_score
+       .endproc
+*// reset_target_group
 
 *********************************************************************************
 *
@@ -1600,6 +1650,9 @@ init_ball:
        clr  @right_flipper_state
        clr  @launch_speed
        clr  @player_status
+       li   r0,event_queue
+       mov  r0,@event_queue_head
+       mov  r0,@event_queue_tail
        bl   @reset_score_buffer
        mov  @two,@play_field_updates
        .endproc
@@ -1618,6 +1671,29 @@ reset_score_buffer:
        mov  r1,*r0+
        rt
 *// reset_score_buffer
+
+*********************************************************************
+*
+* Schedule event
+*
+* r0: number of frames before execution
+* r1: address of function
+* r2: parameter to function
+*
+schedule_event:
+       mov  @event_queue_tail,r3
+       a    @frame,r0
+       mov  r0,@event_frame(r3)
+       mov  r1,@event_function(r3)
+       mov  r2,@event_param(r3)
+       ai   r3,event_size
+       ci   r3,event_queue_end
+       jl   schedule_event_1
+       li   r3,event_queue
+schedule_event_1:
+       mov  r3,@event_queue_tail
+       rt
+*// schedule event
 
 *********************************************************************************
 *
@@ -1864,6 +1940,14 @@ txt_bonus_x6:
        text 'BONUS X6'
 txt_bonus_x8:
        text 'BONUS X8'
+txt_sams:
+       text '  SAMS  '
+txt_peb:
+       text '  PEB   '
+txt_f18a:
+       text '  F18A  '
+txt_32k:
+       text '32K RAM '
 
 init_values:
        equ  $
@@ -1895,6 +1979,21 @@ info_panel_buffer:
 score_buffer:
        byte chr_zero,chr_zero,chr_zero,chr_zero
        byte chr_zero,chr_zero,chr_zero,chr_zero
+
+event_frame:
+       equ  0
+event_function:
+       equ  2
+event_param:
+       equ  4
+event_size:
+       equ  6
+n_events:
+       equ  8
+event_queue:
+       bss  event_size*n_events
+event_queue_end:
+       equ  $
 
 cover_sprites:
        byte play_field_top-17,0,0,0
