@@ -460,19 +460,11 @@ user_input_4:
        bl   @check_key
        jeq  user_input_5
 *      Space pressed
-       mov  @x,r0
-       s    @x_init,r0
-       abs  r0
-       ci   r0,>0040
-       jgt  user_input_6
-       mov  @y,r0
-       ci   r0,>1c00
-       jlt  user_input_6
        mov  @launch_speed,r0
        ci   r0,>0600
        jgt  user_input_6
 *      Add launch speed
-       ai   r0,>0020
+       ai   r0,>0018
        mov  r0,@launch_speed
        srl  r0,7
        ai   r0,plunger_y
@@ -482,17 +474,23 @@ user_input_5:
 *      Space not pressed
        mov  @launch_speed,r0
        jeq  user_input_6
+       li   r1,plunger_y
+       mov  r1,@plunger
+       clr  @launch_speed
        mov  @x,r1
        s    @x_init,r1
        abs  r1
-       ci   r1,>0040
+       ci   r1,>0020
+       jgt  user_input_6
+       mov  @y_init,r1
+       s    @y,r1
+       abs  r1
+       ci   r1,>0020
        jgt  user_input_6
 *      Launch
-       s    r0,@vy
-       clr  @launch_speed
+       neg  r0
+       mov  r0,@vy
        bl   @play_extra
-       li   r0,plunger_y
-       mov  r0,@plunger
        li   r0,txt_launch
        bl   @display_text
        jmp  user_input_9
@@ -999,6 +997,7 @@ special_branch_table:
        data handle_special_target
        data handle_special_saucer
        data handle_special_gate
+       data handle_special_launch
 *// handle_special_collision
 
 *********************************************************************************
@@ -1233,7 +1232,7 @@ reset_target_group_1:
 *
 * r2 points to special structure
 *
-handle_special_saucer
+handle_special_saucer:
        .proc
        mov  @special_score(r2),r0
        bl   @add_score
@@ -1246,12 +1245,48 @@ handle_special_saucer
 *
 * r2 points to special structure
 *
-handle_special_gate
-       .proc
-       mov  @special_score(r2),r0
-       bl   @add_score
-       .endproc
+handle_special_gate:
+;       mov  @special_state(r2),r0
+;       jne  handle_special_gate_1
+;       inc  @special_state(r2)
+;       jmp  handle_special_gate_2
+;handle_special_gate_1:
+;       c    r2,@last_special
+;       jeq  handle_special_gate_2
+;       mov  r2,@last_special
+;       neg  @vx
+;       neg  @vy
+       mov  @vx,r0
+       jlt  handle_special_gate_1
+       mov  @vy,r0
+       jlt  handle_special_gate_1
+       neg  @vx
+       neg  @vy
+
+
+handle_special_gate_1:
+       rt
 *// handle_special_gate
+
+*********************************************************************************
+*
+* Handle special launch
+*
+* r2 points to special structure
+*
+handle_special_launch:
+       mov  @collision_type,r0
+       jeq  handle_special_launch_2
+       mov  @vy,r0
+       sra  r0,1
+       ci   r0,>fff4
+       jlt  handle_special_launch_1
+       clr  r0
+handle_special_launch_1:
+       mov  r0,@vy
+handle_special_launch_2:
+       rt
+*// handle_special_launch
 
 *********************************************************************************
 *
@@ -1655,6 +1690,8 @@ init_ball:
        mov  r0,@event_queue_tail
        bl   @reset_score_buffer
        mov  @two,@play_field_updates
+       li   r1,special_launch_gate
+       clr  @special_state(r1)
        .endproc
 *// init_ball
 

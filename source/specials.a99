@@ -31,6 +31,8 @@ special_type_saucer:
        equ  4
 special_type_gate:
        equ  5
+special_type_launch:
+       equ  6
 
 *      Bumpers
        data special_type_bumper,73,105,128,160,50,static_bumper_50,0,0
@@ -67,7 +69,10 @@ special_rollover_bonus_9_2nd:
 *      Apps ramp
        data special_type_saucer,35,159,41,167,2000,static_saucer_app,special_group_apps_ramp,0
 *      Launch gate
-       data special_type_gate,206,41,213,47,0,static_launch_gate,special_group_apps_ramp,0
+special_launch_gate:
+       data special_type_gate,199,36,207,43,0,static_launch_gate,special_group_apps_ramp,0
+*      Launch pad
+       data special_type_launch,242,487,246,493,0,plunger,0,0
 *      End
        data -1
 
