@@ -943,7 +943,7 @@ update_static_sprites_4:
        movb r5,*r15                    ; Write color
 *      Next sprite
 update_static_sprites_5:
-       ai   r3,4                       ; Skip over colors
+       ai   r3,static_size-static_color ; Skip over colors
        mov  *r3+,r1                    ; Get y
        jgt  update_static_sprites_2
 update_static_sprites_6:
