@@ -1,0 +1,154 @@
+*********************************************************************************
+*
+* Send speak external command and first 8 bytes
+*
+speak:
+       .proc
+       mov  r0,@speech_addr
+       mov  r1,@speech_counter
+*      Speak external command
+       movb @h60,@spchwt
+       bl   @delay_12us
+*      Send first 8 bytes
+       bl   @speech_player
+       .endproc
+*// speak
+
+*********************************************************************************
+*
+* Send up to 8 bytes to the speech synthesizer
+*
+speech_player:
+       .proc
+       mov  @speech_detected,r0
+       jeq  speech_player_2
+       mov  @speech_counter,r2         ; Get counter
+       jeq  speech_player_2                    ; Nothing to do
+*      Check speech status
+       bl   @speech_read_pad
+       movb @speech_status,r0
+       coc  @h4000,r0
+       jne  speech_player_2                    ; Speech buffer not half empty - wait more
+*      Status buffer low
+       mov  @speech_addr,r1            ; Get speech data address
+       mov  @speech_counter,r2         ; Get counter
+       ci   r2,8                       ; More than 8 bytes left?
+       jle  speech_player_1
+       li   r2,8                       ; Yes - send 8
+speech_player_1:
+       movb *r1+,@spchwt               ; Send a byte
+       dec  @speech_counter
+       dec  r2
+       jne  speech_player_1
+       mov  r1,@speech_addr                 ; Save the new address
+speech_player_2:
+       .endproc
+*// speech_player
+
+*********************************************************************************
+*
+* Check if the Speech Synthesizer is attached
+*
+speech_check:
+       .proc
+       clr  r0                         ; Location 0
+       bl   @load_speech_address       ; Load addeess
+       bl   @delay_42us
+       movb @h10,@spchwt
+       bl   @delay_12us
+       bl   @speech_read_pad           ; Read the byte
+       cb   @speech_status,@hAA        ; Is is >AA?
+       jeq  speech_check_1             ; Yes. The peripheral is attached
+*      Not there
+       clr  @speech_detected
+       jmp  speech_check_2
+*      There
+speech_check_1:
+       seto @speech_detected
+speech_check_2:
+       .endproc
+*// speech_check
+
+*********************************************************************************
+*
+* Load address
+*
+* r0: address
+*
+* Uses rO, r1, and r2
+*
+load_speech_address:
+       li   r2,4
+load_speech_address_1:
+       src  r0,4
+       mov  r0,r1
+       src  r1,4
+       andi r1,>0F00                   ; Pick off four bits
+       ori  r1,>4000                   ; Make it >4X
+       movb r1,@spchwt
+       dec  r2                         ; Do it four times
+       jne  load_speech_address_1
+       li   r1,>4000                   ; Write the >40
+       movb r1,@spchwt
+       rt
+*// load_speech_address
+
+*********************************************************************************
+*
+* 12 us delay
+*
+delay_12us:
+       nop                             ; Short delay
+       nop
+       rt
+*// delay_12us
+
+*********************************************************************************
+*
+* 42 us delay
+*
+delay_42us:
+       li   r1,10                      ; Long delay after address set up
+delay_42us_1:
+       dec  r1
+       jne  delay_42us_1
+       rt
+*// delay_42us
+
+*********************************************************************************
+*
+* Speech status read routine code, must be copied to scratchpad
+*
+speech_read:
+       movb @spchrd,@speech_status
+       nop
+       nop
+       nop
+       rt
+speech_read_length:
+       equ $-speech_read
+*// speech_read
+
+*********************************************************************************
+*
+* Speech status read routine code, must be copied to scratchpad
+*
+copy_speech_read_to_pad:
+       li   r0,speech_read
+       li   r1,speech_read_pad
+       li   r2,speech_read_length
+copy_speech_read_to_pad_1:
+       mov  *r0+,*r1+
+       dect r2
+       jne  copy_speech_read_to_pad_1
+       rt
+*// copy_speech_read_to_pad
+
+**
+* Constants
+h4000  data >4000
+h10    byte >10
+h60    byte >60
+hAA    byte >aa
+
+       even

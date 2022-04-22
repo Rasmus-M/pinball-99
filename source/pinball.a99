@@ -116,6 +116,11 @@ vdpsta:                                ; VDP status
        equ  >8802
 sound:                                 ; Sound
        equ  >8400
+spchwt:
+       equ  >9400
+spchrd:
+       equ  >9000
+
 
 **
 * VDP memory map
@@ -252,8 +257,18 @@ module_speed:
        equ  snd_track_3+snd_track_size
 vdp_copy_pad:
        equ  module_speed+2
-pad_max:
+speech_detected:
        equ  vdp_copy_pad+22
+speech_status:
+       equ  speech_detected+2
+speech_addr:
+       equ  speech_status+2
+speech_counter:
+       equ  speech_addr+2
+speech_read_pad:
+       equ  speech_counter+2
+pad_max:
+       equ  speech_read_pad+14
 
 ********************************************************************************
 *
@@ -354,6 +369,7 @@ interrupt_routine:
        mov  r10,@wrksp2+20             ; Use same SP in new workspace
        lwpi wrksp2                     ; Switch to new workspace
        bl   @module_player
+       bl   @speech_player
        bl   @user_input
        bl   @move_ball
        bl   @check_collision
@@ -1742,19 +1758,10 @@ one_time_init:
        mov  r0,@one
        inc  r0
        mov  r0,@two
-       li   r1,padvar
-       li   r2,pad_max-padvar
-one_time_init_1:
-       clr  *r1+
-       dect r2
-       jne  one_time_init_1
-       li   r0,vdp_copy
-       li   r1,vdp_copy_pad
-       li   r2,vdp_copy_end-vdp_copy
-one_time_init_2:
-       mov  *r0+,*r1+
-       dect r2
-       jne one_time_init_2
+       bl   @clear_pad
+       bl   @copy_vdp_copy_to_pad
+       bl   @copy_speech_read_to_pad
+       bl   @speech_check
        bl   @graphics_mode
        bl   @init_vdp_ram
        clr  @info_panel_updates
@@ -1763,8 +1770,40 @@ one_time_init_2:
 *      Play music
        li   r0,bipbop_module
        bl   @play_module
+       li   r0,speech_data+2
+       mov  @speech_data,r1
+       bl   @speak
        .endproc
 *// one_time_init
+
+*********************************************************************************
+*
+* Clear PAD
+*
+clear_pad:
+       li   r1,padvar
+       li   r2,pad_max-padvar
+clear_pad_1:
+       clr  *r1+
+       dect r2
+       jne  clear_pad_1
+       rt
+*// clear_pad
+
+*********************************************************************************
+*
+* Copy VDP copy to PAD
+*
+copy_vdp_copy_to_pad:
+       li   r0,vdp_copy
+       li   r1,vdp_copy_pad
+       li   r2,vdp_copy_end-vdp_copy
+copy_vdp_copy_to_pad_1:
+       mov  *r0+,*r1+
+       dect r2
+       jne copy_vdp_copy_to_pad_1
+       rt
+*// copy_vdp_copy_to_pad
 
 *********************************************************************************
 *
@@ -1797,7 +1836,7 @@ vregs2:
 
 *********************************************************************************
 *
-* Initialize
+* Initialize VDP RAM
 *
 init_vdp_ram:
        .proc
@@ -1952,6 +1991,7 @@ check_key:
        copy "sound-player.a99"
        copy "music-player.a99"
        copy "sound-fx-routines.a99"
+       copy "speech.a99"
 
 ***************************************************************************
 *
@@ -2062,6 +2102,7 @@ normals:
        copy "sound-fx.a99"
        copy "music.a99"
        copy "chars.a99"
+       copy "speech-data.a99"
 
 upper_memory_max:
        equ  $
