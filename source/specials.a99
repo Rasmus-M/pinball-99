@@ -47,9 +47,15 @@ special_rollover_bonus_9_1st:
 special_rollover_bonus_9_2nd:
        data special_type_rollover,182,57,187,77,400,static_rollover_bonus_9_2nd,special_group_bonus_rollovers,0
 *      SAMS path
-       data special_type_rollover,194,286,207,298,1000,static_arrow_sams,special_group_sams_path,0
+special_rollover_sams_start:
+       data special_type_rollover,194,286,207,298,0,static_arrow_sams,special_group_sams_path,0
+special_rollover_sams_end:
+       data special_type_rollover,219,240,226,247,0,static_arrow_sams,special_group_sams_path,0
 *      Games path
-       data special_type_rollover,11,146,17,158,100,static_arrow_games,special_group_games_path,0
+special_rollover_games_start:
+       data special_type_rollover,12,146,17,158,100,static_arrow_games,special_group_games_path,0
+special_rollover_games_end:
+       data special_type_rollover,72,44,88,53,100,static_arrow_games,special_group_games_path,0
 *      PEB targets
        data special_type_target,197,90,205,119,200,static_target_peb_p,special_group_peb_targets,0
        data special_type_target,205,122,214,151,200,static_target_peb_e,special_group_peb_targets,0
@@ -120,18 +126,18 @@ special_group_bonus_rollovers:
 special_group_sams_path:
        data special_group_type_path
        data 0
-       data 0
+       data 5000
        data 1
-       data 0                          ; specials
+       data special_group_sams_path_specials
        data 4
        data special_group_sams_statics
        data txt_sams
 special_group_games_path:
        data special_group_type_path
        data 0
-       data 0
+       data 10000
        data 1
-       data 0                          ; specials
+       data special_group_games_path_specials
        data 5
        data special_group_games_statics
        data 0
@@ -188,6 +194,14 @@ special_group_bonus_specials:
        data special_rollover_bonus_i
        data special_rollover_bonus_9_1st
        data special_rollover_bonus_9_2nd
+
+special_group_sams_path_specials:
+       data special_rollover_sams_start
+       data special_rollover_sams_end
+
+special_group_games_path_specials:
+       data special_rollover_games_start
+       data special_rollover_games_end
 
 special_group_bonus_statics:
        data static_bonus_x2

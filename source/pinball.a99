@@ -610,8 +610,6 @@ check_collision_1:
        ci   r3,->0100
        jgt  check_collision_2
        bl   @play_explosion_3
-       li   r0,1
-       bl   @add_score
 *      Flipper push
 check_collision_2:
        mov  @collision_type,r0
@@ -1059,46 +1057,12 @@ handle_special_rollover:
        jmp  handle_special_rollover_3                  ; None of the above, just add score
 *      Rollovers
 handle_special_rollover_1:
-       mov  @special_state(r2),r0                      ; Get state
-       jne  handle_special_rollover_4                  ; Stop if already lit
-       mov  @special_static_sprite(r2),r3              ; Get sprite
-       movb @static_alt_color_1(r3),@static_color(r3)  ; Change color
-       inc  @special_state(r2)                         ; Record as lit
-       inc  @special_group_state(r4)                   ; Count one as lit
-       mov  @special_group_state(r4),r0                ; Get the new state
-       andi r0,>000f                                   ; Last nybble is the number of specials lit
-       c    r0,@special_group_n_specials(r4)           ; All specials lit?
-       jlt  handle_special_rollover_3                  ; If no skip ahead
-       mov  @special_group_specials(r4),r0             ; Prepare to reset all specials
-       mov  @special_group_n_specials(r4),r2           ; Number of special to reset
-handle_special_rollover_1a:
-       mov  *r0+,r1                                    ; Get a special
-       dec  @special_state(r1)                         ; Record as unlit
-       mov  @special_static_sprite(r1),r1              ; Get its sprite
-       movb @static_alt_color_2(r1),@static_color(r1)  ; Reset sprite color
-       dec  @special_group_state(r4)                   ; Count state backwards
-       dec  r2
-       jne  handle_special_rollover_1a                 ; Loop until all done
-*      Light next sprite
-       mov  @special_group_state(r4),r1                ; Group state
-       andi r1,>00f0                                   ; 2nd last nybble is the number of sprites lit
-       srl  r1,4                                       ; To integer
-       c    r1,@special_group_n_sprites(r4)            ; All lit?
-       jhe  handle_special_rollover_4                  ; If yes just stop
-       sla  r1,1                                       ; To word offset
-       mov  @bonus_multipliers(r1),@bonus_multiplier   ; Record bonus multiplier
-       mov  @special_group_static_sprites(r4),r2       ; Pointer to list of sprites
-       a    r1,r2                                      ; Pointer to sprite
-       mov *r2,r2                                      ; Get sprite
-       movb @static_alt_color_1(r2),@static_color(r2)  ; Change color
-       li   r0,>0010                                   ; Record in state
-       a    r0,@special_group_state(r4)                ; Record in state
-       mov  @bonus_texts(r1),r0                        ; Text to display
-       bl   @display_text                              ; Display text
+       bl   @handle_special_group_rollovers
        jmp  handle_special_rollover_4
 *      Path
 handle_special_rollover_2:
-       jmp  handle_special_rollover_3
+       bl   @handle_special_group_path
+       jmp  handle_special_rollover_4
 handle_special_rollover_3:
        mov  @special_score(r2),r0                      ; Get the number of points to add
        bl   @add_score                                 ; Add to score
@@ -1108,6 +1072,107 @@ handle_special_rollover_4:
 *// handle_special_rollover
 
 *********************************************************************************
+*
+* Handle special group rollovers
+*
+* r0 points to special group structure
+* r2 points to special structure
+*
+handle_special_group_rollovers:
+       .proc
+       mov  @special_state(r2),r0                      ; Get state
+       jne  handle_special_group_rollovers_3           ; Stop if already lit
+       mov  @special_static_sprite(r2),r3              ; Get sprite
+       movb @static_alt_color_1(r3),@static_color(r3)  ; Change color
+       inc  @special_state(r2)                         ; Record as lit
+       inc  @special_group_state(r4)                   ; Count one as lit
+       mov  @special_group_state(r4),r0                ; Get the new state
+       andi r0,>000f                                   ; Last nybble is the number of specials lit
+       c    r0,@special_group_n_specials(r4)           ; All specials lit?
+       jlt  handle_special_group_rollovers_2           ; If no skip ahead
+       mov  @special_group_specials(r4),r0             ; Prepare to reset all specials
+       mov  @special_group_n_specials(r4),r2           ; Number of special to reset
+handle_special_group_rollovers_1:
+       mov  *r0+,r1                                    ; Get a special
+       dec  @special_state(r1)                         ; Record as unlit
+       mov  @special_static_sprite(r1),r1              ; Get its sprite
+       movb @static_alt_color_2(r1),@static_color(r1)  ; Reset sprite color
+       dec  @special_group_state(r4)                   ; Count state backwards
+       dec  r2
+       jne  handle_special_group_rollovers_1           ; Loop until all done
+*      Light next sprite
+       mov  @special_group_state(r4),r1                ; Group state
+       andi r1,>00f0                                   ; 2nd last nybble is the number of sprites lit
+       srl  r1,4                                       ; To integer
+       c    r1,@special_group_n_sprites(r4)            ; All lit?
+       jhe  handle_special_group_rollovers_3           ; If yes just stop
+       sla  r1,1                                       ; To word offset
+       mov  @bonus_multipliers(r1),@bonus_multiplier   ; Record bonus multiplier
+       mov  @special_group_static_sprites(r4),r2       ; Pointer to list of sprites
+       a    r1,r2                                      ; Pointer to sprite
+       mov  *r2,r2                                     ; Get sprite
+       movb @static_alt_color_1(r2),@static_color(r2)  ; Change color
+       li   r0,>0010                                   ; State value add
+       a    r0,@special_group_state(r4)                ; Record in state
+       mov  @bonus_texts(r1),r0                        ; Text to display
+       bl   @display_text                              ; Display text
+       jmp  handle_special_group_rollovers_3
+handle_special_group_rollovers_2:
+       mov  @special_score(r2),r0                      ; Get the number of points to add
+       bl   @add_score                                 ; Add to score
+       bl   @play_warning                              ; Play a sound
+handle_special_group_rollovers_3:
+       .endproc
+*// handle_special_group_rollovers:
+
+*********************************************************************************
+*
+* Handle special group path
+*
+* r2 points to special structure
+* r4 points to special group structure
+*
+handle_special_group_path:
+       .proc
+       mov  @special_group_specials(r4),r0     ; Get pointer to start/end specials
+       mov  *r0+,r1                            ; Get start special
+       c    r2,r1                              ; Is it start?
+       jne  handle_special_group_path_1
+*      Start
+       mov  @one,@special_state(r2)            ; Set start state
+       mov  *r0,r1                             ; Get end special
+       clr  @special_state(r1)                 ; Clear end state
+       jmp  handle_special_group_path_2
+*      End
+handle_special_group_path_1:
+       mov  @special_state(r1),r0              ; Test start state
+       jeq  handle_special_group_path_2
+       clr  @special_state(r1)
+       mov  @special_group_static_sprites(r4),r3
+       mov  @special_group_state(r4),r0
+       sla  r0,1
+       a    r0,r3
+       mov  *r3,r3
+       movb @static_alt_color_1(r3),@static_color(r3)  ; Change color
+       inc  @special_group_state(r4)
+       bl   @play_warning
+       mov  @special_group_state(r4),r0
+       c    r0,@special_group_n_sprites(r4)            ; All lit?
+*      All lit
+       jne  handle_special_group_path_2
+       li   r0,60
+       li   r1,reset_path_group
+       mov  r4,r2
+       bl   @schedule_event
+       bl   @play_extra
+       mov  @special_group_text(r4),r0
+       jeq  handle_special_group_path_2
+       bl   @display_text
+handle_special_group_path_2:
+       .endproc
+*// handle_special_group_path
+
+*************************-********************************************************
 *
 * Roll bonus specials left
 *
@@ -1242,6 +1307,29 @@ reset_target_group_1:
        .endproc
 *// reset_target_group
 
+
+*********************************************************************************
+*
+* Reset path group
+*
+* r0 points to special group structure
+*
+reset_path_group:
+       .proc
+       mov r0,r1
+       clr  @special_group_state(r1)
+       mov  @special_group_static_sprites(r1),r0
+       mov  @special_group_n_sprites(r1),r2
+reset_path_group_1:
+       mov  *r0+,r3
+       movb @static_alt_color_2(r3),@static_color(r3)
+       dec  r2
+       jne  reset_path_group_1
+       mov  @special_group_score(r1),r0
+       bl   @add_score
+       .endproc
+*// reset_path_group
+
 *********************************************************************************
 *
 * Handle special saucer
@@ -1262,24 +1350,12 @@ handle_special_saucer:
 * r2 points to special structure
 *
 handle_special_gate:
-;       mov  @special_state(r2),r0
-;       jne  handle_special_gate_1
-;       inc  @special_state(r2)
-;       jmp  handle_special_gate_2
-;handle_special_gate_1:
-;       c    r2,@last_special
-;       jeq  handle_special_gate_2
-;       mov  r2,@last_special
-;       neg  @vx
-;       neg  @vy
        mov  @vx,r0
        jlt  handle_special_gate_1
        mov  @vy,r0
        jlt  handle_special_gate_1
        neg  @vx
        neg  @vy
-
-
 handle_special_gate_1:
        rt
 *// handle_special_gate
@@ -1598,7 +1674,7 @@ update_score_buffer:
        mov  @score_lsw,r1
        li   r2,8                       ; Counter
        li   r3,10                      ; Divisor
-       li   r4,score_buffer+7     ; Start backwards
+       li   r4,score_buffer+7          ; Start backwards
 *      Digit loop
 update_score_buffer_1:
        div  r3,r0                      ; Divide to get digit as remainder in r1
@@ -1610,7 +1686,7 @@ update_score_buffer_1:
        jeq  update_score_buffer_2
        clr  r0
        dec  r2                         ; Count down
-       jne  update_score_buffer_1            ; Digit loop
+       jne  update_score_buffer_1      ; Digit loop
 update_score_buffer_2:
        bl   @display_score_buffer
        .endproc
@@ -1636,6 +1712,8 @@ display_score_buffer:
 * Display text
 *
 * r0: 8 characters of text to display
+*
+* Modifies r0-r4
 *
 display_text:
        li   r1,info_panel_buffer
