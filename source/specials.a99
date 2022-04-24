@@ -135,7 +135,7 @@ special_group_sams_path:
 special_group_games_path:
        data special_group_type_path
        data 0
-       data 10000
+       data 8000
        data 1
        data special_group_games_path_specials
        data 5
@@ -171,7 +171,7 @@ special_group_32k_targets:
 special_group_500_targets:
        data special_group_type_targets
        data 0
-       data 2000
+       data 5000
        data 2
        data 0                          ; specials
        data 2

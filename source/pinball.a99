@@ -1114,7 +1114,8 @@ handle_special_group_rollovers_1:
        movb @static_alt_color_1(r7),@static_color(r7)  ; Change color
        li   r0,>0010                                   ; State value add
        a    r0,@special_group_state(r9)                ; Record in state
-       mov  @bonus_texts(r1),r0                        ; Text to display
+       mov  @static_text(r7),r0                        ; Text to display
+       jeq  handle_special_group_rollovers_3
        bl   @display_text                              ; Display text
        jmp  handle_special_group_rollovers_3
 handle_special_group_rollovers_2:
@@ -1657,7 +1658,8 @@ calc_signed_product:
 *
 add_score:
        .proc
-       a    r0,@score_lsw
+       mpy  @bonus_multiplier,r0
+       a    r1,@score_lsw
        jnc  add_score_1
        inc  @score_msw
 add_score_1:

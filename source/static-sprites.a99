@@ -22,27 +22,27 @@ static_bonus_x4:
        data 5
        byte 140,136
        byte 14,6,14,6
-       data 0
+       data txt_bonus_x4
 static_bonus_x3:
        data 13
        byte 117,132
        byte 14,12,14,12              ;
-       data 0
+       data txt_bonus_x3
 static_bonus_x6:
        data 13
        byte 163,140
        byte 14,10,14,10              ;
-       data 0
+       data txt_bonus_x6
 static_bonus_x2:
        data 29
        byte 96,128
        byte 14,4,14,4                ;
-       data 0
+       data txt_bonus_x2
 static_bonus_x8:
        data 29
        byte 184,144
        byte 14,13,14,13              ;
-       data 0
+       data txt_bonus_x8
 static_launch_gate:
        data 38
        byte 202,152
