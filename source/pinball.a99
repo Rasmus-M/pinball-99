@@ -1155,7 +1155,12 @@ handle_special_group_path_1:
        mov  *r3,r3
        movb @static_alt_color_1(r3),@static_color(r3)  ; Change color
        inc  @special_group_state(r4)
+       .push r4
        bl   @play_warning
+       mov  @static_text(r3),r0
+       jeq  !
+       bl   @display_text
+!      .pop r4
        mov  @special_group_state(r4),r0
        c    r0,@special_group_n_sprites(r4)            ; All lit?
 *      All lit
@@ -1306,7 +1311,6 @@ reset_target_group_1:
        bl   @add_score
        .endproc
 *// reset_target_group
-
 
 *********************************************************************************
 *
@@ -1711,7 +1715,7 @@ display_score_buffer:
 *
 * Display text
 *
-* r0: 8 characters of text to display
+* r0: pointer to 8 characters of text to display
 *
 * Modifies r0-r4
 *

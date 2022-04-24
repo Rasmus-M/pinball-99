@@ -6,9 +6,10 @@
 * r1: Channel address
 * r2: Frequency
 *
-* Modifies r0-r3
+* Modifies r0-r2
 *
 play_snd:
+       .push r3
        mov  r0,*r1+                    ; Init address
        movb *r0+,r3                    ; Operation
        movb *r0+,*r1+                  ; Init duration
@@ -37,6 +38,7 @@ play_snd_1:
        ori  r3,>1f00                   ; Change operation to full attenuation
        movb r3,@sound
 play_snd_3:
+       .pop r3
        rt
 *// play_snd
 
