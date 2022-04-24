@@ -2,10 +2,12 @@
 *
 * Send speak external command and first 8 bytes
 *
+* r0: address of speech data
+*
 speak:
        .proc
+       mov  *r0+,@speech_counter
        mov  r0,@speech_addr
-       mov  r1,@speech_counter
 *      Speak external command
        movb @h60,@spchwt
        bl   @delay_12us
@@ -23,12 +25,12 @@ speech_player:
        mov  @speech_detected,r0
        jeq  speech_player_2
        mov  @speech_counter,r2         ; Get counter
-       jeq  speech_player_2                    ; Nothing to do
+       jeq  speech_player_2            ; Nothing to do
 *      Check speech status
        bl   @speech_read_pad
        movb @speech_status,r0
        coc  @h4000,r0
-       jne  speech_player_2                    ; Speech buffer not half empty - wait more
+       jne  speech_player_2            ; Speech buffer not half empty - wait more
 *      Status buffer low
        mov  @speech_addr,r1            ; Get speech data address
        mov  @speech_counter,r2         ; Get counter
@@ -40,7 +42,7 @@ speech_player_1:
        dec  @speech_counter
        dec  r2
        jne  speech_player_1
-       mov  r1,@speech_addr                 ; Save the new address
+       mov  r1,@speech_addr            ; Save the new address
 speech_player_2:
        .endproc
 *// speech_player

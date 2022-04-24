@@ -274,7 +274,7 @@ pad_max:
 *
 * Main program
 *
-       aorg >a000
+       aorg >2000
 main:
        limi 0                          ; Interrupts off
        lwpi wrksp                      ; Setup workspace
@@ -914,7 +914,7 @@ update_static_sprites_1:
        jlt  update_static_sprites_6    ; -1 = end
        c    r1,r0                      ; Is y greater than the y value where it should be displayed?
        jgt  update_static_sprites_1a
-       ai   r3,6                       ; Skip over x, pattern, colors
+       ai   r3,static_size-static_x    ; Skip over x, pattern, colors
        jmp  update_static_sprites_1
 update_static_sprites_1a:
 *      Display until out of screen
@@ -1848,8 +1848,7 @@ one_time_init:
 *      Play music
        li   r0,bipbop_module
        bl   @play_module
-       li   r0,speech_data+2
-       mov  @speech_data,r1
+       li   r0,speech_welcome
        bl   @speak
        .endproc
 *// one_time_init
@@ -2071,10 +2070,15 @@ check_key:
        copy "sound-fx-routines.a99"
        copy "speech.a99"
 
+lower_memory_max:
+       equ  $
+
 ***************************************************************************
 *
 * Data
 *
+       aorg >a000
+
 txt_pinball:
        text 'PINBALL!'
 txt_launch:
@@ -2096,13 +2100,29 @@ txt_bonus_x6:
 txt_bonus_x8:
        text 'BONUS X8'
 txt_sams:
-       text '  SAMS  '
+       text 'SAMS MEM'
 txt_peb:
        text '  PEB   '
 txt_f18a:
-       text '  F18A  '
+       text 'F18A VDP'
 txt_32k:
        text '32K RAM '
+txt_parsec:
+       text ' PARSEC '
+txt_invaders:
+       text 'INVADERS'
+txt_munchman:
+       text 'MUNCHMAN'
+txt_tombstone:
+       text 'TMB CITY'
+txt_wumpus:
+       text ' WUMPUS '
+txt_ea:
+       text 'ED/ASSM '
+txt_minimen:
+       text 'MINIMEM '
+txt_XB:
+       text '   XB   '
 
 init_values:
        equ  $
@@ -2163,6 +2183,7 @@ plunger:
        data plunger_y                  ; y
        byte 236,4
        byte 15,15,15,15
+       data 0
        data -1
 specials:
        copy "specials.a99"
