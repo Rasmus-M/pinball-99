@@ -980,27 +980,27 @@ handle_special_collision:
        srl  r0,4
        mov  @y,r1
        srl  r1,4
-       li   r2,specials
+       li   r8,specials
 handle_special_collision_1
-       mov  *r2,r3
+       mov  *r8,r3
        jlt  handle_special_collision_3
-       c    r0,@special_x1(r2)
+       c    r0,@special_x1(r8)
        jl   handle_special_collision_2
-       c    r0,@special_x2(r2)
+       c    r0,@special_x2(r8)
        jhe  handle_special_collision_2
-       c    r1, @special_y1(r2)
+       c    r1, @special_y1(r8)
        jl   handle_special_collision_2
-       c    r1,@special_y2(r2)
+       c    r1,@special_y2(r8)
        jhe  handle_special_collision_2
 *      Special found
-       mov  @special_type(r2),r3
+       mov  @special_type(r8),r3
        sla  r3,1
        mov  @special_branch_table(r3),r3
        jeq  handle_special_collision_3
        bl   *r3
        jmp  handle_special_collision_3
 handle_special_collision_2:
-       ai   r2,special_size
+       ai   r8,special_size
        jmp  handle_special_collision_1
 handle_special_collision_3:
        .endproc
@@ -1018,18 +1018,18 @@ special_branch_table:
 *
 * Handle special bumper
 *
-* r2 points to special structure
+* r8 points to special structure
 *
 handle_special_bumper:
        .proc
        mov  @collision_type,r0
        jeq  handle_special_bumper_1
-       c    r2,@last_special
+       c    r8,@last_special
        jeq  handle_special_bumper_1
-       mov  r2,@last_special
+       mov  r8,@last_special
        a    @nx,@vx
        a    @ny,@vy
-       mov  @special_score(r2),r0
+       mov  @special_score(r8),r0
        bl   @add_score
        bl   @play_shield
 handle_special_bumper_1:
@@ -1040,16 +1040,16 @@ handle_special_bumper_1:
 *
 * Handle special rollover
 *
-* r2 points to special structure
+* r8 points to special structure
 *
 handle_special_rollover:
        .proc
-       c    r2,@last_special                           ; Same as last?
+       c    r8,@last_special                           ; Same as last?
        jeq  handle_special_rollover_4                  ; If yes then stop
-       mov  r2,@last_special                           ; Record as last
-       mov  @special_group(r2),r4                      ; Get the special group
+       mov  r8,@last_special                           ; Record as last
+       mov  @special_group(r8),r9                      ; Get the special group
        jeq  handle_special_rollover_3                  ; If no group the just add score
-       mov  @special_group_type(r4),r0                 ; Get the group type
+       mov  @special_group_type(r9),r0                 ; Get the group type
        ci   r0,special_group_type_rollovers            ; Is it a group of rollovers?
        jeq  handle_special_rollover_1                  ; Jump if yes
        ci   r0,special_group_type_path                 ; Is it a path?
@@ -1064,7 +1064,7 @@ handle_special_rollover_2:
        bl   @handle_special_group_path
        jmp  handle_special_rollover_4
 handle_special_rollover_3:
-       mov  @special_score(r2),r0                      ; Get the number of points to add
+       mov  @special_score(r8),r0                      ; Get the number of points to add
        bl   @add_score                                 ; Add to score
        bl   @play_warning                              ; Play a sound
 handle_special_rollover_4:
@@ -1075,50 +1075,50 @@ handle_special_rollover_4:
 *
 * Handle special group rollovers
 *
-* r0 points to special group structure
-* r2 points to special structure
+* r8 points to special structure
+* r9 points to special group structure
 *
 handle_special_group_rollovers:
        .proc
-       mov  @special_state(r2),r0                      ; Get state
+       mov  @special_state(r8),r0                      ; Get state
        jne  handle_special_group_rollovers_3           ; Stop if already lit
-       mov  @special_static_sprite(r2),r3              ; Get sprite
-       movb @static_alt_color_1(r3),@static_color(r3)  ; Change color
-       inc  @special_state(r2)                         ; Record as lit
-       inc  @special_group_state(r4)                   ; Count one as lit
-       mov  @special_group_state(r4),r0                ; Get the new state
+       mov  @special_static_sprite(r8),r7              ; Get sprite
+       movb @static_alt_color_1(r7),@static_color(r7)  ; Change color
+       inc  @special_state(r8)                         ; Record as lit
+       inc  @special_group_state(r9)                   ; Count one as lit
+       mov  @special_group_state(r9),r0                ; Get the new state
        andi r0,>000f                                   ; Last nybble is the number of specials lit
-       c    r0,@special_group_n_specials(r4)           ; All specials lit?
+       c    r0,@special_group_n_specials(r9)           ; All specials lit?
        jlt  handle_special_group_rollovers_2           ; If no skip ahead
-       mov  @special_group_specials(r4),r0             ; Prepare to reset all specials
-       mov  @special_group_n_specials(r4),r2           ; Number of special to reset
+       mov  @special_group_specials(r9),r0             ; Prepare to reset all specials
+       mov  @special_group_n_specials(r9),r2           ; Number of special to reset
 handle_special_group_rollovers_1:
        mov  *r0+,r1                                    ; Get a special
        dec  @special_state(r1)                         ; Record as unlit
        mov  @special_static_sprite(r1),r1              ; Get its sprite
        movb @static_alt_color_2(r1),@static_color(r1)  ; Reset sprite color
-       dec  @special_group_state(r4)                   ; Count state backwards
+       dec  @special_group_state(r9)                   ; Count state backwards
        dec  r2
        jne  handle_special_group_rollovers_1           ; Loop until all done
 *      Light next sprite
-       mov  @special_group_state(r4),r1                ; Group state
+       mov  @special_group_state(r9),r1                ; Group state
        andi r1,>00f0                                   ; 2nd last nybble is the number of sprites lit
        srl  r1,4                                       ; To integer
-       c    r1,@special_group_n_sprites(r4)            ; All lit?
+       c    r1,@special_group_n_sprites(r9)            ; All lit?
        jhe  handle_special_group_rollovers_3           ; If yes just stop
        sla  r1,1                                       ; To word offset
        mov  @bonus_multipliers(r1),@bonus_multiplier   ; Record bonus multiplier
-       mov  @special_group_static_sprites(r4),r2       ; Pointer to list of sprites
+       mov  @special_group_static_sprites(r9),r2       ; Pointer to list of sprites
        a    r1,r2                                      ; Pointer to sprite
-       mov  *r2,r2                                     ; Get sprite
-       movb @static_alt_color_1(r2),@static_color(r2)  ; Change color
+       mov  *r2,r7                                     ; Get sprite
+       movb @static_alt_color_1(r7),@static_color(r7)  ; Change color
        li   r0,>0010                                   ; State value add
-       a    r0,@special_group_state(r4)                ; Record in state
+       a    r0,@special_group_state(r9)                ; Record in state
        mov  @bonus_texts(r1),r0                        ; Text to display
        bl   @display_text                              ; Display text
        jmp  handle_special_group_rollovers_3
 handle_special_group_rollovers_2:
-       mov  @special_score(r2),r0                      ; Get the number of points to add
+       mov  @special_score(r8),r0                      ; Get the number of points to add
        bl   @add_score                                 ; Add to score
        bl   @play_warning                              ; Play a sound
 handle_special_group_rollovers_3:
@@ -1129,53 +1129,180 @@ handle_special_group_rollovers_3:
 *
 * Handle special group path
 *
-* r2 points to special structure
-* r4 points to special group structure
+* r8 points to special structure
+* r9 points to special group structure
 *
 handle_special_group_path:
        .proc
-       mov  @special_group_specials(r4),r0     ; Get pointer to start/end specials
+       mov  @special_group_specials(r9),r0     ; Get pointer to start/end specials
        mov  *r0+,r1                            ; Get start special
-       c    r2,r1                              ; Is it start?
+       c    r8,r1                              ; Is it the special marking the start of the path?
        jne  handle_special_group_path_1
 *      Start
-       mov  @one,@special_state(r2)            ; Set start state
+       mov  @one,@special_state(r8)            ; Set start state
        mov  *r0,r1                             ; Get end special
        clr  @special_state(r1)                 ; Clear end state
-       jmp  handle_special_group_path_2
+       jmp  handle_special_group_path_3
 *      End
 handle_special_group_path_1:
        mov  @special_state(r1),r0              ; Test start state
-       jeq  handle_special_group_path_2
+       jeq  handle_special_group_path_3
        clr  @special_state(r1)
-       mov  @special_group_static_sprites(r4),r3
-       mov  @special_group_state(r4),r0
+       mov  @special_group_static_sprites(r9),r3
+       mov  @special_group_state(r9),r0
        sla  r0,1
        a    r0,r3
-       mov  *r3,r3
-       movb @static_alt_color_1(r3),@static_color(r3)  ; Change color
-       inc  @special_group_state(r4)
-       .push r4
+       mov  *r3,r7
+       movb @static_alt_color_1(r7),@static_color(r7)  ; Change color
+       inc  @special_group_state(r9)
        bl   @play_warning
-       mov  @static_text(r3),r0
-       jeq  !
-       bl   @display_text
-!      .pop r4
-       mov  @special_group_state(r4),r0
-       c    r0,@special_group_n_sprites(r4)            ; All lit?
-*      All lit
-       jne  handle_special_group_path_2
-       li   r0,60
-       li   r1,reset_path_group
-       mov  r4,r2
-       bl   @schedule_event
-       bl   @play_extra
-       mov  @special_group_text(r4),r0
+       mov  @static_text(r7),r0
        jeq  handle_special_group_path_2
        bl   @display_text
 handle_special_group_path_2:
+       mov  @special_group_state(r9),r0
+       c    r0,@special_group_n_sprites(r9)            ; All lit?
+*      All lit
+       jne  handle_special_group_path_3
+       li   r0,60
+       li   r1,reset_path_group
+       mov  r9,r2
+       bl   @schedule_event
+       bl   @play_extra
+       mov  @special_group_text(r9),r0
+       jeq  handle_special_group_path_3
+       bl   @display_text
+handle_special_group_path_3:
        .endproc
 *// handle_special_group_path
+
+*********************************************************************************
+*
+* Reset path group
+*
+* r0 points to special group structure
+*
+reset_path_group:
+       .proc
+       mov r0,r1
+       clr  @special_group_state(r1)
+       mov  @special_group_static_sprites(r1),r0
+       mov  @special_group_n_sprites(r1),r2
+reset_path_group_1:
+       mov  *r0+,r7
+       movb @static_alt_color_2(r7),@static_color(r7)
+       dec  r2
+       jne  reset_path_group_1
+       mov  @special_group_score(r1),r0
+       bl   @add_score
+       .endproc
+*// reset_path_group
+
+*********************************************************************************
+*
+* Handle special target
+*
+* r8 points to special structure
+*
+handle_special_target:
+       .proc
+       mov  @collision_type,r0
+       jeq  handle_special_target_4
+       c    r8,@last_special
+       jeq  handle_special_target_4
+       mov  r8,@last_special
+       mov  @special_static_sprite(r8),r7
+       cb   @static_alt_color_1(r7),@static_color(r7)
+       jeq  handle_special_target_4
+       movb @static_alt_color_1(r7),@static_color(r7)
+       mov  @special_group(r8),r9
+       inc  @special_group_state(r9)
+       c    @special_group_state(r9),@special_group_n_sprites(r9)
+       jlt  handle_special_target_2
+       li   r0,60
+       li   r1,reset_target_group
+       mov  r9,r2
+       bl   @schedule_event
+       mov  @special_group_text(r9),r0
+       jeq  handle_special_target_4
+       bl   @display_text
+       jmp  handle_special_target_4
+handle_special_target_2:
+       mov  @special_score(r8),r0
+       bl   @add_score
+handle_special_target_4:
+       .endproc
+*// handle_special_target
+
+*********************************************************************************
+*
+* Reset target group
+*
+* r0 points to special group structure
+*
+reset_target_group:
+       .proc
+       mov  r0,r2
+       mov  @special_group_static_sprites(r2),r0
+reset_target_group_1:
+       mov  *r0+,r7
+       movb @static_alt_color_2(r7),@static_color(r7)
+       dec  @special_group_state(r2)
+       jne  reset_target_group_1
+       mov  @special_group_score(r2),r0
+       bl   @add_score
+       .endproc
+*// reset_target_group
+
+*********************************************************************************
+*
+* Handle special saucer
+*
+* r8 points to special structure
+*
+handle_special_saucer:
+       .proc
+       mov  @special_score(r8),r0
+       bl   @add_score
+       .endproc
+*// handle_special_saucer
+
+*********************************************************************************
+*
+* Handle special gate
+*
+* r8 points to special structure
+*
+handle_special_gate:
+       mov  @vx,r0
+       jlt  handle_special_gate_1
+       mov  @vy,r0
+       jlt  handle_special_gate_1
+       neg  @vx
+       neg  @vy
+handle_special_gate_1:
+       rt
+*// handle_special_gate
+
+*********************************************************************************
+*
+* Handle special launch
+*
+* r8 points to special structure
+*
+handle_special_launch:
+       mov  @collision_type,r0
+       jeq  handle_special_launch_2
+       mov  @vy,r0
+       sra  r0,1
+       ci   r0,>fff4
+       jlt  handle_special_launch_1
+       clr  r0
+handle_special_launch_1:
+       mov  r0,@vy
+handle_special_launch_2:
+       rt
+*// handle_special_launch
 
 *************************-********************************************************
 *
@@ -1255,134 +1382,6 @@ roll_bonus_specials_right_5:
        jne  roll_bonus_specials_right_1
        rt
 *// roll_bonus_specials_right
-
-*********************************************************************************
-*
-* Handle special target
-*
-* r2 points to special structure
-*
-handle_special_target:
-       .proc
-       mov  @collision_type,r0
-       jeq  handle_special_target_4
-       c    r2,@last_special
-       jeq  handle_special_target_4
-       mov  r2,@last_special
-       mov  @special_static_sprite(r2),r3
-       cb   @static_alt_color_1(r3),@static_color(r3)
-       jeq  handle_special_target_4
-       movb @static_alt_color_1(r3),@static_color(r3)
-       mov  @special_group(r2),r4
-       inc  @special_group_state(r4)
-       c    @special_group_state(r4),@special_group_n_sprites(r4)
-       jlt  handle_special_target_2
-       li   r0,60
-       li   r1,reset_target_group
-       mov  r4,r2
-       bl   @schedule_event
-       mov  @special_group_text(r4),r0
-       jeq  handle_special_target_4
-       bl   @display_text
-       jmp  handle_special_target_4
-handle_special_target_2:
-       mov  @special_score(r2),r0
-       bl   @add_score
-handle_special_target_4:
-       .endproc
-*// handle_special_target
-
-*********************************************************************************
-*
-* Reset target group
-*
-* r0 points to special group structure
-*
-reset_target_group:
-       .proc
-       mov  r0,r2
-       mov  @special_group_static_sprites(r2),r0
-reset_target_group_1:
-       mov  *r0+,r1
-       movb @static_alt_color_2(r1),@static_color(r1)
-       dec  @special_group_state(r2)
-       jne  reset_target_group_1
-       mov  @special_group_score(r2),r0
-       bl   @add_score
-       .endproc
-*// reset_target_group
-
-*********************************************************************************
-*
-* Reset path group
-*
-* r0 points to special group structure
-*
-reset_path_group:
-       .proc
-       mov r0,r1
-       clr  @special_group_state(r1)
-       mov  @special_group_static_sprites(r1),r0
-       mov  @special_group_n_sprites(r1),r2
-reset_path_group_1:
-       mov  *r0+,r3
-       movb @static_alt_color_2(r3),@static_color(r3)
-       dec  r2
-       jne  reset_path_group_1
-       mov  @special_group_score(r1),r0
-       bl   @add_score
-       .endproc
-*// reset_path_group
-
-*********************************************************************************
-*
-* Handle special saucer
-*
-* r2 points to special structure
-*
-handle_special_saucer:
-       .proc
-       mov  @special_score(r2),r0
-       bl   @add_score
-       .endproc
-*// handle_special_saucer
-
-*********************************************************************************
-*
-* Handle special gate
-*
-* r2 points to special structure
-*
-handle_special_gate:
-       mov  @vx,r0
-       jlt  handle_special_gate_1
-       mov  @vy,r0
-       jlt  handle_special_gate_1
-       neg  @vx
-       neg  @vy
-handle_special_gate_1:
-       rt
-*// handle_special_gate
-
-*********************************************************************************
-*
-* Handle special launch
-*
-* r2 points to special structure
-*
-handle_special_launch:
-       mov  @collision_type,r0
-       jeq  handle_special_launch_2
-       mov  @vy,r0
-       sra  r0,1
-       ci   r0,>fff4
-       jlt  handle_special_launch_1
-       clr  r0
-handle_special_launch_1:
-       mov  r0,@vy
-handle_special_launch_2:
-       rt
-*// handle_special_launch
 
 *********************************************************************************
 *
