@@ -121,7 +121,7 @@ static_game_tombstone:
 static_saucer_app:
        data 154
        byte 28,156
-       byte 14,14,14,14              ;
+       byte 15,15,15,15              ;
        data 0
 static_app_minimen:
        data 157

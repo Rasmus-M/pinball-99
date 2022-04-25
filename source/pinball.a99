@@ -1263,10 +1263,58 @@ reset_target_group_1:
 *
 handle_special_saucer:
        .proc
-       mov  @special_score(r8),r0
-       bl   @add_score
+       c    r8,@last_special
+       jeq  handle_special_saucer_1
+       mov  r8,@last_special
+       inc  @special_state(r8)
+       mov  @special_static_sprite(r8),r1
+       clr  r0
+       movb @static_x(r1),r0
+       srl  r0,4
+       ai   r0,>0070
+       mov  r0,@x
+       clr  r0
+       mov  @static_y(r1),r0
+       sla  r0,4
+       ai   r0,>0070
+       mov  r0,@y
+       li   r0,120
+       clr  @vx
+       clr  @vy
+       clr  @ay
+       li   r1,launch_from_saucer
+       mov  r8,r2
+       bl   @schedule_event
+handle_special_saucer_1:
        .endproc
 *// handle_special_saucer
+
+*********************************************************************************
+*
+* Launch from saucer
+*
+* r0 points to special structure
+*
+launch_from_saucer:
+       mov  r0,r8
+       mov  @special_group(r8),r9
+       mov  @special_group_state(r9),r0
+       sla  r0,1
+       a    @special_group_static_sprites(r9),r0
+       mov  *r0,r7                     ; Get sprite
+       movb @static_alt_color_1(r7),@static_color(r7)
+       mov  @static_text(r7),r0
+       jeq  launch_from_saucer_1
+       bl   @display_text
+launch_from_saucer_1:
+       inc  @special_group_state(r9)
+       li   r0,>0020
+       mov  r0,@vx
+       li   r0,>0010
+       mov  r0,@vy
+       mov  @ay_init,@ay
+       rt
+*// lauch_from_saucer
 
 *********************************************************************************
 *
