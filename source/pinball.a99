@@ -681,16 +681,18 @@ perform_events:
        mov  @event_frame(r3),r1
        c    r1,@frame
        jh   perform_events_2
+*      Move head
+       mov  @event_queue_head,r4
+       ai   r4,event_size
+       ci   r4,event_queue_end
+       jl   perform_events_1
+       li   r4,event_queue
+perform_events_1:
+       mov  r4,@event_queue_head
+*      Perform event
        mov  @event_function(r3),r1
        mov  @event_param(r3),r0
        bl   *r1                        ; Call function
-       mov  @event_queue_head,r3
-       ai   r3,event_size
-       ci   r3,event_queue_end
-       jl   perform_events_1
-       li   r3,event_queue
-perform_events_1:
-       mov  r3,@event_queue_head
 perform_events_2:
        .endproc
 *// perform events
@@ -1165,10 +1167,7 @@ handle_special_group_path_2:
        c    r0,@special_group_n_sprites(r9)            ; All lit?
 *      All lit
        jne  handle_special_group_path_3
-       li   r0,60
-       li   r1,reset_path_group
-       mov  r9,r2
-       bl   @schedule_event
+       bl   @schedule_reset_special_group
        bl   @play_extra
        mov  @special_group_text(r9),r0
        jeq  handle_special_group_path_3
@@ -1176,28 +1175,6 @@ handle_special_group_path_2:
 handle_special_group_path_3:
        .endproc
 *// handle_special_group_path
-
-*********************************************************************************
-*
-* Reset path group
-*
-* r0 points to special group structure
-*
-reset_path_group:
-       .proc
-       mov r0,r1
-       clr  @special_group_state(r1)
-       mov  @special_group_static_sprites(r1),r0
-       mov  @special_group_n_sprites(r1),r2
-reset_path_group_1:
-       mov  *r0+,r7
-       movb @static_alt_color_2(r7),@static_color(r7)
-       dec  r2
-       jne  reset_path_group_1
-       mov  @special_group_score(r1),r0
-       bl   @add_score
-       .endproc
-*// reset_path_group
 
 *********************************************************************************
 *
@@ -1220,10 +1197,7 @@ handle_special_target:
        inc  @special_group_state(r9)
        c    @special_group_state(r9),@special_group_n_sprites(r9)
        jlt  handle_special_target_2
-       li   r0,60
-       li   r1,reset_target_group
-       mov  r9,r2
-       bl   @schedule_event
+       bl   @schedule_reset_special_group
        mov  @special_group_text(r9),r0
        jeq  handle_special_target_4
        bl   @display_text
@@ -1234,26 +1208,6 @@ handle_special_target_2:
 handle_special_target_4:
        .endproc
 *// handle_special_target
-
-*********************************************************************************
-*
-* Reset target group
-*
-* r0 points to special group structure
-*
-reset_target_group:
-       .proc
-       mov  r0,r2
-       mov  @special_group_static_sprites(r2),r0
-reset_target_group_1:
-       mov  *r0+,r7
-       movb @static_alt_color_2(r7),@static_color(r7)
-       dec  @special_group_state(r2)
-       jne  reset_target_group_1
-       mov  @special_group_score(r2),r0
-       bl   @add_score
-       .endproc
-*// reset_target_group
 
 *********************************************************************************
 *
@@ -1296,6 +1250,7 @@ handle_special_saucer_1:
 * r0 points to special structure
 *
 launch_from_saucer:
+       .proc
        mov  r0,r8
        mov  @special_group(r8),r9
        mov  @special_group_state(r9),r0
@@ -1308,12 +1263,17 @@ launch_from_saucer:
        bl   @display_text
 launch_from_saucer_1:
        inc  @special_group_state(r9)
+       c    @special_group_state(r9),@special_group_n_sprites(r9)
+       jne  launch_from_saucer_3
+       bl   @schedule_reset_special_group
+launch_from_saucer_3:
+*      Release ball
        li   r0,>0020
        mov  r0,@vx
        li   r0,>0010
        mov  r0,@vy
        mov  @ay_init,@ay
-       rt
+       .endproc
 *// lauch_from_saucer
 
 *********************************************************************************
@@ -1352,6 +1312,51 @@ handle_special_launch_1:
 handle_special_launch_2:
        rt
 *// handle_special_launch
+
+*********************************************************************************
+*
+* Schedule reset special group, display text, display score
+*
+* r9 points to special group structure
+*
+schedule_reset_special_group:
+       .proc
+       li   r0,60
+       li   r1,reset_special_group
+       mov  r9,r2
+       bl   @schedule_event
+       mov  @special_group_score(r9),r2
+       jeq  schedule_reset_special_group_1
+       li   r0,60
+       li   r1,add_score
+       bl   @schedule_event
+schedule_reset_special_group_1:
+       .endproc
+*// schedule_reset_special_group
+
+*********************************************************************************
+*
+* Reset special group
+*
+* r0 points to special group structure
+*
+reset_special_group:
+       .proc
+       mov r0,r9
+       clr  @special_group_state(r9)
+       mov  @special_group_static_sprites(r9),r0
+       mov  @special_group_n_sprites(r9),r2
+reset_special_group_1:
+       mov  *r0+,r7
+       movb @static_alt_color_2(r7),@static_color(r7)
+       dec  r2
+       jne  reset_special_group_1
+       mov  @special_group_text(r9),r0
+       jeq  reset_special_group_2
+       bl   @display_text
+reset_special_group_2:
+       .endproc
+*// reset_special_group
 
 *************************-********************************************************
 *
@@ -1866,15 +1871,29 @@ reset_score_buffer:
 *
 schedule_event:
        mov  @event_queue_tail,r3
-       a    @frame,r0
+       c    r3,@event_queue_head       ; Empty?
+       jeq  schedule_event_2
+*      Get last scheduled event
+       mov  r3,r4
+       ai   r4,-event_size
+       ci   r4,event_queue
+       jhe  schedule_event_1
+       li   r4,event_queue_end-event_size
+schedule_event_1:
+       a    @event_frame(r4),r0        ; Releative to previous
+       jmp  schedule_event_3
+schedule_event_2:
+       a    @frame,r0                  ; Relative to current frame
+*      Schedule new event
+schedule_event_3:
        mov  r0,@event_frame(r3)
        mov  r1,@event_function(r3)
        mov  r2,@event_param(r3)
        ai   r3,event_size
        ci   r3,event_queue_end
-       jl   schedule_event_1
+       jl   schedule_event_4
        li   r3,event_queue
-schedule_event_1:
+schedule_event_4:
        mov  r3,@event_queue_tail
        rt
 *// schedule event
@@ -2160,6 +2179,8 @@ txt_f18a:
        text 'F18A VDP'
 txt_32k:
        text '32K RAM '
+txt_games:
+       text ' GAMES! '
 txt_parsec:
        text ' PARSEC '
 txt_invaders:
@@ -2170,6 +2191,8 @@ txt_tombstone:
        text 'TMB CITY'
 txt_wumpus:
        text ' WUMPUS '
+txt_apps:
+       text 'ALL APPS'
 txt_ea:
        text 'ED/ASSM '
 txt_minimen:

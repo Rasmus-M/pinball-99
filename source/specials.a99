@@ -140,7 +140,7 @@ special_group_games_path:
        data special_group_games_path_specials
        data 5
        data special_group_games_statics
-       data 0
+       data txt_games
 special_group_peb_targets:
        data special_group_type_targets
        data 0
@@ -180,12 +180,12 @@ special_group_500_targets:
 special_group_apps_ramp:
        data special_group_type_ramp
        data 0
-       data 0
+       data 5000
        data 1
        data 0                          ; specials
        data 3
        data special_group_apps_statics
-       data 0
+       data txt_apps
 *      End
        data -1
 
