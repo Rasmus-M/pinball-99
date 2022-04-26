@@ -1031,7 +1031,8 @@ handle_special_bumper:
        mov  r8,@last_special
        a    @nx,@vx
        a    @ny,@vy
-       mov  @special_score(r8),r0
+       mov  @special_static_sprite(r8),r7
+       mov  @static_score(r7),r0
        bl   @add_score
        bl   @play_shield
 handle_special_bumper_1:
@@ -1065,8 +1066,10 @@ handle_special_rollover_1:
 handle_special_rollover_2:
        bl   @handle_special_group_path
        jmp  handle_special_rollover_4
+*      Default
 handle_special_rollover_3:
-       mov  @special_score(r8),r0                      ; Get the number of points to add
+       mov  @special_static_sprite(r8),r7              ; Get sprite
+       mov  @static_score(r7),r0                       ; Get the number of points to add
        bl   @add_score                                 ; Add to score
        bl   @play_warning                              ; Play a sound
 handle_special_rollover_4:
@@ -1109,11 +1112,11 @@ handle_special_group_rollovers_1:
        c    r1,@special_group_n_sprites(r9)            ; All lit?
        jhe  handle_special_group_rollovers_3           ; If yes just stop
        sla  r1,1                                       ; To word offset
-       mov  @bonus_multipliers(r1),@bonus_multiplier   ; Record bonus multiplier
        mov  @special_group_static_sprites(r9),r2       ; Pointer to list of sprites
        a    r1,r2                                      ; Pointer to sprite
        mov  *r2,r7                                     ; Get sprite
        movb @static_alt_color_1(r7),@static_color(r7)  ; Change color
+       mov  @static_score(r7),@bonus_multiplier        ; Record bonus multiplier
        li   r0,>0010                                   ; State value add
        a    r0,@special_group_state(r9)                ; Record in state
        mov  @static_text(r7),r0                        ; Text to display
@@ -1121,7 +1124,7 @@ handle_special_group_rollovers_1:
        bl   @display_text                              ; Display text
        jmp  handle_special_group_rollovers_3
 handle_special_group_rollovers_2:
-       mov  @special_score(r8),r0                      ; Get the number of points to add
+       mov  @static_score(r7),r0                       ; Get the number of points to add
        bl   @add_score                                 ; Add to score
        bl   @play_warning                              ; Play a sound
 handle_special_group_rollovers_3:
@@ -1156,22 +1159,15 @@ handle_special_group_path_1:
        sla  r0,1
        a    r0,r3
        mov  *r3,r7
-       movb @static_alt_color_1(r7),@static_color(r7)  ; Change color
-       inc  @special_group_state(r9)
+       bl   @light_static_sprite
        bl   @play_warning
-       mov  @static_text(r7),r0
-       jeq  handle_special_group_path_2
-       bl   @display_text
-handle_special_group_path_2:
+       inc  @special_group_state(r9)
        mov  @special_group_state(r9),r0
        c    r0,@special_group_n_sprites(r9)            ; All lit?
-*      All lit
        jne  handle_special_group_path_3
+*      All lit
        bl   @schedule_reset_special_group
        bl   @play_extra
-       mov  @special_group_text(r9),r0
-       jeq  handle_special_group_path_3
-       bl   @display_text
 handle_special_group_path_3:
        .endproc
 *// handle_special_group_path
@@ -1189,22 +1185,17 @@ handle_special_target:
        c    r8,@last_special
        jeq  handle_special_target_4
        mov  r8,@last_special
+       mov  @special_state(r8),r0
+       jne  handle_special_target_4
+       inc  @special_state(r8)
        mov  @special_static_sprite(r8),r7
-       cb   @static_alt_color_1(r7),@static_color(r7)
-       jeq  handle_special_target_4
-       movb @static_alt_color_1(r7),@static_color(r7)
+       bl   @light_static_sprite
+       bl   @play_extra
        mov  @special_group(r8),r9
        inc  @special_group_state(r9)
        c    @special_group_state(r9),@special_group_n_sprites(r9)
-       jlt  handle_special_target_2
+       jlt  handle_special_target_4
        bl   @schedule_reset_special_group
-       mov  @special_group_text(r9),r0
-       jeq  handle_special_target_4
-       bl   @display_text
-       jmp  handle_special_target_4
-handle_special_target_2:
-       mov  @special_score(r8),r0
-       bl   @add_score
 handle_special_target_4:
        .endproc
 *// handle_special_target
@@ -1220,7 +1211,6 @@ handle_special_saucer:
        c    r8,@last_special
        jeq  handle_special_saucer_1
        mov  r8,@last_special
-       inc  @special_state(r8)
        mov  @special_static_sprite(r8),r1
        clr  r0
        movb @static_x(r1),r0
@@ -1257,11 +1247,8 @@ launch_from_saucer:
        sla  r0,1
        a    @special_group_static_sprites(r9),r0
        mov  *r0,r7                     ; Get sprite
-       movb @static_alt_color_1(r7),@static_color(r7)
-       mov  @static_text(r7),r0
-       jeq  launch_from_saucer_1
-       bl   @display_text
-launch_from_saucer_1:
+       bl   @light_static_sprite
+       bl   @play_shield
        inc  @special_group_state(r9)
        c    @special_group_state(r9),@special_group_n_sprites(r9)
        jne  launch_from_saucer_3
@@ -1273,8 +1260,20 @@ launch_from_saucer_3:
        li   r0,>0010
        mov  r0,@vy
        mov  @ay_init,@ay
+       li   r0,60
+       li   r1,reset_last_special
+       bl   @schedule_event
        .endproc
 *// lauch_from_saucer
+
+*********************************************************************************
+*
+* Reset last special
+*
+reset_last_special:
+       clr  @last_special
+       rt
+*// reset_last_special
 
 *********************************************************************************
 *
@@ -1315,6 +1314,28 @@ handle_special_launch_2:
 
 *********************************************************************************
 *
+* Light static sprite, display text and score
+*
+* r7 points to static structure
+*
+light_static_sprite:
+       .proc
+       movb @static_alt_color_1(r7),@static_color(r7)  ; Change color
+       mov  @static_text(r7),r0
+       jeq  light_static_sprite_1                      ; Display text
+       bl   @display_text
+light_static_sprite_1:
+       mov  @static_score,r2
+       jeq  light_static_sprite_2
+       li   r0,60
+       li   r1,add_score
+       bl   @schedule_event
+light_static_sprite_2:
+       .endproc
+*// light_static_sprite
+
+*********************************************************************************
+*
 * Schedule reset special group, display text, display score
 *
 * r9 points to special group structure
@@ -1344,17 +1365,31 @@ reset_special_group:
        .proc
        mov r0,r9
        clr  @special_group_state(r9)
+*      Reset specials state
+       mov  @special_group_specials(r9),r0
+       mov  @special_group_n_specials(r9),r2
+       jeq  reset_special_group_2
+reset_special_group_1:
+       mov  *r0+,r8
+       clr  @special_state(r8)
+       dec  r2
+       jne  reset_special_group_1
+*      Reset sprite colors
+reset_special_group_2:
        mov  @special_group_static_sprites(r9),r0
        mov  @special_group_n_sprites(r9),r2
-reset_special_group_1:
+       jeq  reset_special_group_4
+reset_special_group_3:
        mov  *r0+,r7
        movb @static_alt_color_2(r7),@static_color(r7)
        dec  r2
-       jne  reset_special_group_1
+       jne  reset_special_group_3
+*      Display text
+reset_special_group_4:
        mov  @special_group_text(r9),r0
-       jeq  reset_special_group_2
+       jeq  reset_special_group_5
        bl   @display_text
-reset_special_group_2:
+reset_special_group_5:
        .endproc
 *// reset_special_group
 
@@ -1711,12 +1746,15 @@ calc_signed_product:
 *
 add_score:
        .proc
+       mov  r0,r0
+       jeq  add_score_2
        mpy  @bonus_multiplier,r0
        a    r1,@score_lsw
        jnc  add_score_1
        inc  @score_msw
 add_score_1:
        bl   @update_score_buffer
+add_score_2:
        .endproc
 *// add_score
 
