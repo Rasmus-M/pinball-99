@@ -1122,11 +1122,14 @@ handle_special_group_rollovers_1:
        mov  @static_text(r7),r0                        ; Text to display
        jeq  handle_special_group_rollovers_3
        bl   @display_text                              ; Display text
+       mov  @special_group_speech(r9),r0
+       jeq  handle_special_group_rollovers_3
+       bl   @speak
        jmp  handle_special_group_rollovers_3
 handle_special_group_rollovers_2:
        mov  @static_score(r7),r0                       ; Get the number of points to add
        bl   @add_score                                 ; Add to score
-       bl   @play_ouip                              ; Play a sound
+       bl   @play_ouip                                 ; Play a sound
 handle_special_group_rollovers_3:
        .endproc
 *// handle_special_group_rollovers:
@@ -1351,6 +1354,9 @@ schedule_reset_special_group:
        li   r0,60
        li   r1,add_score
        bl   @schedule_event
+       mov  @special_group_speech(r9),r0
+       jeq  schedule_reset_special_group_1
+       bl   @speak
 schedule_reset_special_group_1:
        .endproc
 *// schedule_reset_special_group
