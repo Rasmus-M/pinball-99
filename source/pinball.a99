@@ -506,7 +506,7 @@ user_input_5:
 *      Launch
        neg  r0
        mov  r0,@vy
-       bl   @play_extra
+       bl   @play_zap
        li   r0,txt_launch
        bl   @display_text
        jmp  user_input_9
@@ -609,7 +609,7 @@ check_collision_1:
        mov  @dp,r3
        ci   r3,->0100
        jgt  check_collision_2
-       bl   @play_explosion_3
+       bl   @play_crash
 *      Flipper push
 check_collision_2:
        mov  @collision_type,r0
@@ -647,7 +647,7 @@ check_collision_4:
        a    @right_flipper_center_x,r3
        jlt  check_collision_6
 check_collision_5:
-       sla  r3,arm                     ; arm
+       sla  r3,arm                     ; Length of flipper arm
 *      Add arm * (nx, ny) to velocity
        mov  @nx,r0
        mov  r3,r1
@@ -657,8 +657,8 @@ check_collision_5:
        mov  r3,r1
        bl   @calc_signed_product
        a    r0,@vy
-*      Play sound
-       bl   @play_shot
+*      Play sound and display text
+       bl   @play_zap
        li   r0,txt_kapow
        bl   @display_text
 check_collision_6:
@@ -1034,7 +1034,7 @@ handle_special_bumper:
        mov  @special_static_sprite(r8),r7
        mov  @static_score(r7),r0
        bl   @add_score
-       bl   @play_shield
+       bl   @play_duouoh
 handle_special_bumper_1:
        .endproc
 *// handle_special_bumper
@@ -1071,7 +1071,7 @@ handle_special_rollover_3:
        mov  @special_static_sprite(r8),r7              ; Get sprite
        mov  @static_score(r7),r0                       ; Get the number of points to add
        bl   @add_score                                 ; Add to score
-       bl   @play_warning                              ; Play a sound
+       bl   @play_ouip                              ; Play a sound
 handle_special_rollover_4:
        .endproc
 *// handle_special_rollover
@@ -1126,7 +1126,7 @@ handle_special_group_rollovers_1:
 handle_special_group_rollovers_2:
        mov  @static_score(r7),r0                       ; Get the number of points to add
        bl   @add_score                                 ; Add to score
-       bl   @play_warning                              ; Play a sound
+       bl   @play_ouip                              ; Play a sound
 handle_special_group_rollovers_3:
        .endproc
 *// handle_special_group_rollovers:
@@ -1160,14 +1160,14 @@ handle_special_group_path_1:
        a    r0,r3
        mov  *r3,r7
        bl   @light_static_sprite
-       bl   @play_warning
+       bl   @play_ouip
        inc  @special_group_state(r9)
        mov  @special_group_state(r9),r0
        c    r0,@special_group_n_sprites(r9)            ; All lit?
        jne  handle_special_group_path_3
 *      All lit
        bl   @schedule_reset_special_group
-       bl   @play_extra
+       bl   @play_bing
 handle_special_group_path_3:
        .endproc
 *// handle_special_group_path
@@ -1190,7 +1190,7 @@ handle_special_target:
        inc  @special_state(r8)
        mov  @special_static_sprite(r8),r7
        bl   @light_static_sprite
-       bl   @play_extra
+       bl   @play_bing
        mov  @special_group(r8),r9
        inc  @special_group_state(r9)
        c    @special_group_state(r9),@special_group_n_sprites(r9)
@@ -1248,7 +1248,7 @@ launch_from_saucer:
        a    @special_group_static_sprites(r9),r0
        mov  *r0,r7                     ; Get sprite
        bl   @light_static_sprite
-       bl   @play_shield
+       bl   @play_duouoh
        inc  @special_group_state(r9)
        c    @special_group_state(r9),@special_group_n_sprites(r9)
        jne  launch_from_saucer_3
@@ -1998,27 +1998,29 @@ copy_vdp_copy_to_pad_1:
 *
 graphics_mode:
        .proc
-       clr  r0
        li   r1,vregs2
-       li   r2,8
 graphics_mode_1:
-       movb *r1+,@lsb_r0
+       mov  *r1+,r0
+       jlt  graphics_mode_2
        bl   @vwtr                      ; Set register
-       ai   r0,>0100
-       dec  r2
-       jne  graphics_mode_1
+       jmp  graphics_mode_1
 *      Return
+graphics_mode_2:
        .endproc
 *      VDP registers
 vregs2:
-       byte >00                        ; Graphics I mode
-       byte >e2                        ; 16K, display on, interrupts enabled
-       byte name_table/>400            ; Name table
-       byte color_table/>40            ; Color table
-       byte pattern_table/>800         ; Pattern table
-       byte sprite_attr_table/>80      ; Sprite attribute table
-       byte sprite_pattern_table/>800  ; Sprite pattern table
-       byte >0e                        ; Backdrop color
+       byte >39,>1c                        ; Unlock F18A
+       byte >39,>1c                        ; Unlock F18A
+       byte >1e,>04                        ; F18A: Max 4 sprites on a scanline
+       byte >00,>00                        ; Graphics I mode
+       byte >01,>e2                        ; 16K, display on, interrupts enabled
+       byte >02,name_table/>400            ; Name table
+       byte >03,color_table/>40            ; Color table
+       byte >04,pattern_table/>800         ; Pattern table
+       byte >05,sprite_attr_table/>80      ; Sprite attribute table
+       byte >06,sprite_pattern_table/>800  ; Sprite pattern table
+       byte >07,>0e                        ; Backdrop color
+       data -1
 *// graphics_mode
 
 *********************************************************************************
