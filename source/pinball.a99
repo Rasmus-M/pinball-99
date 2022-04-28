@@ -322,6 +322,15 @@ loop:
 !      bl   @display_text
        jmp  restart_ball
 game_over:
+       li   r0,txt_game
+       bl   @display_text_now
+       li   r0,60
+       bl   @pause
+       li   r0,txt_over
+       bl   @display_text_now
+       li   r0,60
+       bl   @pause
+       bl   @display_score_now
        li   r0,240
        bl   @pause
        jmp  restart_game
@@ -1074,7 +1083,7 @@ handle_special_rollover_3:
        mov  @special_static_sprite(r8),r7              ; Get sprite
        mov  @static_score(r7),r0                       ; Get the number of points to add
        bl   @add_score                                 ; Add to score
-       bl   @play_ouip                              ; Play a sound
+       bl   @play_ouip                                 ; Play a sound
 handle_special_rollover_4:
        .endproc
 *// handle_special_rollover
@@ -1335,12 +1344,18 @@ light_static_sprite_1:
        jeq  light_static_sprite_2                      ; Speak
        bl   @speak
 light_static_sprite_2:
-       mov  @static_score,r2                           ; Add points
+       mov  @static_score(r7),r2                       ; Add points
+       jeq  light_static_sprite_4
+       mov  @static_text(r7),r0
        jeq  light_static_sprite_3
        li   r0,60
        li   r1,add_score
        bl   @schedule_event
+       jmp  light_static_sprite_4
 light_static_sprite_3:
+       mov  r2,r0
+       bl   @add_score
+light_static_sprite_4:
        .endproc
 *// light_static_sprite
 
@@ -1854,6 +1869,20 @@ display_text_now:
        .endproc
 *// display_text_now
 
+*********************************************************************
+*
+* Display score to both double buffers
+*
+display_score_now:
+       .proc
+       bl   @display_score_buffer
+       bl   @draw_info_panel
+       inv  @double_buffer_flag
+       bl   @draw_info_panel
+       inv  @double_buffer_flag
+       .endproc
+*// display_score_now
+
 *********************************************************************************
 *
 * Initialize game
@@ -1865,6 +1894,27 @@ init_game:
        mov  @one,@bonus_multiplier
        li   r0,3
        mov  r0,@balls
+*      Reset static sprites
+       li   r1,static_sprites
+init_game_1:
+       movb @static_alt_color_2(r1),@static_color(r1)
+       ai   r1,static_size
+       mov  *r1,r0
+       jgt  init_game_1
+*      Reset specials
+       li   r1,specials
+init_game_2:
+       clr  @special_state(r1)
+       ai   r1,special_size
+       mov  *r1,r0
+       jgt  init_game_2
+*      Reset special groups
+       li   r1,special_groups
+init_game_3:
+       clr  @special_group_state(r1)
+       ai   r1,special_group_size
+       mov  *r1,r0
+       jgt  init_game_3
        .endproc
 *// init_game
 
@@ -2250,8 +2300,12 @@ txt_ea:
        text 'ED/ASSM '
 txt_minimen:
        text 'MINIMEM '
-txt_XB:
+txt_xb:
        text '   XB   '
+txt_game:
+       text '  GAME  '
+txt_over:
+       text '  OVER  '
 
 init_values:
        equ  $
@@ -2308,12 +2362,6 @@ cover_sprites:
 
 static_sprites:
        copy "static-sprites.a99"
-plunger:
-       data plunger_y                  ; y
-       byte 236,4
-       byte 15,15,15,15
-       data 0
-       data -1
 specials:
        copy "specials.a99"
 

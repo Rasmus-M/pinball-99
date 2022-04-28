@@ -302,3 +302,12 @@ static_arrow_sams:
        data 0
        data 0
        data 0
+plunger:
+       data plunger_y                  ; y
+       byte 236,4
+       byte 15,15,15,15
+       data 0
+       data 0
+       data 0
+*      End
+       data -1

@@ -36,113 +36,138 @@ special_type_launch:
 special_rollover_bumper_50:
        data special_type_bumper
        data 73,105,128,160
-       data static_bumper_50,0,0
+       data static_bumper_50,0
+       data 0
 special_rollover_bumper_20:
        data special_type_bumper
        data 121,153,176,208
-       data static_bumper_20,0,0
+       data static_bumper_20,0
+       data 0
 *      Bonus
 special_rollover_bonus_t:
        data special_type_rollover
        data 110,56,115,76
-       data static_rollover_bonus_t,special_group_bonus_rollovers,0
+       data static_rollover_bonus_t,special_group_bonus_rollovers
+       data 0
 special_rollover_bonus_i:
        data special_type_rollover
        data 134,64,139,80
-       data static_rollover_bonus_i,special_group_bonus_rollovers,0
+       data static_rollover_bonus_i,special_group_bonus_rollovers
+       data 0
 special_rollover_bonus_9_1st:
        data special_type_rollover
        data 158,65,163,79
-       data static_rollover_bonus_9_1st,special_group_bonus_rollovers,0
+       data static_rollover_bonus_9_1st,special_group_bonus_rollovers
+       data 0
 special_rollover_bonus_9_2nd:
        data special_type_rollover
        data 182,57,187,77
-       data static_rollover_bonus_9_2nd,special_group_bonus_rollovers,0
+       data static_rollover_bonus_9_2nd,special_group_bonus_rollovers
+       data 0
 *      SAMS path
 special_rollover_sams_start:
        data special_type_rollover
        data 194,286,207,298
-       data static_arrow_sams,special_group_sams_path,0
+       data static_arrow_sams,special_group_sams_path
+       data 0
 special_rollover_sams_end:
        data special_type_rollover
        data 219,240,226,247
-       data static_arrow_sams,special_group_sams_path,0
+       data static_arrow_sams,special_group_sams_path
+       data 0
 *      Games path
 special_rollover_games_start:
        data special_type_rollover
        data 12,146,17,158
-       data static_arrow_games,special_group_games_path,0
+       data static_arrow_games,special_group_games_path
+       data 0
 special_rollover_games_end:
        data special_type_rollover
        data 72,44,88,53
-       data static_arrow_games,special_group_games_path,0
+       data static_arrow_games,special_group_games_path
+       data 0
 *      PEB targets
 special_target_peb_p:
        data special_type_target
        data 197,90,205,119
-       data static_target_peb_p,special_group_peb_targets,0
+       data static_target_peb_p,special_group_peb_targets
+       data 0
 special_target_peb_e:
        data special_type_target
        data 205,122,214,151
-       data static_target_peb_e,special_group_peb_targets,0
+       data static_target_peb_e,special_group_peb_targets
+       data 0
 special_target_peb_b:
        data special_type_target
        data 213,154,222,184
-       data static_target_peb_b,special_group_peb_targets,0
+       data static_target_peb_b,special_group_peb_targets
+       data 0
 *      F18a targets
 special_target_f18a_f:
        data special_type_target
        data 12,224,20,253
-       data static_target_f18a_f,special_group_f18a_targets,0
+       data static_target_f18a_f,special_group_f18a_targets
+       data 0
 special_target_f18a_1:
        data special_type_target
        data 16,253,20,277
-       data static_target_f18a_1,special_group_f18a_targets,0
+       data static_target_f18a_1,special_group_f18a_targets
+       data 0
 special_target_f18a_8:
        data special_type_target
        data 16,277,20,301
-       data static_target_f18a_8,special_group_f18a_targets,0
+       data static_target_f18a_8,special_group_f18a_targets
+       data 0
 special_target_f18a_a:
        data special_type_target
        data 16,301,20,324
-       data static_target_f18a_a,special_group_f18a_targets,0
+       data static_target_f18a_a,special_group_f18a_targets
+       data 0
 *      32K targets
 special_target_32k_3:
        data special_type_target
        data 106,226,124,239
-       data static_target_32k_3,special_group_32k_targets,0
+       data static_target_32k_3,special_group_32k_targets
+       data 0
 special_target_32k_2:
        data special_type_target
        data 124,237,140,247
-       data static_target_32k_2,special_group_32k_targets,0
+       data static_target_32k_2,special_group_32k_targets
+       data 0
 special_target_32k_k:
        data special_type_target
        data 140,245,158,254
-       data static_target_32k_k,special_group_32k_targets,0
+       data static_target_32k_k,special_group_32k_targets
+       data 0
 *      500 targets
 special_target_500_1:
        data special_type_target
        data 74,81,87,94
-       data static_target_500_1,special_group_500_targets,0
+       data static_target_500_1,special_group_500_targets
+       data 0
 special_target_500_2:
        data special_type_target
        data 58,97,71,110
-       data static_target_500_2,special_group_500_targets,0
+       data static_target_500_2,special_group_500_targets
+       data 0
 *      Apps ramp
 special_saucer_apps:
        data special_type_saucer
        data 35,159,41,167
-       data static_saucer_apps,special_group_apps_ramp,0
+       data static_saucer_apps,special_group_apps_ramp
+       data 0
 *      Launch gate
 special_launch_gate:
        data special_type_gate
        data 199,36,207,43
-       data static_launch_gate,special_group_apps_ramp,0
+       data static_launch_gate,special_group_apps_ramp
+       data 0
 *      Launch pad
 special_launch_pad:
        data special_type_launch
        data 242,487,246,493
        data plunger,0,0
+       data 0
 *      End
        data -1
 
@@ -193,7 +218,7 @@ special_group_bonus_rollovers:
 special_group_sams_path:
        data special_group_type_path
        data 0
-       data 1
+       data 2
        data special_group_sams_path_specials
        data 4
        data special_group_sams_statics
@@ -203,7 +228,7 @@ special_group_sams_path:
 special_group_games_path:
        data special_group_type_path
        data 0
-       data 1
+       data 2
        data special_group_games_path_specials
        data 5
        data special_group_games_statics
