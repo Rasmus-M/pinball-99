@@ -83,7 +83,7 @@ static_game_parsec:
        byte 48,224
        byte 14,13,14,13               ;
        data txt_parsec
-       data speech_game
+       data speech_game_idx
        data 2500
 static_rollover_bonus_i:
        data 64
@@ -111,7 +111,7 @@ static_game_invaders:
        byte 29,228
        byte 14,13,14,13               ;
        data txt_invaders
-       data speech_game
+       data speech_game_idx
        data 2000
 static_target_500_2:
        data 97
@@ -132,7 +132,7 @@ static_game_munchman:
        byte 14,232
        byte 14,13,14,13              ;
        data txt_munchman
-       data speech_game
+       data speech_game_idx
        data 1500
 static_bumper_50:
        data 124
@@ -153,14 +153,14 @@ static_app_ea:
        byte 44,28
        byte 14,15,14,15               ;
        data txt_ea
-       data speech_application
+       data speech_application_idx
        data 4000
 static_game_tombstone:
        data 145
        byte 6,236
        byte 14,13,14,13               ;
        data txt_tombstone
-       data speech_game
+       data speech_game_idx
        data 1000
 static_saucer_apps:
        data 154
@@ -174,7 +174,7 @@ static_app_minimen:
        byte 56,220
        byte 14,15,14,15              ;
        data txt_minimen
-       data speech_application
+       data speech_application_idx
        data 3000
 static_target_peb_b:
        data 162
@@ -195,14 +195,14 @@ static_game_wumpus:
        byte 8,240
        byte 14,13,14,13              ;
        data txt_wumpus
-       data speech_game
+       data speech_game_idx
        data 500
 static_app_xb:
        data 181
        byte 68,24
        byte 14,15,14,15               ;
        data txt_XB
-       data speech_application
+       data speech_application_idx
        data 2000
 static_arrow_games:
        data 200

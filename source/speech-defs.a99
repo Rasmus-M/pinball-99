@@ -1,0 +1,20 @@
+speech_32k_idx:
+       equ  1
+speech_application_idx:
+       equ  2
+speech_extra_ball_idx:
+       equ  3
+speech_extra_bonus_idx:
+       equ  4
+speech_f18a_idx:
+       equ  5
+speech_game_idx:
+       equ  6
+speech_good_shot_idx:
+       equ  7
+speech_peb_idx:
+       equ  8
+speech_sams_idx:
+       equ  9
+speech_welcome_idx:
+       equ  10

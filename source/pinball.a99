@@ -10,6 +10,7 @@
        copy "r.a99"
        copy "macros.a99"
        copy "sound-defs.a99"
+       copy "speech-defs.a99"
 
 **
 * Constants
@@ -102,6 +103,8 @@ collision_type_left_flipper:
        equ  2
 collision_type_right_flipper:
        equ  3
+speech_bank:
+       equ  >6034
 
 **
 * Memory mapped addresses
@@ -1968,7 +1971,7 @@ one_time_init:
 *      Play music
        li   r0,bipbop_module
        bl   @play_module
-       li   r0,speech_welcome
+       li   r0,speech_welcome_idx
        bl   @speak
        .endproc
 *// one_time_init
@@ -2327,7 +2330,6 @@ normals:
        copy "sound-fx.a99"
        copy "music.a99"
        copy "chars.a99"
-       copy "speech-data.a99"
 
 upper_memory_max:
        equ  $

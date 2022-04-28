@@ -2,12 +2,15 @@
 *
 * Send speak external command and first 8 bytes
 *
-* r0: address of speech data
+* r0: index of speech data
 *
 speak:
        .proc
-       mov  *r0+,@speech_counter
-       mov  r0,@speech_addr
+       seto @speech_bank
+       sla  r0,2                       ; * 4
+       ai   r0,>6000
+       mov  *r0+,@speech_addr
+       mov  *r0,@speech_counter
 *      Speak external command
        movb @h60,@spchwt
        bl   @delay_12us
@@ -32,6 +35,7 @@ speech_player:
        coc  @h4000,r0
        jne  speech_player_2            ; Speech buffer not half empty - wait more
 *      Status buffer low
+       seto @speech_bank
        mov  @speech_addr,r1            ; Get speech data address
        mov  @speech_counter,r2         ; Get counter
        ci   r2,8                       ; More than 8 bytes left?

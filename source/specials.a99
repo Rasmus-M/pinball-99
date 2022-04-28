@@ -188,7 +188,7 @@ special_group_bonus_rollovers:
        data 5
        data special_group_bonus_statics
        data 0
-       data speech_extra_bonus
+       data speech_extra_bonus_idx
        data 0
 special_group_sams_path:
        data special_group_type_path
@@ -198,7 +198,7 @@ special_group_sams_path:
        data 4
        data special_group_sams_statics
        data txt_sams
-       data speech_sams
+       data speech_sams_idx
        data 5000
 special_group_games_path:
        data special_group_type_path
@@ -218,7 +218,7 @@ special_group_peb_targets:
        data 3
        data special_group_peb_statics
        data txt_peb
-       data speech_peb
+       data speech_peb_idx
        data 4000
 special_group_f18a_targets:
        data special_group_type_targets
@@ -228,7 +228,7 @@ special_group_f18a_targets:
        data 4
        data special_group_f18a_statics
        data txt_f18a
-       data speech_f18a
+       data speech_f18a_idx
        data 3000
 special_group_32k_targets:
        data special_group_type_targets
@@ -238,7 +238,7 @@ special_group_32k_targets:
        data 3
        data special_group_32k_statics
        data txt_32k
-       data speech_32k
+       data speech_32k_idx
        data 2000
 special_group_500_targets:
        data special_group_type_targets
