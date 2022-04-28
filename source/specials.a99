@@ -150,19 +150,19 @@ special_group_type:
        equ  0
 special_group_state:
        equ  2
-special_group_score:
-       equ  4
 special_group_n_specials:
-       equ  6
+       equ  4
 special_group_specials:
-       equ  8
+       equ  6
 special_group_n_sprites:
-       equ  10
+       equ  8
 special_group_static_sprites:
-       equ  12
+       equ  10
 special_group_text:
-       equ  14
+       equ  12
 special_group_speech:
+       equ  14
+special_group_score:
        equ  16
 special_group_size:
        equ  18
@@ -183,83 +183,83 @@ special_groups:
 special_group_bonus_rollovers:
        data special_group_type_rollovers
        data 0
-       data 0
        data 4
        data special_group_bonus_specials
        data 5
        data special_group_bonus_statics
        data 0
        data speech_extra_bonus
+       data 0
 special_group_sams_path:
        data special_group_type_path
        data 0
-       data 5000
        data 1
        data special_group_sams_path_specials
        data 4
        data special_group_sams_statics
        data txt_sams
        data speech_sams
+       data 5000
 special_group_games_path:
        data special_group_type_path
        data 0
-       data 8000
        data 1
        data special_group_games_path_specials
        data 5
        data special_group_games_statics
        data txt_games
-       data speech_game
+       data 0
+       data 8000
 special_group_peb_targets:
        data special_group_type_targets
        data 0
-       data 4000
        data 3
        data special_group_peb_specials
        data 3
        data special_group_peb_statics
        data txt_peb
        data speech_peb
+       data 4000
 special_group_f18a_targets:
        data special_group_type_targets
        data 0
-       data 3000
        data 4
        data special_group_f18a_specials
        data 4
        data special_group_f18a_statics
        data txt_f18a
        data speech_f18a
+       data 3000
 special_group_32k_targets:
        data special_group_type_targets
        data 0
-       data 2000
        data 3
        data special_group_32k_specials
        data 3
        data special_group_32k_statics
        data txt_32k
        data speech_32k
+       data 2000
 special_group_500_targets:
        data special_group_type_targets
        data 0
-       data 5000
        data 2
        data special_group_500_specials
        data 2
        data special_group_500_statics
        data 0
        data 0
+       data 5000
 special_group_apps_ramp:
        data special_group_type_ramp
        data 0
-       data 6000
        data 1
        data special_group_apps_specials
        data 3
        data special_group_apps_statics
        data txt_apps
-       data speech_application
+       data 0
+       data 6000
 *      End
        data -1
 

@@ -1328,12 +1328,16 @@ light_static_sprite:
        jeq  light_static_sprite_1                      ; Display text
        bl   @display_text
 light_static_sprite_1:
-       mov  @static_score,r2
-       jeq  light_static_sprite_2
+       mov  @static_speech(r7),r0
+       jeq  light_static_sprite_2                      ; Speak
+       bl   @speak
+light_static_sprite_2:
+       mov  @static_score,r2                           ; Add points
+       jeq  light_static_sprite_3
        li   r0,60
        li   r1,add_score
        bl   @schedule_event
-light_static_sprite_2:
+light_static_sprite_3:
        .endproc
 *// light_static_sprite
 
