@@ -509,12 +509,12 @@ user_input_5:
        s    @x_init,r1
        abs  r1
        ci   r1,>0020
-       jgt  user_input_6
+       jgt  user_input_5a
        mov  @y_init,r1
        s    @y,r1
        abs  r1
        ci   r1,>0020
-       jgt  user_input_6
+       jgt  user_input_5a
 *      Launch
        neg  r0
        mov  r0,@vy
@@ -522,22 +522,29 @@ user_input_5:
        li   r0,txt_launch
        bl   @display_text
        jmp  user_input_9
+*      Nudge
+user_input_5a:
+       ai   r0,->0300
+       sra  r0,4
+       a    r0,@vx
+       jmp  user_input_9
+*      Cheat
 user_input_6:
-       li   r0,KEY_X
+       li   r0,KEY_LF
        bl   @check_key
        jeq  user_input_8
-       li   r0,>0080
+       li   r0,->0040
        mov  r0,@vx
-       li   r0,->0100
+       li   r0,->0080
        mov  r0,@vy
        jmp  user_input_9
 user_input_8:
-       li   r0,KEY_n
+       li   r0,KEY_RG
        bl   @check_key
        jeq  user_input_9
-       li   r0,->0080
+       li   r0,>0040
        mov  r0,@vx
-       li   r0,->0100
+       li   r0,->0080
        mov  r0,@vy
 user_input_9:
        .endproc
@@ -1106,7 +1113,7 @@ handle_special_group_rollovers:
        mov  @special_state(r8),r0                      ; Get state
        jne  handle_special_group_rollovers_3           ; Stop if already lit
        mov  @special_static_sprite(r8),r7              ; Get sprite
-       movb @static_alt_color_1(r7),@static_color(r7)  ; Change color
+       movb @static_lit_color(r7),@static_color(r7)    ; Change color
        inc  @special_state(r8)                         ; Record as lit
        inc  @special_group_state(r9)                   ; Count one as lit
        mov  @special_group_state(r9),r0                ; Get the new state
@@ -1119,7 +1126,7 @@ handle_special_group_rollovers_1:
        mov  *r0+,r1                                    ; Get a special
        dec  @special_state(r1)                         ; Record as unlit
        mov  @special_static_sprite(r1),r1              ; Get its sprite
-       movb @static_alt_color_2(r1),@static_color(r1)  ; Reset sprite color
+       movb @static_unlit_color(r1),@static_color(r1)  ; Reset sprite color
        dec  @special_group_state(r9)                   ; Count state backwards
        dec  r2
        jne  handle_special_group_rollovers_1           ; Loop until all done
@@ -1133,7 +1140,7 @@ handle_special_group_rollovers_1:
        mov  @special_group_static_sprites(r9),r2       ; Pointer to list of sprites
        a    r1,r2                                      ; Pointer to sprite
        mov  *r2,r7                                     ; Get sprite
-       movb @static_alt_color_1(r7),@static_color(r7)  ; Change color
+       movb @static_lit_color(r7),@static_color(r7)    ; Change color
        mov  @static_score(r7),@bonus_multiplier        ; Record bonus multiplier
        li   r0,>0010                                   ; State value add
        a    r0,@special_group_state(r9)                ; Record in state
@@ -1179,6 +1186,7 @@ handle_special_group_path_1:
        mov  @special_state(r1),r0              ; Test start state
        jne  handle_special_group_path_2        ; If set, the path is complete
        mov  @one,@special_state(r2)            ; Else set the end state
+       clr  @special_state(r1)                 ; Clear start state
        jmp  handle_special_group_path_3        ; And leave
 *      Path complete
 handle_special_group_path_2:
@@ -1350,7 +1358,7 @@ handle_special_launch_2:
 *
 light_static_sprite:
        .proc
-       movb @static_alt_color_1(r7),@static_color(r7)  ; Change color
+       movb @static_lit_color(r7),@static_color(r7)    ; Change color
        mov  @static_text(r7),r0
        jeq  light_static_sprite_1                      ; Display text
        bl   @display_text
@@ -1424,7 +1432,7 @@ reset_special_group_2:
        jeq  reset_special_group_4
 reset_special_group_3:
        mov  *r0+,r7
-       movb @static_alt_color_2(r7),@static_color(r7)
+       movb @static_unlit_color(r7),@static_color(r7)
        dec  r2
        jne  reset_special_group_3
 *      Display text
@@ -1462,11 +1470,11 @@ roll_bonus_specials_left_3:
        mov  r5,r5                          ; Is next lit?
        jne  roll_bonus_specials_left_4     ; Jump if lit
        clr  @special_state(r3)
-       movb @static_alt_color_2(r7),@static_color(r7)
+       movb @static_unlit_color(r7),@static_color(r7)
        jmp  roll_bonus_specials_left_5
 roll_bonus_specials_left_4:
        mov  @one,@special_state(r3)
-       movb @static_alt_color_1(r7),@static_color(r7)
+       movb @static_lit_color(r7),@static_color(r7)
 roll_bonus_specials_left_5:
        dec  r2
        jne  roll_bonus_specials_left_1
@@ -1504,11 +1512,11 @@ roll_bonus_specials_right_3:
        mov  r5,r5                          ; Is next lit?
        jne  roll_bonus_specials_right_4    ; Jump if lit
        clr  @special_state(r3)
-       movb @static_alt_color_2(r7),@static_color(r7)
+       movb @static_unlit_color(r7),@static_color(r7)
        jmp  roll_bonus_specials_right_5
 roll_bonus_specials_right_4:
        mov  @one,@special_state(r3)
-       movb @static_alt_color_1(r7),@static_color(r7)
+       movb @static_lit_color(r7),@static_color(r7)
 roll_bonus_specials_right_5:
        dec  r2
        jne  roll_bonus_specials_right_1
@@ -1912,7 +1920,7 @@ init_game:
 *      Reset static sprites
        li   r1,static_sprites
 init_game_1:
-       movb @static_alt_color_2(r1),@static_color(r1)
+       movb @static_unlit_color(r1),@static_color(r1)
        ai   r1,static_size
        mov  *r1,r0
        jgt  init_game_1

@@ -72,7 +72,7 @@ special_rollover_sams_start:
        data 0
 special_rollover_sams_end:
        data special_type_rollover
-       data 219,240,226,247
+       data 217,239,226,249
        data static_arrow_sams,special_group_sams_path
        data 0
 *      Games path
