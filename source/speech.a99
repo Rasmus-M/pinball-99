@@ -6,16 +6,21 @@
 *
 speak:
        .proc
-       seto @speech_bank
-       sla  r0,2                       ; * 4
+       mov  @speech_detected,r1
+       jeq  speak_1
+       mov  @speech_counter,r2         ; Get counter
+       jne  speak_1                    ; Skip if already speaking
+       sla  r0,2                       ; index * 4
        ai   r0,>6000
+       seto @speech_bank
        mov  *r0+,@speech_addr
        mov  *r0,@speech_counter
 *      Speak external command
        movb @h60,@spchwt
        bl   @delay_12us
 *      Send first 8 bytes
-       bl   @speech_player
+       bl   @send_bytes_to_speech
+speak_1:
        .endproc
 *// speak
 
@@ -32,24 +37,33 @@ speech_player:
 *      Check speech status
        bl   @speech_read_pad
        movb @speech_status,r0
-       coc  @h4000,r0
-       jne  speech_player_2            ; Speech buffer not half empty - wait more
-*      Status buffer low
+       coc  @h4000,r0                  ; Is speech buffer half empty?
+       jne  speech_player_2
+*      Speech buffer low
+       bl   @send_bytes_to_speech
+speech_player_2:
+       .endproc
+*// speech_player
+
+*********************************************************************************
+*
+* Send bytes to speech synth
+*
+send_bytes_to_speech:
        seto @speech_bank
        mov  @speech_addr,r1            ; Get speech data address
        mov  @speech_counter,r2         ; Get counter
        ci   r2,8                       ; More than 8 bytes left?
-       jle  speech_player_1
+       jle  send_bytes_to_speech_1     ; No - jump
        li   r2,8                       ; Yes - send 8
-speech_player_1:
+send_bytes_to_speech_1:
        movb *r1+,@spchwt               ; Send a byte
        dec  @speech_counter
        dec  r2
-       jne  speech_player_1
+       jne  send_bytes_to_speech_1
        mov  r1,@speech_addr            ; Save the new address
-speech_player_2:
-       .endproc
-*// speech_player
+       rt
+*// send_bytes_to_speech
 
 *********************************************************************************
 *
@@ -137,7 +151,7 @@ speech_read_length:
 
 *********************************************************************************
 *
-* Speech status read routine code, must be copied to scratchpad
+* Copy speech status read routine code to scratchpad
 *
 copy_speech_read_to_pad:
        li   r0,speech_read
@@ -152,7 +166,9 @@ copy_speech_read_to_pad_1:
 
 **
 * Constants
+h8000  data >8000
 h4000  data >4000
+h2000  data >2000
 h10    byte >10
 h60    byte >60
 hAA    byte >aa

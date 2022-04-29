@@ -670,9 +670,15 @@ check_collision_5:
        bl   @calc_signed_product
        a    r0,@vy
 *      Play sound and display text
+*      Can happen multiple times during the same shot
        bl   @play_zap
+       mov  @vy,r0
+       ci   r0,->0300
+       jgt  check_collision_6
        li   r0,txt_kapow
        bl   @display_text
+       li   r0,speech_good_shot_idx
+       bl   @speak
 check_collision_6:
        mov  @special_collision,r0
        jeq  check_collision_7
@@ -1156,19 +1162,28 @@ handle_special_group_rollovers_3:
 handle_special_group_path:
        .proc
        mov  @special_group_specials(r9),r0     ; Get pointer to start/end specials
-       mov  *r0+,r1                            ; Get start special
-       c    r8,r1                              ; Is it the special marking the start of the path?
-       jne  handle_special_group_path_1
-*      Start
-       mov  @one,@special_state(r8)            ; Set start state
-       mov  *r0,r1                             ; Get end special
-       clr  @special_state(r1)                 ; Clear end state
-       jmp  handle_special_group_path_3
-*      End
+       mov  *r0+,r1                            ; Get special that marks the start of the path
+       mov  *r0,r2                             ; Get special that marks the end of the path
+       c    r8,r1                              ; Is it the start special?
+       jne  handle_special_group_path_1        ; Jump to end special if not
+*      Start special
+       mov  @special_state(r2),r0              ; Test end state
+       jeq  handle_special_group_path_0        ; If set we entered the path from the wrong end
+       clr  @special_state(r2)                 ; Clear end state
+       jmp  handle_special_group_path_3        ; And leave
+handle_special_group_path_0:
+       mov  @one,@special_state(r1)            ; Set start state
+       jmp  handle_special_group_path_3        ; And leave
+*      End special
 handle_special_group_path_1:
        mov  @special_state(r1),r0              ; Test start state
-       jeq  handle_special_group_path_3
-       clr  @special_state(r1)
+       jne  handle_special_group_path_2        ; If set, the path is complete
+       mov  @one,@special_state(r2)            ; Else set the end state
+       jmp  handle_special_group_path_3        ; And leave
+*      Path complete
+handle_special_group_path_2:
+       clr  @special_state(r1)                     ; Clear start state
+       clr  @special_state(r2)                     ; Clear end state (to be safe)
        mov  @special_group_static_sprites(r9),r3
        mov  @special_group_state(r9),r0
        sla  r0,1
