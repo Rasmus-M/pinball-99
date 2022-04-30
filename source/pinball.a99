@@ -1180,14 +1180,13 @@ handle_special_group_path:
        jmp  handle_special_group_path_3        ; And leave
 handle_special_group_path_0:
        mov  @one,@special_state(r1)            ; Set start state
-       jmp  handle_special_group_path_3        ; And leave
+       jmp  handle_special_group_path_4        ; And leave
 *      End special
 handle_special_group_path_1:
        mov  @special_state(r1),r0              ; Test start state
        jne  handle_special_group_path_2        ; If set, the path is complete
        mov  @one,@special_state(r2)            ; Else set the end state
-       clr  @special_state(r1)                 ; Clear start state
-       jmp  handle_special_group_path_3        ; And leave
+       jmp  handle_special_group_path_4        ; And leave
 *      Path complete
 handle_special_group_path_2:
        clr  @special_state(r1)                     ; Clear start state
@@ -1207,6 +1206,10 @@ handle_special_group_path_2:
        bl   @schedule_reset_special_group
        bl   @play_bing
 handle_special_group_path_3:
+       li   r0,60
+       li   r1,reset_last_special
+       bl   @schedule_event
+handle_special_group_path_4:
        .endproc
 *// handle_special_group_path
 
