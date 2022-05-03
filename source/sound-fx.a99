@@ -2,25 +2,25 @@
 * Sound FXs
 *
 snd_zap:
-       byte T2
+       byte T1
        byte 16                         ; Frames
        byte 0                          ; Attn start
        byte 16                         ; Attn step
        data 4                          ; Freq step
 snd_bing:
-       byte T2
+       byte T1
        byte 64                         ; Frames
        byte 0                          ; Attn start
        byte 4                          ; Attn step
        data 0                          ; Freq step
 snd_duouoh:
-       byte T2
+       byte T1
        byte 16                         ; Frames
        byte 6                          ; Attn start
        byte 0                          ; Attn step
        data 6                          ; Freq step
 snd_ouip:
-       byte T2
+       byte T1
        byte 32                         ; Frames
        byte 0                          ; Attn start
        byte 0                          ; Attn step

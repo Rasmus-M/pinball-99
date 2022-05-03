@@ -45,6 +45,12 @@ info_panel_char_size:
        equ  info_panel_char_width*info_panel_char_height
 info_panel_n_chars:
        equ  info_panel_width_char/info_panel_char_width
+info_panel_map_width:
+       equ  3*info_panel_width_char
+info_panel_map_height:
+       equ  3*info_panel_height_char
+info_panel_map_size:
+       equ  info_panel_map_width*info_panel_map_height
 chr_space:
        equ  0
 chr_zero:
@@ -105,6 +111,37 @@ collision_type_right_flipper:
        equ  3
 speech_bank:
        equ  >6034
+
+info_panel_north_x:
+       equ  info_panel_width_char
+info_panel_north_y:
+       equ  0
+info_panel_north_offset:
+       equ  info_panel_width_char
+info_panel_west_x:
+       equ  0
+info_panel_west_y:
+       equ  info_panel_height_char
+info_panel_west_offset:
+       equ  (info_panel_height_char*info_panel_map_width)
+info_panel_center_x:
+       equ  info_panel_width_char
+info_panel_center_y:
+       equ  info_panel_height_char
+info_panel_center_offset:
+       equ  (info_panel_height_char*info_panel_map_width)+info_panel_width_char
+info_panel_east_x:
+       equ  2*info_panel_width_char
+info_panel_east_y:
+       equ  info_panel_height_char
+info_panel_east_offset:
+       equ  (info_panel_height_char*info_panel_map_width)+(2*info_panel_width_char)
+info_panel_south_x:
+       equ  info_panel_width_char
+info_panel_south_y:
+       equ  2*info_panel_height_char
+info_panel_south_offset:
+       equ  (2*info_panel_height_char*info_panel_map_width)+info_panel_width_char
 
 **
 * Memory mapped addresses
@@ -270,8 +307,10 @@ speech_counter:
        equ  speech_addr+2
 speech_read_pad:
        equ  speech_counter+2
-pad_max:
+info_panel_view_offset:
        equ  speech_read_pad+14
+pad_max:
+       equ  info_panel_view_offset+2
 
 ********************************************************************************
 *
@@ -299,6 +338,7 @@ loop:
        mov  @y,@y1
        bl   @set_scroll_position
        bl   @draw_info_panel
+       bl   @update_info_panel_view_position
        bl   @draw_play_field
        bl   @update_sprite_attr_table
        bl   @interrupt_check
@@ -308,7 +348,7 @@ loop:
 *      Ball lost
        clr  @vx
        clr  @vy
-       bl   @play_explosion_1
+       bl   @play_toc
        li   r0,120
        bl   @pause
        dec  @balls
@@ -519,8 +559,7 @@ user_input_5:
        neg  r0
        mov  r0,@vy
        bl   @play_zap
-       li   r0,txt_launch
-       bl   @display_text
+       bl   @display_score_buffer
        jmp  user_input_9
 *      Nudge
 user_input_5a:
@@ -683,7 +722,7 @@ check_collision_5:
        ci   r0,->0300
        jgt  check_collision_6
        li   r0,txt_kapow
-       bl   @display_text
+       bl   @display_text_east
        li   r0,speech_good_shot_idx
        bl   @speak
 check_collision_6:
@@ -773,29 +812,38 @@ draw_info_panel:
        andi r0,>400
        ai   r0,name_table
        bl   @vwad                      ; Setup write address
+       li   r1,info_panel_map
+       a    @info_panel_view_offset,r1
        li   r3,info_panel_height_char  ; Number of rows to display
-       li   r4,MD2
-draw_info_panel_1:
-       li   r2,info_panel_n_chars
-       li   r5,info_panel_buffer
 draw_info_panel_2:
-       clr  r0
-       movb *r5+,r0                    ; Get char number
-       swpb r0
-       mpy  @w_info_panel_char_size,r0 ; Multiply by char size
-       a    r4,r1
-       movb *r1+,*r15                  ; write to VDP
-       movb *r1+,*r15
-       movb *r1+,*r15
-       movb *r1+,*r15
-       dec  r2
-       jne  draw_info_panel_2
-       ai   r4,info_panel_char_width
+       li   r2,info_panel_width_char/8
+       bl   @vdp_copy_pad
+       ai   r1,info_panel_map_width-info_panel_width_char
        dec  r3
-       jne  draw_info_panel_1
+       jne  draw_info_panel_2
 draw_info_panel_3:
        .endproc
 *// draw_info_panel
+
+*********************************************************************************
+*
+* Update info panel view position
+*
+update_info_panel_view_position:
+       .proc
+       mov  @info_panel_view_steps,r0
+       jeq  update_info_panel_view_position_1
+       mov  @frame,r0
+       andi r0,7
+       jne  update_info_panel_view_position_1
+       a    @info_panel_view_dx,@info_panel_view_x
+       a    @info_panel_view_dy,@info_panel_view_y
+       bl   @calc_info_panel_view_offset
+       dec  @info_panel_view_steps
+       mov  @two,@info_panel_updates
+update_info_panel_view_position_1:
+       .endproc
+*// update_info_panel_view_position
 
 *********************************************************************************
 *
@@ -1847,15 +1895,107 @@ update_score_buffer_2:
 * Display score buffer
 *
 display_score_buffer:
+       .proc
        li   r0,score_buffer
        li   r1,info_panel_buffer
        mov  *r0+,*r1+
        mov  *r0+,*r1+
        mov  *r0+,*r1+
        mov  *r0+,*r1+
+       li   r6,info_panel_center_offset
+       bl   @draw_info_panel_to_map
+       li   r0,info_panel_center_x
+       li   r1,info_panel_center_y
+       bl   @move_info_panel_view
        mov  @two,@info_panel_updates
-       rt
+       .endproc
 *// display_score_buffer
+
+*********************************************************************
+*
+* Reset score buffer
+*
+reset_score_buffer:
+       li   r0,score_buffer
+       li   r1,chr_zero*256+chr_zero
+       mov  r1,*r0+
+       mov  r1,*r0+
+       mov  r1,*r0+
+       mov  r1,*r0+
+       rt
+*// reset_score_buffer
+
+*********************************************************************
+*
+* Display text north
+*
+* r0: pointer to 8 characters of text to display
+*
+* Modifies r0-r4
+*
+display_text_north:
+       .proc
+       li   r6,info_panel_north_offset
+       bl   @display_text_at
+       li   r0,info_panel_north_x
+       li   r1,info_panel_north_y
+       bl   @move_info_panel_view
+       .endproc
+*// display_text_north
+
+*********************************************************************
+*
+* Display text west
+*
+* r0: pointer to 8 characters of text to display
+*
+* Modifies r0-r4
+*
+display_text_west:
+       .proc
+       li   r6,info_panel_west_offset
+       bl   @display_text_at
+       li   r0,info_panel_west_x
+       li   r1,info_panel_west_y
+       bl   @move_info_panel_view
+       .endproc
+*// display_text_west
+
+*********************************************************************
+*
+* Display text east
+*
+* r0: pointer to 8 characters of text to display
+*
+* Modifies r0-r4
+*
+display_text_east:
+       .proc
+       li   r6,info_panel_east_offset
+       bl   @display_text_at
+       li   r0,info_panel_east_x
+       li   r1,info_panel_east_y
+       bl   @move_info_panel_view
+       .endproc
+*// display_text_east
+
+*********************************************************************
+*
+* Display text south
+*
+* r0: pointer to 8 characters of text to display
+*
+* Modifies r0-r4
+*
+display_text_south:
+       .proc
+       li   r6,info_panel_south_offset
+       bl   @display_text_at
+       li   r0,info_panel_south_x
+       li   r1,info_panel_south_y
+       bl   @move_info_panel_view
+       .endproc
+*// display_text_south
 
 *********************************************************************
 *
@@ -1863,21 +2003,39 @@ display_score_buffer:
 *
 * r0: pointer to 8 characters of text to display
 *
-* Modifies r0-r4
+* Modifies r0-r6
 *
 display_text:
+       .proc
+       li   r6,info_panel_center_offset
+       bl   @display_text_at
+       .endproc
+*// display_text
+
+*********************************************************************
+*
+* Display text at
+*
+* r0: pointer to 8 characters of text to display
+* r6: draw offset
+*
+* Modifies r0-r6
+*
+display_text_at:
+       .proc
        li   r1,info_panel_buffer
        li   r2,info_panel_n_chars
        li   r3,32*256
-display_text_1:
+display_text_at_1:
        movb *r0+,r4
        sb   r3,r4
        movb r4,*r1+
        dec  r2
-       jne  display_text_1
+       jne  display_text_at_1
+       bl   @draw_info_panel_to_map
        mov  @two,@info_panel_updates
-       rt
-*// display_text
+       .endproc
+*// display_text_at
 
 *********************************************************************
 *
@@ -1888,6 +2046,8 @@ display_text_1:
 display_text_now:
        .proc
        bl   @display_text
+       li   r6,info_panel_center_offset
+       bl   @draw_info_panel_to_map
        bl   @draw_info_panel
        inv  @double_buffer_flag
        bl   @draw_info_panel
@@ -1902,12 +2062,148 @@ display_text_now:
 display_score_now:
        .proc
        bl   @display_score_buffer
+       li   r6,info_panel_center_offset
+       bl   @draw_info_panel_to_map
        bl   @draw_info_panel
        inv  @double_buffer_flag
        bl   @draw_info_panel
        inv  @double_buffer_flag
        .endproc
 *// display_score_now
+
+*********************************************************************************
+*
+* Draw info panel to map
+*
+* r6: draw offset
+*
+draw_info_panel_to_map:
+       ai   r6,info_panel_map
+       li   r4,MD2
+       li   r2,info_panel_n_chars
+       li   r5,info_panel_buffer
+draw_info_panel_to_map_1:
+       clr  r0
+       movb *r5+,r0                    ; Get char number
+       swpb r0
+       mpy  @w_info_panel_char_size,r0 ; Multiply by char size
+       a    r4,r1
+       li   r3,info_panel_height_char  ; Number of rows to display
+draw_info_panel_to_map_2:
+       movb *r1+,*r6+                  ; write to map
+       movb *r1+,*r6+
+       movb *r1+,*r6+
+       movb *r1+,*r6+
+       ai   r6,info_panel_map_width-4  ; Next row
+       dec  r3
+       jne  draw_info_panel_to_map_2
+       ai   r6,-info_panel_height_char*info_panel_map_width+4
+       dec  r2
+       jne  draw_info_panel_to_map_1
+       rt
+*// draw_info_panel_to_map
+
+*********************************************************************************
+*
+* Setup info panel view to move to new position
+*
+* r0: New x
+* r1: New y
+*
+move_info_panel_view:
+       s    @info_panel_view_x,r0
+       jne  move_info_panel_view_1
+*      x same
+       s    @info_panel_view_y,r1
+       jeq  move_info_panel_view_2
+*      x same, y different
+       mov  r1,r2
+       seto r2
+       jlt  !
+       neg  r2
+!      mov  r2,@info_panel_view_dy
+       abs  r1
+       mov  r1,@info_panel_view_steps
+       jmp  move_info_panel_view_2
+*      x different
+move_info_panel_view_1:
+       s    @info_panel_view_y,r1
+       jne  move_info_panel_view_2
+*      x different, y same
+       mov  r0,r2
+       seto r2
+       jlt  !
+       neg  r2
+!      mov  r2,@info_panel_view_dx
+       abs  r0
+       mov  r0,@info_panel_view_steps
+move_info_panel_view_2:
+       rt
+*// move_info_panel_view
+
+*********************************************************************************
+*
+* Clear info panel map
+*
+clear_info_panel_map:
+       li   r0,info_panel_map
+       li   r1,>f0f0
+       li   r2,info_panel_map_size
+clear_info_panel_map_1:
+       mov  r1,*r0+
+       dect r2
+       jne  clear_info_panel_map_1
+       rt
+*// clear_info_panel_map
+
+*********************************************************************************
+*
+* Calculate info panel view offset
+*
+calc_info_panel_view_offset:
+       mov  @info_panel_view_y,r0
+       mpy  @w_info_panel_map_width,r0
+       a    @info_panel_view_x,r1
+       mov r1,@info_panel_view_offset
+       rt
+*// calc_info_panel_view_offset
+
+*********************************************************************
+*
+* Schedule event
+*
+* r0: number of frames before execution
+* r1: address of function
+* r2: parameter to function
+*
+schedule_event:
+       mov  @event_queue_tail,r3
+       c    r3,@event_queue_head       ; Empty?
+       jeq  schedule_event_2
+*      Get last scheduled event
+       mov  r3,r4
+       ai   r4,-event_size
+       ci   r4,event_queue
+       jhe  schedule_event_1
+       li   r4,event_queue_end-event_size
+schedule_event_1:
+       a    @event_frame(r4),r0        ; Releative to previous
+       jmp  schedule_event_3
+schedule_event_2:
+       a    @frame,r0                  ; Relative to current frame
+*      Schedule new event
+schedule_event_3:
+       mov  r0,@event_frame(r3)
+       mov  r1,@event_function(r3)
+       mov  r2,@event_param(r3)
+       ai   r3,event_size
+       ci   r3,event_queue_end
+       jl   schedule_event_4
+       li   r3,event_queue
+schedule_event_4:
+       mov  r3,@event_queue_tail
+       rt
+*// schedule event
 
 *********************************************************************************
 *
@@ -1974,57 +2270,6 @@ init_ball:
        .endproc
 *// init_ball
 
-*********************************************************************
-*
-* Reset score buffer
-*
-reset_score_buffer:
-       li   r0,score_buffer
-       li   r1,chr_zero*256+chr_zero
-       mov  r1,*r0+
-       mov  r1,*r0+
-       mov  r1,*r0+
-       mov  r1,*r0+
-       rt
-*// reset_score_buffer
-
-*********************************************************************
-*
-* Schedule event
-*
-* r0: number of frames before execution
-* r1: address of function
-* r2: parameter to function
-*
-schedule_event:
-       mov  @event_queue_tail,r3
-       c    r3,@event_queue_head       ; Empty?
-       jeq  schedule_event_2
-*      Get last scheduled event
-       mov  r3,r4
-       ai   r4,-event_size
-       ci   r4,event_queue
-       jhe  schedule_event_1
-       li   r4,event_queue_end-event_size
-schedule_event_1:
-       a    @event_frame(r4),r0        ; Releative to previous
-       jmp  schedule_event_3
-schedule_event_2:
-       a    @frame,r0                  ; Relative to current frame
-*      Schedule new event
-schedule_event_3:
-       mov  r0,@event_frame(r3)
-       mov  r1,@event_function(r3)
-       mov  r2,@event_param(r3)
-       ai   r3,event_size
-       ci   r3,event_queue_end
-       jl   schedule_event_4
-       li   r3,event_queue
-schedule_event_4:
-       mov  r3,@event_queue_tail
-       rt
-*// schedule event
-
 *********************************************************************************
 *
 * One time initializations
@@ -2041,8 +2286,13 @@ one_time_init:
        bl   @speech_check
        bl   @graphics_mode
        bl   @init_vdp_ram
-       clr  @info_panel_updates
-       clr  @play_field_updates
+       li   r0,info_panel_width_char
+       mov  r0,@info_panel_view_x
+       li   r1,info_panel_height_char
+       mov  r1,@info_panel_view_y
+       bl   @calc_info_panel_view_offset
+       bl   @clear_info_panel_map
+       mov  @two,@info_panel_updates
        clr  @double_buffer_flag
 *      Play music
        li   r0,bipbop_module
@@ -2282,8 +2532,6 @@ lower_memory_max:
 
 txt_pinball:
        text 'PINBALL!'
-txt_launch:
-       text ' LAUNCH '
 txt_kapow:
        text ' KAPOW! '
 txt_ball_2:
@@ -2348,18 +2596,28 @@ ax_init:
 ay_init:
        data >0004
 
-w_map_width:
-       data map_width
-w_map_height:
-       data map_height
-w_coll_map_bank_height:
-       data coll_map_bank_height
+w_info_panel_map_width:
+       data info_panel_map_width
 w_info_panel_char_size:
        data  info_panel_char_size
 
 info_panel_buffer:
        byte chr_space,chr_space,chr_space,chr_space
        byte chr_space,chr_space,chr_space,chr_space
+info_panel_view_x:
+       data 0
+info_panel_view_y:
+       data 0
+info_panel_view_dx:
+       data 0
+info_panel_view_dy:
+       data 0
+info_panel_view_steps:
+       data 0
+
+info_panel_map:
+       bss info_panel_map_size
+
 score_buffer:
        byte chr_zero,chr_zero,chr_zero,chr_zero
        byte chr_zero,chr_zero,chr_zero,chr_zero

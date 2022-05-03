@@ -60,7 +60,7 @@ play_duouoh:
 
 *********************************************************************
 *
-* Play straight
+* Play ouip
 *
 play_ouip:
        .proc
@@ -69,16 +69,16 @@ play_ouip:
        li   r2,A2
        bl   @play_snd
        .endproc
-*// play_straight
+*// play_ouip
 
 *********************************************************************
 *
 * Play toc
 *
-play_explosion_1:
+play_toc:
        .proc
        li   r0,snd_toc
-       li   r1,snd_channel_1
+       li   r1,snd_channel_4
        bl   @play_snd
        .endproc
 *// play_toc
@@ -90,7 +90,7 @@ play_explosion_1:
 play_crash:
        .proc
        li   r0,snd_crash
-       li   r1,snd_channel_1
+       li   r1,snd_channel_4
        bl   @play_snd
        .endproc
 *// play_crash
