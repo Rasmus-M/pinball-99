@@ -387,6 +387,8 @@ pause:
 pause_1:
        bl   @vsync
        bl   @interrupt_routine
+       bl   @draw_info_panel
+       bl   @update_info_panel_view_position
        dec  @pause_frames
        jne  pause_1
        .endproc
@@ -648,8 +650,8 @@ check_collision_1:
        bl   @calc_normal               ; Calculate n
        bl   @calc_dot_product          ; r3=dot product of v and n
        mov  @dp,r3
-       ci   r3,>fffe
-       jgt  check_collision_2          ; If positive the ball is moving in the same direction as the normal
+       ci   r3,>fff8                   ; If positive (or slightly negative)
+       jgt  check_collision_2          ; the ball is moving in the same direction as the normal
 *      Reflection around normal
        bl   @reflect
 *      Set velocity to (1 - 2^-damping) * (rx, ry)
@@ -1228,6 +1230,10 @@ handle_special_group_path:
        jmp  handle_special_group_path_3        ; And leave
 handle_special_group_path_0:
        mov  @one,@special_state(r1)            ; Set start state
+       mov  @special_misc(r1),r0
+       jeq  handle_special_group_path_4
+       mov  *r0+,@vx
+       mov  *r0,@vy
        jmp  handle_special_group_path_4        ; And leave
 *      End special
 handle_special_group_path_1:

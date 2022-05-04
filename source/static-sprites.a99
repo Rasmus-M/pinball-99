@@ -305,7 +305,7 @@ static_arrow_sams:
 plunger:
        data plunger_y
        byte 236,4
-       byte 15,15,15,0
+       byte 14,14,14,0
        data 0
        data 0
        data 0

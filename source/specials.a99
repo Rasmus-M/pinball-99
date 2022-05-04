@@ -14,8 +14,10 @@ special_group:
        equ  12
 special_state:
        equ  14
-special_size:
+special_misc:
        equ  16
+special_size:
+       equ  18
 
 special_type_none:
        equ  0
@@ -38,136 +40,161 @@ special_rollover_bumper_50:
        data 73,105,128,160
        data static_bumper_50,0
        data 0
+       data 0                          ; Misc
 special_rollover_bumper_20:
        data special_type_bumper
        data 121,153,176,208
        data static_bumper_20,0
        data 0
+       data 0                          ; Misc
 *      Bonus
 special_rollover_bonus_t:
        data special_type_rollover
        data 110,56,115,76
        data static_rollover_bonus_t,special_group_bonus_rollovers
        data 0
+       data 0                          ; Misc
 special_rollover_bonus_i:
        data special_type_rollover
        data 134,64,139,80
        data static_rollover_bonus_i,special_group_bonus_rollovers
        data 0
+       data 0                          ; Misc
 special_rollover_bonus_9_1st:
        data special_type_rollover
        data 158,65,163,79
        data static_rollover_bonus_9_1st,special_group_bonus_rollovers
        data 0
+       data 0                          ; Misc
 special_rollover_bonus_9_2nd:
        data special_type_rollover
        data 182,57,187,77
        data static_rollover_bonus_9_2nd,special_group_bonus_rollovers
        data 0
+       data 0                          ; Misc
 *      SAMS path
 special_rollover_sams_start:
        data special_type_rollover
        data 190,286,207,304
        data static_arrow_sams,special_group_sams_path
        data 0
+       data 0                          ; Misc
 special_rollover_sams_end:
        data special_type_rollover
        data 217,239,226,249
        data static_arrow_sams,special_group_sams_path
        data 0
+       data 0                          ; Misc
 *      Games path
 special_rollover_games_start:
        data special_type_rollover
        data 12,146,17,158
        data static_arrow_games,special_group_games_path
        data 0
+       data special_rollover_games_start_misc
 special_rollover_games_end:
        data special_type_rollover
        data 72,44,88,53
        data static_arrow_games,special_group_games_path
        data 0
+       data 0                          ; Misc
 *      PEB targets
 special_target_peb_p:
        data special_type_target
        data 197,90,205,119
        data static_target_peb_p,special_group_peb_targets
        data 0
+       data 0                          ; Misc
 special_target_peb_e:
        data special_type_target
        data 205,122,214,151
        data static_target_peb_e,special_group_peb_targets
        data 0
+       data 0                          ; Misc
 special_target_peb_b:
        data special_type_target
        data 213,154,222,184
        data static_target_peb_b,special_group_peb_targets
        data 0
+       data 0                          ; Misc
 *      F18a targets
 special_target_f18a_f:
        data special_type_target
        data 12,224,20,253
        data static_target_f18a_f,special_group_f18a_targets
        data 0
+       data 0                          ; Misc
 special_target_f18a_1:
        data special_type_target
        data 16,253,20,277
        data static_target_f18a_1,special_group_f18a_targets
        data 0
+       data 0                          ; Misc
 special_target_f18a_8:
        data special_type_target
        data 16,277,20,301
        data static_target_f18a_8,special_group_f18a_targets
        data 0
+       data 0                          ; Misc
 special_target_f18a_a:
        data special_type_target
        data 16,301,20,324
        data static_target_f18a_a,special_group_f18a_targets
        data 0
+       data 0                          ; Misc
 *      32K targets
 special_target_32k_3:
        data special_type_target
        data 106,226,124,239
        data static_target_32k_3,special_group_32k_targets
        data 0
+       data 0                          ; Misc
 special_target_32k_2:
        data special_type_target
        data 124,237,140,247
        data static_target_32k_2,special_group_32k_targets
        data 0
+       data 0                          ; Misc
 special_target_32k_k:
        data special_type_target
        data 140,245,158,254
        data static_target_32k_k,special_group_32k_targets
        data 0
+       data 0                          ; Misc
 *      500 targets
 special_target_500_1:
        data special_type_target
        data 74,81,87,94
        data static_target_500_1,special_group_500_targets
        data 0
+       data 0                          ; Misc
 special_target_500_2:
        data special_type_target
        data 58,97,71,110
        data static_target_500_2,special_group_500_targets
        data 0
+       data 0                          ; Misc
 *      Apps ramp
 special_saucer_apps:
        data special_type_saucer
        data 35,159,41,167
        data static_saucer_apps,special_group_apps_ramp
        data 0
+       data 0                          ; Misc
 *      Launch gate
 special_launch_gate:
        data special_type_gate
        data 199,36,207,43
        data static_launch_gate,special_group_apps_ramp
        data 0
+       data 0                          ; Misc
 *      Launch pad
 special_launch_pad:
        data special_type_launch
        data 242,487,246,493
        data plunger,0,0
        data 0
+       data 0                          ; Misc
 *      End
        data -1
 
@@ -369,3 +396,7 @@ special_group_apps_statics:
        data static_app_xb
        data static_app_minimen
        data static_app_ea
+
+special_rollover_games_start_misc:
+       data >0060                      ; dx
+       data ->0400                     ; dy
