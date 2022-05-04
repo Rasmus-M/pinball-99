@@ -359,7 +359,7 @@ loop:
        li   r0,txt_ball_2
        jmp  !!
 !      li   r0,txt_ball_3
-!      bl   @display_text
+!      bl   @display_text_east
        jmp  restart_ball
 game_over:
        li   r0,txt_game
@@ -722,7 +722,7 @@ check_collision_5:
        ci   r0,->0300
        jgt  check_collision_6
        li   r0,txt_kapow
-       bl   @display_text_east
+       bl   @display_text_north
        li   r0,speech_good_shot_idx
        bl   @speak
 check_collision_6:
@@ -834,7 +834,7 @@ update_info_panel_view_position:
        mov  @info_panel_view_steps,r0
        jeq  update_info_panel_view_position_1
        mov  @frame,r0
-       andi r0,7
+       czc  @info_panel_view_update_mask,r0
        jne  update_info_panel_view_position_1
        a    @info_panel_view_dx,@info_panel_view_x
        a    @info_panel_view_dy,@info_panel_view_y
@@ -1194,7 +1194,7 @@ handle_special_group_rollovers_1:
        a    r0,@special_group_state(r9)                ; Record in state
        mov  @static_text(r7),r0                        ; Text to display
        jeq  handle_special_group_rollovers_3
-       bl   @display_text                              ; Display text
+       bl   @display_text_west                         ; Display text
        mov  @special_group_speech(r9),r0
        jeq  handle_special_group_rollovers_3
        bl   @speak
@@ -1412,7 +1412,7 @@ light_static_sprite:
        movb @static_lit_color(r7),@static_color(r7)    ; Change color
        mov  @static_text(r7),r0
        jeq  light_static_sprite_1                      ; Display text
-       bl   @display_text
+       bl   @display_text_south
 light_static_sprite_1:
        mov  @static_speech(r7),r0
        jeq  light_static_sprite_2                      ; Speak
@@ -1421,10 +1421,10 @@ light_static_sprite_2:
        mov  @static_score(r7),r2                       ; Add points
        jeq  light_static_sprite_4
        mov  @static_text(r7),r0
-       jeq  light_static_sprite_3
-       li   r0,60
+       jeq  light_static_sprite_3                      ; If there is was no text display score now
+       li   r0,120
        li   r1,add_score
-       bl   @schedule_event
+       bl   @schedule_event                            ; Else schedule for later
        jmp  light_static_sprite_4
 light_static_sprite_3:
        mov  r2,r0
@@ -1447,7 +1447,7 @@ schedule_reset_special_group:
        bl   @schedule_event
        mov  @special_group_score(r9),r2
        jeq  schedule_reset_special_group_1
-       li   r0,60
+       li   r0,120
        li   r1,add_score
        bl   @schedule_event
        mov  @special_group_speech(r9),r0
@@ -1490,7 +1490,7 @@ reset_special_group_3:
 reset_special_group_4:
        mov  @special_group_text(r9),r0
        jeq  reset_special_group_5
-       bl   @display_text
+       bl   @display_text_south
 reset_special_group_5:
        .endproc
 *// reset_special_group
@@ -2122,8 +2122,11 @@ move_info_panel_view:
        jlt  !
        neg  r2
 !      mov  r2,@info_panel_view_dy
+       clr  @info_panel_view_dx
        abs  r1
        mov  r1,@info_panel_view_steps
+       li   r0,7
+       mov  r0,@info_panel_view_update_mask
        jmp  move_info_panel_view_2
 *      x different
 move_info_panel_view_1:
@@ -2135,8 +2138,11 @@ move_info_panel_view_1:
        jlt  !
        neg  r2
 !      mov  r2,@info_panel_view_dx
+       clr  @info_panel_view_dy
        abs  r0
        mov  r0,@info_panel_view_steps
+       li   r0,1
+       mov  r0,@info_panel_view_update_mask
 move_info_panel_view_2:
        rt
 *// move_info_panel_view
@@ -2613,6 +2619,8 @@ info_panel_view_dx:
 info_panel_view_dy:
        data 0
 info_panel_view_steps:
+       data 0
+info_panel_view_update_mask:
        data 0
 
 info_panel_map:

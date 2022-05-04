@@ -67,7 +67,7 @@ special_rollover_bonus_9_2nd:
 *      SAMS path
 special_rollover_sams_start:
        data special_type_rollover
-       data 194,286,207,298
+       data 190,286,207,304
        data static_arrow_sams,special_group_sams_path
        data 0
 special_rollover_sams_end:
