@@ -199,7 +199,7 @@ stack:
 * PAD constants
 *
 padcon:
-       equ  stack+>10                  ; Start of pad constants
+       equ  stack+>14                  ; Start of pad constants
 one:
        equ  padcon
 two:
@@ -269,8 +269,10 @@ player_status:
        equ  launch_speed+2
 balls:
        equ  player_status+2
-score_msw:                             ; Low word of score
+ball_no:
        equ  balls+2
+score_msw:                             ; Low word of score
+       equ  ball_no+2
 score_lsw:                             ; High word of score
        equ  score_msw+2
 bonus_multiplier:
@@ -330,21 +332,10 @@ restart_game:
 restart_ball:
        bl   @init_ball
        clr  @frame
-loop:
-       bl   @vsync
-       bl   @set_vdp_regs
-       bl   @interrupt_routine
-       mov  @x,@x1
-       mov  @y,@y1
-       bl   @set_scroll_position
-       bl   @draw_info_panel
-       bl   @update_info_panel_view_position
-       bl   @draw_play_field
-       bl   @update_sprite_attr_table
-       bl   @interrupt_check
-       bl   @check_quit
+main_loop:
+       bl   @main_loop_body
        mov  @player_status,r0
-       jeq  loop
+       jeq  main_loop
 *      Ball lost
        clr  @vx
        clr  @vy
@@ -353,24 +344,24 @@ loop:
        bl   @pause
        dec  @balls
        jeq  game_over
-       mov  @balls,r0
-       ci   r0,2
-       jne  !
-       li   r0,txt_ball_2
-       jmp  !!
-!      li   r0,txt_ball_3
-!      bl   @display_text_east
+       inc  @ball_no
+       mov  @ball_no,r0
+       ai   r0,48                      ; ASCII 0
+       swpb r0
+       movb r0,@txt_ball_n+6
+       li   r0,txt_ball_n
+       bl   @display_text_east
        jmp  restart_ball
 game_over:
        li   r0,txt_game
-       bl   @display_text_now
+       bl   @display_text_north
        li   r0,60
        bl   @pause
        li   r0,txt_over
-       bl   @display_text_now
-       li   r0,60
+       bl   @display_text_south
+       li   r0,120
        bl   @pause
-       bl   @display_score_now
+       bl   @display_score_buffer
        li   r0,240
        bl   @pause
        jmp  restart_game
@@ -385,16 +376,34 @@ pause:
        .proc
        mov  r0,@pause_frames
 pause_1:
-       bl   @vsync
-       bl   @interrupt_routine
-       bl   @draw_info_panel
-       bl   @update_info_panel_view_position
+       bl   @main_loop_body
        dec  @pause_frames
        jne  pause_1
        .endproc
 pause_frames:
        data 0
 *// pause
+
+********************************************************************************
+*
+* Main loop body
+*
+main_loop_body:
+       .proc
+       bl   @vsync
+       bl   @set_vdp_regs
+       bl   @interrupt_routine
+       mov  @x,@x1
+       mov  @y,@y1
+       bl   @set_scroll_position
+       bl   @draw_info_panel
+       bl   @update_info_panel_view_position
+       bl   @draw_play_field
+       bl   @update_sprite_attr_table
+       bl   @interrupt_check
+       bl   @check_quit
+       .endproc
+*// main_loop_body
 
 ********************************************************************************
 *
@@ -424,12 +433,14 @@ interrupt_routine:
        lwpi wrksp2                     ; Switch to new workspace
        bl   @module_player
        bl   @speech_player
+       mov  @player_status,r0
+       jne  !
        bl   @user_input
        bl   @move_ball
        bl   @check_collision
        bl   @move_ball
        bl   @check_collision
-       bl   @perform_events
+!      bl   @perform_events
        inc  @frame
        lwpi wrksp                      ; Switch to old workspace
        b    *r11
@@ -479,8 +490,6 @@ set_vdp_regs:
 *********************************************************************************
 *
 * Check for user input
-*
-* Modifies r0,r12
 *
 user_input:
        .proc
@@ -532,7 +541,7 @@ user_input_4:
 *      Space pressed
        mov  @launch_speed,r0
        ci   r0,>0600
-       jgt  user_input_6
+       jgt  user_input_7
 *      Add launch speed
        ai   r0,>0018
        mov  r0,@launch_speed
@@ -543,7 +552,7 @@ user_input_4:
 user_input_5:
 *      Space not pressed
        mov  @launch_speed,r0
-       jeq  user_input_6
+       jeq  user_input_7
        li   r1,plunger_y
        mov  r1,@plunger
        clr  @launch_speed
@@ -551,12 +560,12 @@ user_input_5:
        s    @x_init,r1
        abs  r1
        ci   r1,>0020
-       jgt  user_input_5a
+       jgt  user_input_6
        mov  @y_init,r1
        s    @y,r1
        abs  r1
        ci   r1,>0020
-       jgt  user_input_5a
+       jgt  user_input_6
 *      Launch
        neg  r0
        mov  r0,@vy
@@ -564,13 +573,13 @@ user_input_5:
        bl   @display_score_buffer
        jmp  user_input_9
 *      Nudge
-user_input_5a:
+user_input_6:
        ai   r0,->0300
        sra  r0,4
        a    r0,@vx
        jmp  user_input_9
 *      Cheat
-user_input_6:
+user_input_7:
        li   r0,KEY_LF
        bl   @check_key
        jeq  user_input_8
@@ -721,7 +730,7 @@ check_collision_5:
 *      Can happen multiple times during the same shot
        bl   @play_zap
        mov  @vy,r0
-       ci   r0,->0300
+       ci   r0,->0480
        jgt  check_collision_6
        li   r0,txt_kapow
        bl   @display_text_north
@@ -1348,6 +1357,9 @@ launch_from_saucer:
        c    @special_group_state(r9),@special_group_n_sprites(r9)
        jne  launch_from_saucer_3
        bl   @schedule_reset_special_group
+       li   r0,120
+       li   r1,extra_ball
+       bl   @schedule_event
 launch_from_saucer_3:
 *      Release ball
        li   r0,>0020
@@ -1360,6 +1372,20 @@ launch_from_saucer_3:
        bl   @schedule_event
        .endproc
 *// lauch_from_saucer
+
+*********************************************************************************
+*
+* Extra ball
+*
+extra_ball:
+       .proc
+       li   r0,txt_x_ball
+       bl   @display_text_north
+       li   r0,speech_extra_ball_idx
+       bl   @speak
+       inc  @balls
+       .endproc
+*// extra_ball
 
 *********************************************************************************
 *
@@ -2228,6 +2254,7 @@ init_game:
        mov  @one,@bonus_multiplier
        li   r0,3
        mov  r0,@balls
+       mov  @one,@ball_no
 *      Reset static sprites
        li   r1,static_sprites
 init_game_1:
@@ -2277,9 +2304,21 @@ init_ball:
        mov  r0,@event_queue_tail
        bl   @reset_score_buffer
        mov  @two,@play_field_updates
-       li   r1,special_launch_gate
+       li   r0,init_ball_special_states_to_clear
+init_ball_1:
+       mov  *r0+,r1
+       jeq  init_ball_2
        clr  @special_state(r1)
+       jmp  init_ball_1
+init_ball_2:
        .endproc
+init_ball_special_states_to_clear:
+       data special_launch_gate
+       data special_rollover_games_start
+       data special_rollover_games_end
+       data special_rollover_sams_start
+       data special_rollover_sams_end
+       data 0
 *// init_ball
 
 *********************************************************************************
@@ -2546,10 +2585,8 @@ txt_pinball:
        text 'PINBALL!'
 txt_kapow:
        text ' KAPOW! '
-txt_ball_2:
-       text ' BALL 2 '
-txt_ball_3:
-       text ' BALL 3 '
+txt_ball_n:
+       text ' BALL 0 '
 txt_bonus_x2:
        text 'BONUS X2'
 txt_bonus_x3:
@@ -2588,6 +2625,8 @@ txt_minimen:
        text 'MINIMEM '
 txt_xb:
        text '   XB   '
+txt_x_ball:
+       text ' X-BALL '
 txt_game:
        text '  GAME  '
 txt_over:

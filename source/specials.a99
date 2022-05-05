@@ -78,7 +78,7 @@ special_rollover_sams_start:
        data 190,286,207,304
        data static_arrow_sams,special_group_sams_path
        data 0
-       data 0                          ; Misc
+       data special_rollover_sams_start_misc
 special_rollover_sams_end:
        data special_type_rollover
        data 217,239,226,249
@@ -398,5 +398,9 @@ special_group_apps_statics:
        data static_app_ea
 
 special_rollover_games_start_misc:
-       data >0060                      ; dx
-       data ->0400                     ; dy
+       data >0060                      ; vx
+       data ->0400                     ; vy
+
+special_rollover_sams_start_misc:
+       data >0100                      ; vx
+       data ->0200                     ; vy
