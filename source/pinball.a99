@@ -327,8 +327,8 @@ main:
        bl   @one_time_init
 restart_game:
        bl   @init_game
-       li   r0,txt_pinball
-       bl   @display_text_now
+       bl   @init_ball
+       bl   @intro
 restart_ball:
        bl   @init_ball
        clr  @frame
@@ -339,11 +339,14 @@ main_loop:
 *      Ball lost
        clr  @vx
        clr  @vy
-       bl   @play_toc
+       bl   @play_crash
        li   r0,120
        bl   @pause
        dec  @balls
-       jeq  game_over
+       jne  next_ball
+       bl   @game_over
+       jmp  restart_game
+next_ball:
        inc  @ball_no
        mov  @ball_no,r0
        ai   r0,48                      ; ASCII 0
@@ -352,7 +355,36 @@ main_loop:
        li   r0,txt_ball_n
        bl   @display_text_east
        jmp  restart_ball
+
+********************************************************************************
+*
+* Intro
+*
+intro:
+       .proc
+intro_1:
+       li   r0,txt_pinball
+       bl   @display_text_center
+       li   r0,120
+       bl   @pause
+       abs  @pause_frames
+       jne  intro_2
+       li   r0,txt_99
+       bl   @display_text_south
+       li   r0,120
+       bl   @pause
+       abs  @pause_frames
+       jeq  intro_1
+intro_2:
+       .endproc
+*// intro
+
+********************************************************************************
+*
+* Game over
+*
 game_over:
+       .proc
        li   r0,txt_game
        bl   @display_text_north
        li   r0,60
@@ -364,7 +396,8 @@ game_over:
        bl   @display_score_buffer
        li   r0,240
        bl   @pause
-       jmp  restart_game
+       .endproc
+*// game_over
 
 ********************************************************************************
 *
@@ -375,10 +408,18 @@ game_over:
 pause:
        .proc
        mov  r0,@pause_frames
+pause_0:
+       li   r0,key_sp
+       bl   @check_key
+       jne  pause_0
 pause_1:
        bl   @main_loop_body
+       li   r0,key_sp
+       bl   @check_key
+       jne  pause_2
        dec  @pause_frames
        jne  pause_1
+pause_2:
        .endproc
 pause_frames:
        data 0
@@ -1561,6 +1602,7 @@ roll_bonus_specials_left_4:
 roll_bonus_specials_left_5:
        dec  r2
        jne  roll_bonus_specials_left_1
+       clr  @last_special
        rt
 *// roll_bonus_specials_left
 
@@ -1603,6 +1645,7 @@ roll_bonus_specials_right_4:
 roll_bonus_specials_right_5:
        dec  r2
        jne  roll_bonus_specials_right_1
+       clr  @last_special
        rt
 *// roll_bonus_specials_right
 
@@ -2031,6 +2074,24 @@ display_text_south:
 
 *********************************************************************
 *
+* Display text center
+*
+* r0: pointer to 8 characters of text to display
+*
+* Modifies r0-r4
+*
+display_text_center:
+       .proc
+       li   r6,info_panel_center_offset
+       bl   @display_text_at
+       li   r0,info_panel_center_x
+       li   r1,info_panel_center_y
+       bl   @move_info_panel_view
+       .endproc
+*// display_text_center
+
+*********************************************************************
+*
 * Display text
 *
 * r0: pointer to 8 characters of text to display
@@ -2068,40 +2129,6 @@ display_text_at_1:
        mov  @two,@info_panel_updates
        .endproc
 *// display_text_at
-
-*********************************************************************
-*
-* Display text to both double buffers
-*
-* r0: 8 characters of text to display
-*
-display_text_now:
-       .proc
-       bl   @display_text
-       li   r6,info_panel_center_offset
-       bl   @draw_info_panel_to_map
-       bl   @draw_info_panel
-       inv  @double_buffer_flag
-       bl   @draw_info_panel
-       inv  @double_buffer_flag
-       .endproc
-*// display_text_now
-
-*********************************************************************
-*
-* Display score to both double buffers
-*
-display_score_now:
-       .proc
-       bl   @display_score_buffer
-       li   r6,info_panel_center_offset
-       bl   @draw_info_panel_to_map
-       bl   @draw_info_panel
-       inv  @double_buffer_flag
-       bl   @draw_info_panel
-       inv  @double_buffer_flag
-       .endproc
-*// display_score_now
 
 *********************************************************************************
 *
@@ -2249,6 +2276,8 @@ schedule_event_4:
 *
 init_game:
        .proc
+       li   r0,>000e
+       mov  r0,@pattern_and_color
        clr  @score_lsw
        clr  @score_msw
        mov  @one,@bonus_multiplier
@@ -2293,8 +2322,6 @@ init_ball:
        mov  *r0+,@vy
        mov  *r0+,@ax
        mov  *r0+,@ay
-       li   r0,>000e
-       mov  r0,@pattern_and_color
        clr  @left_flipper_state
        clr  @right_flipper_state
        clr  @launch_speed
@@ -2583,6 +2610,8 @@ lower_memory_max:
 
 txt_pinball:
        text 'PINBALL!'
+txt_99:
+       text ' * 99 * '
 txt_kapow:
        text ' KAPOW! '
 txt_ball_n:

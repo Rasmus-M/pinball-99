@@ -1,7 +1,7 @@
 xas99.py -S -L pinball.lst -i -q -o bin/PINBALL source/pinball.a99
 xas99.py -b -q source/speech-data.a99 -o bin/speech-data.bin
 
-java -jar tools/ea5tocart.jar bin\pinball "PINBALL" > make.log
+java -jar tools/ea5tocart.jar bin\pinball "PINBALL 99" > make.log
 
 copy /b bin\pinball8.bin + ^
     bin\coll.bin + ^
