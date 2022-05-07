@@ -21,76 +21,103 @@ mute_table:
 
 *********************************************************************
 *
-* Play zap
+* Play launch
 *
-play_zap:
+play_launch:
        .proc
-       li   r0,snd_zap
+       li   r0,snd_vol_freq_drop
        li   r1,snd_channel_1
-       li   r2,>0020
+       li   r2,C5
        bl   @play_snd
        .endproc
-*// play_zap
+*// play_launch
 
 *********************************************************************
 *
-* Play bing
+* Play target
 *
-play_bing:
+play_target:
        .proc
-       li   r0,snd_bing
+       li   r0,snd_vol_drop
        li   r1,snd_channel_1
-       li   r2,A5
+       li   r2,A4
        bl   @play_snd
        .endproc
-*// play_bing
+*// play_target
 
 *********************************************************************
 *
-* Play duouoh
+* Play bumper
 *
-play_duouoh:
+play_bumper:
        .proc
-       li   r0,snd_duouoh
+       li   r0,snd_freq_drop
+       li   r1,snd_channel_1
+       li   r2,C2
+       bl   @play_snd
+       .endproc
+*// play_bumper
+
+*********************************************************************
+*
+* Play saucer
+*
+play_saucer:
+       .proc
+       li   r0,snd_freq_drop
        li   r1,snd_channel_1
        li   r2,C4
        bl   @play_snd
        .endproc
-*// play_duouoh
+*// play_saucer
 
 *********************************************************************
 *
-* Play ouip
+* Play rollover
 *
-play_ouip:
+play_rollover:
        .proc
-       li   r0,snd_ouip
+       li   r0,snd_freq_raise
        li   r1,snd_channel_1
        li   r2,A2
        bl   @play_snd
        .endproc
-*// play_ouip
+*// play_rollover
 
 *********************************************************************
 *
-* Play toc
+* Play path
 *
-play_toc:
+play_path:
        .proc
-       li   r0,snd_toc
-       li   r1,snd_channel_4
+       li   r0,snd_freq_raise
+       li   r1,snd_channel_1
+       li   r2,A3
        bl   @play_snd
        .endproc
-*// play_toc
+*// play_path
 
 *********************************************************************
 *
-* Play crash
+* Play hit
 *
-play_crash:
+play_hit:
+       .proc
+       li   r0,snd_short
+       li   r1,snd_channel_1
+       li   r2,A1
+       bl   @play_snd
+       .endproc
+*// play_hit
+
+*********************************************************************
+*
+* Play ball lost
+*
+play_ball_lost:
        .proc
        li   r0,snd_crash
        li   r1,snd_channel_4
        bl   @play_snd
        .endproc
-*// play_crash
+*// play_ball_lost
