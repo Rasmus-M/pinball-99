@@ -720,6 +720,8 @@ check_collision_1:
        mov  @dp,r3
        ci   r3,->0100
        jgt  check_collision_2
+       mov  @special_collision,r0
+       jne  check_collision_2
        bl   @play_hit
 *      Flipper push
 check_collision_2:
