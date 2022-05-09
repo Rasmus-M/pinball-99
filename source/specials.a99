@@ -402,5 +402,5 @@ special_rollover_games_start_misc:
        data ->0400                     ; vy
 
 special_rollover_sams_start_misc:
-       data >0100                      ; vx
-       data ->0200                     ; vy
+       data >00c0                      ; vx
+       data ->0180                     ; vy

@@ -211,10 +211,8 @@ padvar:                                ; Start of pad variables
        equ  two+2
 frame:
        equ padvar
-vdp_status:
-       equ frame+2
 double_buffer_flag:
-       equ  vdp_status+2
+       equ  frame+2
 info_panel_updates:
        equ  double_buffer_flag+2
 play_field_updates:
@@ -249,8 +247,10 @@ y1:                                     ; Ball position y (FP 12.4)
        equ  x1+2
 pattern_and_color:
        equ  y1+2
-left_flipper_state:
+keys:
        equ  pattern_and_color+2
+left_flipper_state:
+       equ  keys+2
 right_flipper_state:
        equ  left_flipper_state+2
 left_flipper_dir:
@@ -409,18 +409,30 @@ game_over:
 pause:
        .proc
        mov  r0,@pause_frames
-pause_0:
-       li   r0,key_sp
-       bl   @check_key
-       jne  pause_0
+       li   r2,32
 pause_1:
-       bl   @main_loop_body
-       li   r0,key_sp
+       mov  @keys,r1
+       mov  @key_launch(r1),r0
        bl   @check_key
-       jne  pause_2
-       dec  @pause_frames
+       jeq  pause_2
+       dec  r2
        jne  pause_1
 pause_2:
+       bl   @main_loop_body
+       li   r1,keys_keyboard
+       mov  @key_launch(r1),r0
+       bl   @check_key
+       jne  pause_3
+       li   r1,keys_joystick
+       mov  @key_launch(r1),r0
+       bl   @check_key
+       jne  pause_3
+       dec  @pause_frames
+       jne  pause_2
+       jmp  pause_4
+pause_3:
+       mov  r1,@keys
+pause_4:
        .endproc
 pause_frames:
        data 0
@@ -461,7 +473,7 @@ interrupt_check:
 *      Interrupt occurred
 interrupt_check_1:
        .proc
-       movb @vdpsta,@vdp_status
+       movb @vdpsta,r12
        bl   @interrupt_routine
        .endproc
 *// interrupt_check
@@ -493,12 +505,12 @@ interrupt_routine:
 * Wait for vertical retrace (CRU)
 *
 vsync:
-       movb @vdpsta,@vdp_status
+       movb @vdpsta,r12
        clr  r12
 vsync_1:
        tb   2                          ; Test CRU bit for VDP interrupt
        jeq  vsync_1
-       movb @vdpsta,@vdp_status
+       movb @vdpsta,r12
        rt
 *// vsync
 
@@ -535,9 +547,10 @@ set_vdp_regs:
 *
 user_input:
        .proc
+       mov  @keys,r13
 *      Left flipper
        clr  @left_flipper_dir
-       li   r0,KEY_Z
+       mov  *r13+,r0                   ; Key left
        bl   @check_key
        jeq  user_input_1
        mov  @frame,r0
@@ -558,7 +571,7 @@ user_input_1:
 user_input_2:
 *      Right flipper
        clr  @right_flipper_dir
-       li   r0,KEY_M
+       mov  *r13+,r0                   ; Key right
        bl   @check_key
        jeq  user_input_3
        mov  @frame,r0
@@ -577,7 +590,7 @@ user_input_3:
        dec  @right_flipper_state
        dec  @right_flipper_dir
 user_input_4:
-       li   r0,KEY_SP
+       mov  *r13+,r0                   ; Key launch
        bl   @check_key
        jeq  user_input_5
 *      Space pressed
@@ -622,21 +635,21 @@ user_input_6:
        jmp  user_input_9
 *      Cheat
 user_input_7:
-       li   r0,KEY_LF
+       li   r0,KEY_A
        bl   @check_key
        jeq  user_input_8
-       li   r0,->0040
+       li   r0,->0100                  ; ->0040
        mov  r0,@vx
-       li   r0,->0080
+       li   r0,->0200                  ; ->0080
        mov  r0,@vy
        jmp  user_input_9
 user_input_8:
-       li   r0,KEY_RG
+       li   r0,KEY_K
        bl   @check_key
        jeq  user_input_9
-       li   r0,>0040
+       li   r0,>0100                   ; >0040
        mov  r0,@vx
-       li   r0,->0080
+       li   r0,->0200                  ; ->0080
        mov  r0,@vy
 user_input_9:
        .endproc
@@ -1271,6 +1284,8 @@ handle_special_group_rollovers_3:
 *
 handle_special_group_path:
        .proc
+       mov  @vy,r0
+       jgt  handle_special_group_path_4
        mov  @special_group_specials(r9),r0     ; Get pointer to start/end specials
        mov  *r0+,r1                            ; Get special that marks the start of the path
        mov  *r0,r2                             ; Get special that marks the end of the path
@@ -2375,6 +2390,8 @@ one_time_init:
        bl   @clear_info_panel_map
        mov  @two,@info_panel_updates
        clr  @double_buffer_flag
+       li   r0,keys_keyboard
+       mov  r0,@keys
 *      Play music
        li   r0,bipbop_module
        bl   @play_module
@@ -2643,6 +2660,23 @@ lower_memory_max:
 * Data
 *
        aorg >a000
+
+key_left:
+       equ  0
+key_right:
+       equ  2
+key_launch:
+       equ  4
+
+keys_keyboard:
+       data KEY_Z
+       data KEY_M
+       data KEY_SP
+
+keys_joystick:
+       data KEY_LF
+       data KEY_RG
+       data KEY_FI
 
 txt_pinball:
        text 'PINBALL!'
