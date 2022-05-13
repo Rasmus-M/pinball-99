@@ -638,18 +638,18 @@ user_input_7:
        li   r0,KEY_A
        bl   @check_key
        jeq  user_input_8
-       li   r0,->0100                  ; ->0040
+       li   r0,->0040                  ; ->0040
        mov  r0,@vx
-       li   r0,->0200                  ; ->0080
+       li   r0,->0080                  ; ->0080
        mov  r0,@vy
        jmp  user_input_9
 user_input_8:
        li   r0,KEY_K
        bl   @check_key
        jeq  user_input_9
-       li   r0,>0100                   ; >0040
+       li   r0,>0040                   ; >0040
        mov  r0,@vx
-       li   r0,->0200                  ; ->0080
+       li   r0,->0080                  ; ->0080
        mov  r0,@vy
 user_input_9:
        .endproc
@@ -1203,17 +1203,19 @@ search_specials_bsp_tree_5:
 handle_special_bumper:
        .proc
        mov  @collision_type,r0
-       jeq  handle_special_bumper_1
+       jeq  handle_special_bumper_2
        c    r8,@last_special
-       jeq  handle_special_bumper_1
+       jeq  handle_special_bumper_2
        mov  r8,@last_special
        a    @nx,@vx
        a    @ny,@vy
        mov  @special_static_sprite(r8),r7
+       jeq  handle_special_bumper_1
        mov  @static_score(r7),r0
        bl   @add_score
-       bl   @play_bumper
 handle_special_bumper_1:
+       bl   @play_bumper
+handle_special_bumper_2:
        .endproc
 *// handle_special_bumper
 
