@@ -339,6 +339,7 @@ main_loop:
        clr  @vx
        clr  @vy
        bl   @play_ball_lost
+       clr  @scroll_dir
        li   r0,120
        bl   @pause
        dec  @balls
@@ -362,6 +363,7 @@ next_ball:
 intro:
        .proc
        inc  @player_status
+       mov  @one,@scroll_dir
 intro_1:
        li   r0,txt_pinball
        bl   @display_text_center
@@ -833,6 +835,19 @@ perform_events_2:
 * Set scroll position depending on ball position
 *
 set_scroll_position:
+       .proc
+       mov  @player_status,r0
+       jeq  set_scroll_position_2
+       a    @scroll_dir,@scroll_y
+       mov  @two,@play_field_updates
+       mov  @scroll_y,r0
+       jeq  set_scroll_position_1
+       ci   r0,scroll_y_max
+       jne  set_scroll_position_5
+set_scroll_position_1:
+       neg  @scroll_dir
+       jmp  set_scroll_position_5
+set_scroll_position_2:
        mov  @y1,r0
        srl  r0,4
        s    @scroll_y,r0
@@ -840,30 +855,30 @@ set_scroll_position:
 *      Scroll up
        mov  r0,r1
        ai   r1,-scroll_when_y_less_than
-       jgt  set_scroll_position_1
+       jgt  set_scroll_position_3
        mov  @scroll_y,r2
        a    r1,r2
-       jgt  set_scroll_position_2
+       jgt  set_scroll_position_4
        clr  r2
-       jmp  set_scroll_position_2
-set_scroll_position_1:
+       jmp  set_scroll_position_4
+set_scroll_position_3:
 *      Scroll down
        mov  r0,r1
        ai   r1,-scroll_when_y_greater_than
-       jlt  set_scroll_position_3
+       jlt  set_scroll_position_5
        mov  @scroll_y,r2
        a    r1,r2
        ci   r2,scroll_y_max
-       jlt  set_scroll_position_2
+       jlt  set_scroll_position_4
        li   r2,scroll_y_max
-set_scroll_position_2:
+set_scroll_position_4:
        andi r2,>fffe
        c    r2,@scroll_y
-       jeq  set_scroll_position_3
+       jeq  set_scroll_position_5
        mov  r2,@scroll_y
        mov  @two,@play_field_updates
-set_scroll_position_3:
-       rt
+set_scroll_position_5:
+       .endproc
 *// set_scroll_position
 
 *********************************************************************************
@@ -956,6 +971,10 @@ update_sprite_attr_table:
        mov  @y1,r0
        srl  r0,4
        s    @scroll_y,r0
+       ci   r0,-15
+       jlt  update_sprite_attr_table_1
+       ci   r0,play_field_height
+       jhe  update_sprite_attr_table_1
        ai   r0,-ball_radius-1+sprite_y_offset
        swpb r0
        movb r0,*r15
@@ -967,6 +986,7 @@ update_sprite_attr_table:
        movb @pattern_and_color,*r15
        movb @pattern_and_color+1,*r15
 *      Flippers
+update_sprite_attr_table_1:
        bl   @update_flippers_sprites
 *      Static sprites
        bl   @update_static_sprites
@@ -2817,6 +2837,9 @@ cover_sprites:
        byte play_field_top-17,0,0,0
        byte play_field_top-17,0,0,0
        byte >d0,>00
+
+scroll_dir:
+       data 0
 
 ***************************************************************************
 *

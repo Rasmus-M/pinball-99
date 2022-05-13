@@ -117,7 +117,7 @@ special_rollover_games_start:
        data special_rollover_games_start_misc
 special_rollover_games_end:
        data special_type_rollover
-       data 72,44,88,53
+       data 61,56,78,64
        data static_arrow_games
        data special_group_games_path
        data 0                          ; State
