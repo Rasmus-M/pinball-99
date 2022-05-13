@@ -35,13 +35,13 @@ special_type_launch:
        equ  6
 
 *      Bumpers
-special_rollover_bumper_50:
+special_bumper_50:
        data special_type_bumper
        data 73,105,128,160
        data static_bumper_50,0
        data 0
        data 0                          ; Misc
-special_rollover_bumper_20:
+special_bumper_20:
        data special_type_bumper
        data 121,153,176,208
        data static_bumper_20,0

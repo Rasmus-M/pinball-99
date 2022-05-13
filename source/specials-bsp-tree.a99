@@ -1,0 +1,121 @@
+bsp_node_type:
+       equ  0
+bsp_node_value:
+       equ  2                          ; For leaf this is the address of a list of specials
+                                       ; For split it's the x or y coordinate for the split
+bsp_node_left:
+       equ  4
+bsp_node_right:
+       equ  6
+
+bsp_node_type_leaf:
+       equ  0
+bsp_node_type_split_x:
+       equ  -1
+bsp_node_type_split_y:
+       equ  1
+
+specials_bsp_tree:
+       data bsp_node_type_split_y
+       data 216
+       data specials_bsp_node_top
+       data specials_bsp_node_bottom
+specials_bsp_node_top:
+       data bsp_node_type_split_x
+       data 176
+       data specials_bsp_node_top_left
+       data specials_bsp_node_top_right
+specials_bsp_node_bottom:
+       data bsp_node_type_split_x
+       data 96
+       data specials_bsp_node_bottom_left
+       data specials_bsp_node_bottom_right
+specials_bsp_node_top_left:
+       data bsp_node_type_split_y
+       data 96
+       data specials_bsp_node_top_left_top
+       data specials_bsp_node_top_left_bottom
+specials_bsp_node_top_right:
+       data bsp_node_type_split_y
+       data 120
+       data specials_bsp_node_top_right_top
+       data specials_bsp_node_top_right_bottom
+specials_bsp_node_bottom_left:
+       data bsp_node_type_leaf
+       data specials_list_bottom_left
+specials_bsp_node_bottom_right:
+       data bsp_node_type_split_y
+       data 264
+       data specials_bsp_node_bottom_right_top
+       data specials_bsp_node_bottom_right_bottom
+specials_bsp_node_top_left_top:
+       data bsp_node_type_split_x
+       data 104
+       data specials_bsp_node_top_left_top_left
+       data specials_bsp_node_top_left_top_right
+
+specials_bsp_node_top_left_bottom:
+       data bsp_node_type_leaf
+       data specials_list_top_left_bottom
+specials_bsp_node_top_right_top:
+       data bsp_node_type_leaf
+       data specials_list_top_right_top
+specials_bsp_node_top_right_bottom:
+       data bsp_node_type_leaf
+       data specials_list_top_right_bottom
+specials_bsp_node_bottom_right_top:
+       data bsp_node_type_leaf
+       data specials_list_bottom_right_top
+specials_bsp_node_bottom_right_bottom:
+       data bsp_node_type_leaf
+       data specials_list_bottom_right_bottom
+specials_bsp_node_top_left_top_left:
+       data bsp_node_type_leaf
+       data specials_list_top_left_top_left
+specials_bsp_node_top_left_top_right:
+       data bsp_node_type_leaf
+       data specials_list_top_left_top_right
+
+specials_list_top_right_top:
+       data special_rollover_bonus_9_2nd
+       data special_launch_gate
+       data special_target_peb_p
+       data 0
+specials_list_top_right_bottom:
+       data special_target_peb_e
+       data special_target_peb_b
+       data 0
+specials_list_bottom_left:
+       data special_target_f18a_f
+       data special_target_f18a_1
+       data special_target_f18a_8
+       data special_target_f18a_a
+*      data special_bumper_left
+       data 0
+specials_list_bottom_right_top:
+       data special_target_32k_3
+       data special_target_32k_2
+       data special_target_32k_k
+       data special_rollover_sams_end
+       data 0
+specials_list_bottom_right_bottom:
+       data special_rollover_sams_start
+       data special_launch_pad
+*      data special_bumper_right
+       data 0
+specials_list_top_left_top_left:
+       data special_rollover_games_end
+       data special_target_500_1
+       data 0
+specials_list_top_left_top_right:
+       data special_rollover_bonus_t
+       data special_rollover_bonus_i
+       data special_rollover_bonus_9_1st
+       data 0
+specials_list_top_left_bottom:
+       data special_target_500_1
+       data special_rollover_games_start
+       data special_bumper_20
+       data special_bumper_50
+       data special_saucer_apps
+       data 0

@@ -1123,29 +1123,25 @@ handle_special_collision:
        srl  r0,4
        mov  @y,r1
        srl  r1,4
-       li   r8,specials
+       bl   @search_specials_bsp_tree  ; Get list of specials to serach
 handle_special_collision_1
-       mov  *r8,r3
-       jlt  handle_special_collision_3
+       mov  *r3+,r8                    ; Get special
+       jeq  handle_special_collision_2
        c    r0,@special_x1(r8)
-       jl   handle_special_collision_2
+       jl   handle_special_collision_1
        c    r0,@special_x2(r8)
-       jhe  handle_special_collision_2
+       jhe  handle_special_collision_1
        c    r1, @special_y1(r8)
-       jl   handle_special_collision_2
+       jl   handle_special_collision_1
        c    r1,@special_y2(r8)
-       jhe  handle_special_collision_2
+       jhe  handle_special_collision_1
 *      Special found
        mov  @special_type(r8),r3
        sla  r3,1
        mov  @special_branch_table(r3),r3
-       jeq  handle_special_collision_3
+       jeq  handle_special_collision_2
        bl   *r3
-       jmp  handle_special_collision_3
 handle_special_collision_2:
-       ai   r8,special_size
-       jmp  handle_special_collision_1
-handle_special_collision_3:
        .endproc
 special_branch_table:
        data 0
@@ -1156,6 +1152,47 @@ special_branch_table:
        data handle_special_gate
        data handle_special_launch
 *// handle_special_collision
+
+*********************************************************************************
+*
+* Search specials BSP tree
+*
+* r0: x value to seek
+* r1: y value to seek
+*
+* On return r3 contains a pointer to the list of specials
+*
+search_specials_bsp_tree:
+       li   r2,specials_bsp_tree
+search_specials_bsp_tree_1:
+*      Check node type
+       mov  *r2,r3                     ; mov  @bsp_node_type(r2),r3
+                                       ; ci   r3,bsp_node_type_leaf
+       jeq  search_specials_bsp_tree_5
+                                       ; ci   r2,bsp_node_type_split_y
+       jgt  search_specials_bsp_tree_2 ; jeq  search_specials_bsp_tree_2
+*      Split x
+       c    r0,@bsp_node_value(r2)
+       jlt  search_specials_bsp_tree_3
+       jmp  search_specials_bsp_tree_4
+*      Split y
+search_specials_bsp_tree_2:
+       c    r1,@bsp_node_value(r2)
+       jlt  search_specials_bsp_tree_3
+       jmp  search_specials_bsp_tree_4
+*      Take left branch
+search_specials_bsp_tree_3:
+       mov  @bsp_node_left(r2),r2
+       jmp  search_specials_bsp_tree_1
+*      Take right branch
+search_specials_bsp_tree_4:
+       mov  @bsp_node_right(r2),r2
+       jmp  search_specials_bsp_tree_1
+*      Leaf
+search_specials_bsp_tree_5:
+       mov  @bsp_node_value(r2),r3
+       rt
+*// search_specials_bsp_tree
 
 *********************************************************************************
 *
@@ -2796,15 +2833,15 @@ cover_sprites:
        byte play_field_top-17,0,0,0
        byte >d0,>00
 
-static_sprites:
-       copy "static-sprites.a99"
-specials:
-       copy "specials.a99"
-
 ***************************************************************************
 *
 * Data includes
 *
+static_sprites:
+       copy "static-sprites.a99"
+specials:
+       copy "specials.a99"
+       copy "specials-bsp-tree.a99"
 sprite_patterns:
        copy "sprite-patterns.a99"
 normals:
