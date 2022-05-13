@@ -199,7 +199,7 @@ stack:
 * PAD constants
 *
 padcon:
-       equ  stack+>14                  ; Start of pad constants
+       equ  stack+>16                  ; Start of pad constants
 one:
        equ  padcon
 two:
@@ -309,10 +309,8 @@ speech_counter:
        equ  speech_addr+2
 speech_read_pad:
        equ  speech_counter+2
-info_panel_view_offset:
-       equ  speech_read_pad+14
 pad_max:
-       equ  info_panel_view_offset+2
+        equ  speech_read_pad+14
 
 ********************************************************************************
 *
@@ -363,6 +361,7 @@ next_ball:
 *
 intro:
        .proc
+       inc  @player_status
 intro_1:
        li   r0,txt_pinball
        bl   @display_text_center
@@ -704,10 +703,10 @@ check_collision:
        .proc
        clr  @collision_type
        bl   @check_flipper_collision
-       mov  r1,r1                      ; Test colllision map value for flippers
+       mov  r1,r1                      ; Test collision map value for flippers
        jne  check_collision_1
        bl   @get_background_collision_map_value
-       mov  r1,r1                      ; Test colllision map value for background
+       mov  r1,r1                      ; Test collision map value for background
        jeq  check_collision_6          ; Zero means no collision
 check_collision_1:
        dec  r1                         ; Convert to zero-based
@@ -2337,6 +2336,7 @@ init_game:
        mov  r0,@pattern_and_color
        clr  @score_lsw
        clr  @score_msw
+       bl   @reset_score_buffer
        mov  @one,@bonus_multiplier
        li   r0,3
        mov  r0,@balls
@@ -2386,7 +2386,6 @@ init_ball:
        li   r0,event_queue
        mov  r0,@event_queue_head
        mov  r0,@event_queue_tail
-       bl   @reset_score_buffer
        mov  @two,@play_field_updates
        li   r0,init_ball_special_states_to_clear
 init_ball_1:
@@ -2793,6 +2792,8 @@ w_info_panel_char_size:
 info_panel_buffer:
        byte chr_space,chr_space,chr_space,chr_space
        byte chr_space,chr_space,chr_space,chr_space
+info_panel_view_offset:
+       data 0
 info_panel_view_x:
        data 0
 info_panel_view_y:

@@ -95,14 +95,14 @@ special_rollover_bonus_9_2nd:
 *      SAMS path
 special_rollover_sams_start:
        data special_type_rollover
-       data 190,286,207,304
+       data 189,284,210,305
        data static_arrow_sams
        data special_group_sams_path
        data 0                          ; State
        data special_rollover_sams_start_misc
 special_rollover_sams_end:
        data special_type_rollover
-       data 217,239,226,249
+       data 216,239,228,249
        data static_arrow_sams
        data special_group_sams_path
        data 0                          ; State
@@ -442,5 +442,5 @@ special_rollover_games_start_misc:
        data ->0400                     ; vy
 
 special_rollover_sams_start_misc:
-       data >00c0                      ; vx
-       data ->0180                     ; vy
+       data >0100                      ; vx
+       data ->0200                     ; vy
