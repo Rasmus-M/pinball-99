@@ -1323,34 +1323,20 @@ handle_special_group_rollovers_3:
 handle_special_group_path:
        .proc
        mov  @vy,r0
-       jgt  handle_special_group_path_4
+       jgt  handle_special_group_path_3
        mov  @special_group_specials(r9),r0     ; Get pointer to start/end specials
        mov  *r0+,r1                            ; Get special that marks the start of the path
        mov  *r0,r2                             ; Get special that marks the end of the path
        c    r8,r1                              ; Is it the start special?
        jne  handle_special_group_path_1        ; Jump to end special if not
 *      Start special
-       mov  @special_state(r2),r0              ; Test end state
-       jeq  handle_special_group_path_0        ; If set we entered the path from the wrong end
-       clr  @special_state(r2)                 ; Clear end state
-       jmp  handle_special_group_path_3        ; And leave
-handle_special_group_path_0:
-       mov  @one,@special_state(r1)            ; Set start state
        mov  @special_misc(r1),r0
-       jeq  handle_special_group_path_4
+       jeq  handle_special_group_path_3
        mov  *r0+,@vx
        mov  *r0,@vy
-       jmp  handle_special_group_path_4        ; And leave
+       jmp  handle_special_group_path_3        ; Leave
 *      End special
 handle_special_group_path_1:
-       mov  @special_state(r1),r0              ; Test start state
-       jne  handle_special_group_path_2        ; If set, the path is complete
-       mov  @one,@special_state(r2)            ; Else set the end state
-       jmp  handle_special_group_path_4        ; And leave
-*      Path complete
-handle_special_group_path_2:
-       clr  @special_state(r1)                     ; Clear start state
-       clr  @special_state(r2)                     ; Clear end state (to be safe)
        mov  @special_group_static_sprites(r9),r3
        mov  @special_group_state(r9),r0
        sla  r0,1
@@ -1365,10 +1351,6 @@ handle_special_group_path_2:
 *      All lit
        bl   @schedule_reset_special_group
 handle_special_group_path_3:
-       li   r0,60
-       li   r1,reset_last_special
-       bl   @schedule_event
-handle_special_group_path_4:
        .endproc
 *// handle_special_group_path
 

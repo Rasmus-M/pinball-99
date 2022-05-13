@@ -346,7 +346,7 @@ static_left_bumper:
        data 395
        byte 44
        byte 252
-       byte >80+9,>80+15,6,8
+       byte >80+8,>80+8,9,15
        data 0
        data 0
        data 100
@@ -354,7 +354,7 @@ static_right_bumper:
        data 395
        byte 177
        byte 252
-       byte >80+6,>80+8,9,15
+       byte >80+15,>80+15,8,9
        data 0
        data 0
        data 100

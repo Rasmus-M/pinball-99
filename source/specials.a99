@@ -110,7 +110,7 @@ special_rollover_sams_end:
 *      Games path
 special_rollover_games_start:
        data special_type_rollover
-       data 12,146,17,158
+       data 10,146,19,158
        data static_arrow_games
        data special_group_games_path
        data 0                          ; State
