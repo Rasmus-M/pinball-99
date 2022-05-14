@@ -34,6 +34,8 @@ special_type_gate:
 special_type_launch:
        equ  6
 
+specials:
+       equ  $
 *      Bumpers
 special_bumper_50:
        data special_type_bumper

@@ -1068,8 +1068,11 @@ update_static_sprites:
        andi r4,>0030
        srl  r4,4
        mov  @scroll_y,r0
+       mov  r0,r1
        ai   r0,-16                     ; Sprites with y > this should be displayed
-       li   r3,static_sprites
+       andi r1,>01c0                   ; Isolate bits for index lookup
+       srl  r1,5                       ; Shift to word offset
+       mov  @static_sprite_index(r1),r3 ; Get first relevant sprite from index
 *      Find first sprite to display
 update_static_sprites_1:
        mov  *r3+,r1                    ; Get y
@@ -2845,9 +2848,7 @@ scroll_dir:
 *
 * Data includes
 *
-static_sprites:
        copy "static-sprites.a99"
-specials:
        copy "specials.a99"
        copy "specials-bsp-tree.a99"
 sprite_patterns:

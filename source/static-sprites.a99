@@ -21,7 +21,27 @@ static_score:
 static_size:
        equ  14
 
+static_sprite_index:
+*      0 (y = -16 - 63)
+       data static_bonus_x4
+*      64 (y = 48 - 127)
+       data static_rollover_bonus_t
+*      128 (y = 112 - 191)
+       data static_game_munchman
+*      192 (y = 176 - 255)
+       data static_app_xb
+*      256 (y = 240 - 319)
+       data static_sams_s_2nd
+*      320 (y = 304 - 383)
+       data static_target_f18a_a
+*      384 (y = 368 - 447)
+       data static_left_bumper
+*      448 (y = 432 - 511)
+       data plunger
+
 *      Sorted by y,x
+static_sprites:
+       equ  $
 static_bonus_x4:
        data 5
        byte 140
