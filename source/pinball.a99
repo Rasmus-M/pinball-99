@@ -2433,7 +2433,7 @@ one_time_init:
        li   r0,keys_keyboard
        mov  r0,@keys
 *      Play music
-       li   r0,bipbop_module
+       li   r0,tune1_module
        bl   @play_module
        li   r0,speech_welcome_idx
        bl   @speak
@@ -2857,7 +2857,7 @@ normals:
        copy "map.a99"
        copy "flippers.a99"
        copy "sound-fx.a99"
-       copy "music.a99"
+       copy "tune1-music.a99"
        copy "chars.a99"
 
 upper_memory_max:
