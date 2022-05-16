@@ -1,5 +1,5 @@
 tune1_module:
-       data >0004
+       data >0007
        data tune1_track_01
        data tune1_track_02
        data tune1_track_03
@@ -7,211 +7,468 @@ tune1_module:
 tune1_track_01:
        data snd_channel_2
 tune1_track_01_rpt:
-       data tune1_seq_00BC
-       data tune1_seq_00C6
-       data tune1_seq_00CF
-       data tune1_seq_00B8
-       data tune1_seq_00BC
-       data tune1_seq_00C6
-       data tune1_seq_00D9
-       data tune1_seq_00B8
+       data tune1_seq_00DC
+       data tune1_seq_00E8
+       data tune1_seq_00DC
+       data tune1_seq_00F2
+       data tune1_seq_00FC
+       data tune1_seq_010B
+       data tune1_seq_00FC
+       data tune1_seq_0113
        data >00FF
        data tune1_track_01_rpt
        data >0000
 tune1_track_02:
        data snd_channel_3
 tune1_track_02_rpt:
-       data tune1_seq_00E3
-       data tune1_seq_00EC
-       data tune1_seq_00F5
-       data tune1_seq_00E3
-       data tune1_seq_00E3
-       data tune1_seq_00EC
-       data tune1_seq_00F5
-       data tune1_seq_00E3
+       data tune1_seq_011B
+       data tune1_seq_0127
+       data tune1_seq_011B
+       data tune1_seq_0127
+       data tune1_seq_0133
+       data tune1_seq_013F
+       data tune1_seq_0133
+       data tune1_seq_014B
        data >00FF
        data tune1_track_02_rpt
        data >0000
 tune1_track_03:
        data snd_channel_4
 tune1_track_03_rpt:
-       data tune1_seq_00FE
-       data tune1_seq_00FE
-       data tune1_seq_00FE
-       data tune1_seq_00FE
-       data tune1_seq_00FE
-       data tune1_seq_00FE
-       data tune1_seq_00FE
-       data tune1_seq_00FE
+       data tune1_seq_0154
+       data tune1_seq_0154
+       data tune1_seq_016A
+       data tune1_seq_0154
+       data tune1_seq_0180
+       data tune1_seq_0180
+       data tune1_seq_0180
+       data tune1_seq_0190
        data >00FF
        data tune1_track_03_rpt
        data >0000
-tune1_seq_00B8:
+tune1_seq_00D8:
        data >0020
        data >0000
-tune1_seq_00BC:
-       data tune1_note_010A
-       data >0007
-       data tune1_note_010D
-       data >0007
-       data tune1_note_010A
+tune1_seq_00DC:
+       data tune1_note_01A2
        data >0003
-       data tune1_note_010D
-       data >0007
-       data tune1_note_0110
+       data tune1_note_01A5
        data >0003
-       data >0000
-tune1_seq_00E3:
-       data tune1_note_0125
-       data >0007
-       data tune1_note_0128
-       data >0003
-       data tune1_note_0125
-       data >000B
-       data tune1_note_012B
-       data >0003
-       data tune1_note_0125
-       data >0003
-       data >0000
-tune1_seq_00FE:
-       data tune1_note_0134
-       data >0003
-       data tune1_note_0134
-       data >0003
-       data tune1_note_0136
-       data >0003
-       data tune1_note_0134
+       data tune1_note_01A2
        data >0001
-       data tune1_note_0134
+       data tune1_note_01A5
+       data >0003
+       data tune1_note_01A8
+       data >0003
+       data tune1_note_01AB
        data >0001
-       data tune1_note_0134
-       data >0003
-       data tune1_note_0134
-       data >0003
-       data tune1_note_0136
+       data tune1_note_01A8
        data >0001
-       data tune1_note_0136
+       data tune1_note_01AB
        data >0001
-       data tune1_note_0134
-       data >0003
+       data tune1_note_01A5
+       data >0001
+       data tune1_note_01AE
+       data >0005
        data >0000
-tune1_seq_00C6:
-       data >0004
-       data tune1_note_0113
+tune1_seq_011B:
+       data tune1_note_01D5
        data >0003
-       data tune1_note_0110
+       data tune1_note_01D8
+       data >0001
+       data tune1_note_01D5
+       data >0005
+       data tune1_note_01DB
+       data >0001
+       data tune1_note_01D5
+       data >0001
+       data tune1_note_01DE
        data >0003
-       data tune1_note_0113
-       data >0003
-       data tune1_note_010D
-       data >0003
-       data tune1_note_0116
-       data >000B
+       data tune1_note_01D8
+       data >0001
+       data tune1_note_01DE
+       data >0005
+       data tune1_note_01DB
+       data >0001
+       data tune1_note_01DE
+       data >0001
        data >0000
-tune1_seq_00EC:
-       data tune1_note_012E
+tune1_seq_0154:
+       data tune1_note_01FC
+       data >0001
+       data tune1_note_01FC
+       data >0001
+       data tune1_note_01FE
+       data >0001
+       data tune1_note_01FC
+       data tune1_note_01FC
+       data tune1_note_01FC
+       data >0001
+       data tune1_note_01FC
+       data >0001
+       data tune1_note_01FE
+       data tune1_note_01FE
+       data tune1_note_01FC
+       data >0001
+       data tune1_note_01FC
+       data >0001
+       data tune1_note_01FC
+       data >0001
+       data tune1_note_01FE
+       data >0001
+       data tune1_note_01FC
+       data tune1_note_01FC
+       data tune1_note_01FC
+       data >0001
+       data tune1_note_01FC
+       data >0001
+       data tune1_note_01FE
+       data tune1_note_01FE
+       data tune1_note_01FC
+       data >0001
+       data >0000
+tune1_seq_00E8:
+       data tune1_note_01B1
+       data >0001
+       data tune1_note_01B4
+       data >0001
+       data tune1_note_01B1
+       data >0001
+       data tune1_note_01B4
+       data >0001
+       data tune1_note_01B1
+       data >0001
+       data tune1_note_01A5
+       data >0003
+       data tune1_note_01B7
+       data >0011
+       data >0000
+tune1_seq_0127:
+       data tune1_note_01E1
+       data >0003
+       data tune1_note_01D8
+       data >0001
+       data tune1_note_01E1
+       data >0005
+       data tune1_note_01DB
+       data >0001
+       data tune1_note_01E1
+       data >0001
+       data tune1_note_01D5
+       data >0003
+       data tune1_note_01D8
+       data >0001
+       data tune1_note_01D5
+       data >0005
+       data tune1_note_01DB
+       data >0001
+       data tune1_note_01D5
+       data >0001
+       data >0000
+tune1_seq_016A:
+       data tune1_note_01FC
+       data >0001
+       data tune1_note_01FC
+       data >0001
+       data tune1_note_01FE
+       data >0001
+       data tune1_note_01FC
+       data tune1_note_01FC
+       data tune1_note_01FC
+       data >0001
+       data tune1_note_01FC
+       data >0001
+       data tune1_note_01FE
+       data tune1_note_01FE
+       data tune1_note_01FC
+       data >0001
+       data tune1_note_01FC
+       data >0001
+       data tune1_note_01FC
+       data >0001
+       data tune1_note_01FE
+       data >0001
+       data tune1_note_01FC
+       data tune1_note_01FC
+       data tune1_note_01FC
+       data >0001
+       data tune1_note_01FC
+       data >0001
+       data tune1_note_01FE
+       data tune1_note_01FE
+       data tune1_note_01FC
+       data >0001
+       data >0000
+tune1_seq_00F2:
+       data tune1_note_01B1
+       data >0001
+       data tune1_note_01B4
+       data >0001
+       data tune1_note_01B1
+       data >0001
+       data tune1_note_01AB
+       data >0001
+       data tune1_note_01A5
+       data >0001
+       data tune1_note_01B1
+       data >0003
+       data tune1_note_01BA
+       data >0011
+       data >0000
+tune1_seq_00FC:
+       data tune1_note_01BD
+       data >0003
+       data tune1_note_01C0
+       data >0001
+       data tune1_note_01BD
+       data >0003
+       data tune1_note_01C0
+       data >0001
+       data tune1_note_01BD
+       data >0001
+       data tune1_note_01C0
+       data >0001
+       data tune1_note_01C3
+       data >0001
+       data tune1_note_01C3
+       data >0001
+       data tune1_note_01C0
+       data >0001
+       data tune1_note_01C3
+       data >0003
+       data tune1_note_01C0
+       data >0001
+       data tune1_note_01C3
+       data >0001
+       data tune1_note_01C0
+       data >0001
+       data >0000
+tune1_seq_0133:
+       data tune1_note_01E4
+       data >0003
+       data tune1_note_01E7
+       data >0001
+       data tune1_note_01E7
+       data >0001
+       data tune1_note_01E4
        data >0007
-       data tune1_note_0128
+       data tune1_note_01EA
        data >0003
-       data tune1_note_012E
-       data >000B
-       data tune1_note_012B
-       data >0003
-       data tune1_note_012E
-       data >0003
-       data >0000
-tune1_seq_00CF:
-       data tune1_note_0119
-       data >0003
-       data tune1_note_011C
-       data >0003
-       data tune1_note_0119
-       data >0003
-       data tune1_note_011C
-       data >0003
-       data tune1_note_0119
-       data >0003
-       data tune1_note_010D
+       data tune1_note_01ED
+       data >0001
+       data tune1_note_01ED
+       data >0001
+       data tune1_note_01EA
        data >0007
-       data tune1_note_011F
-       data >0003
        data >0000
-tune1_seq_00F5:
-       data tune1_note_0131
+tune1_seq_0180:
+       data tune1_note_01FC
+       data >0001
+       data tune1_note_01FC
+       data >0001
+       data tune1_note_01FE
+       data >0003
+       data tune1_note_01FC
+       data >0001
+       data tune1_note_01FC
+       data >0001
+       data tune1_note_01FE
+       data >0002
+       data tune1_note_01FE
+       data tune1_note_01FC
+       data >0001
+       data tune1_note_01FC
+       data >0001
+       data tune1_note_01FE
+       data >0003
+       data tune1_note_01FC
+       data >0001
+       data tune1_note_01FC
+       data >0001
+       data tune1_note_01FE
+       data >0001
+       data tune1_note_01FE
+       data >0001
+       data >0000
+tune1_seq_010B:
+       data tune1_note_01C6
+       data >0003
+       data tune1_note_01BD
+       data >0001
+       data tune1_note_01C6
+       data >0003
+       data tune1_note_01C0
+       data >0003
+       data tune1_note_01C9
+       data >0011
+       data >0000
+tune1_seq_013F:
+       data tune1_note_01E1
+       data >0003
+       data tune1_note_01F0
+       data >0001
+       data tune1_note_01F0
+       data >0001
+       data tune1_note_01E1
        data >0007
-       data tune1_note_0128
+       data tune1_note_01F3
        data >0003
-       data tune1_note_0131
-       data >000B
-       data tune1_note_012B
-       data >0003
-       data tune1_note_0131
-       data >0003
-       data >0000
-tune1_seq_00D9:
-       data tune1_note_0119
-       data >0003
-       data tune1_note_011C
-       data >0003
-       data tune1_note_0119
-       data >0003
-       data tune1_note_0113
-       data >0003
-       data tune1_note_010D
-       data >0003
-       data tune1_note_0119
+       data tune1_note_01F6
+       data >0001
+       data tune1_note_01F6
+       data >0001
+       data tune1_note_01F3
        data >0007
-       data tune1_note_0122
-       data >0003
        data >0000
-tune1_note_010A:
+tune1_seq_0113:
+       data tune1_note_01CC
+       data >0003
+       data tune1_note_01CF
+       data >0001
+       data tune1_note_01C9
+       data >0003
+       data tune1_note_01C9
+       data >0003
+       data tune1_note_01D2
+       data >0011
+       data >0000
+tune1_seq_014B:
+       data tune1_note_01E1
+       data >0003
+       data tune1_note_01F0
+       data >0001
+       data tune1_note_01F0
+       data >0001
+       data tune1_note_01E1
+       data >0007
+       data tune1_note_01F9
+       data >000F
+       data >0000
+tune1_seq_0190:
+       data tune1_note_01FC
+       data >0001
+       data tune1_note_01FC
+       data >0001
+       data tune1_note_01FE
+       data >0003
+       data tune1_note_01FC
+       data >0001
+       data tune1_note_01FC
+       data >0001
+       data tune1_note_01FE
+       data >0002
+       data tune1_note_01FE
+       data tune1_note_01FC
+       data >0001
+       data tune1_note_01FC
+       data >0001
+       data tune1_note_01FE
+       data >0003
+       data tune1_note_01FC
+       data >0001
+       data tune1_note_01FC
+       data >0001
+       data tune1_note_01FE
+       data tune1_note_01FE
+       data tune1_note_01FE
+       data tune1_note_01FE
+       data >0000
+tune1_note_01A2:
        data tune1_instr_00
        data D3
-tune1_note_010D:
+tune1_note_01A5:
        data tune1_instr_00
        data F3
-tune1_note_0110:
+tune1_note_01A8:
        data tune1_instr_00
        data A4
-tune1_note_0125:
-       data tune1_instr_02
-       data C♯4
-tune1_note_0128:
-       data tune1_instr_05
-       data D4
-tune1_note_012B:
-       data tune1_instr_05
-       data D1
-tune1_note_0134:
-       data tune1_instr_03
-       data P3
-tune1_note_0136:
-       data tune1_instr_01
-       data W0
-tune1_note_0113:
+tune1_note_01AB:
        data tune1_instr_00
        data G3
-tune1_note_0116:
+tune1_note_01AE:
        data tune1_instr_00
        data C3
-tune1_note_012E:
+tune1_note_01D5:
+       data tune1_instr_02
+       data C♯4
+tune1_note_01D8:
+       data tune1_instr_05
+       data D4
+tune1_note_01DB:
+       data tune1_instr_05
+       data D1
+tune1_note_01DE:
        data tune1_instr_02
        data E4
-tune1_note_0119:
+tune1_note_01FC:
+       data tune1_instr_03
+       data P3
+tune1_note_01FE:
+       data tune1_instr_01
+       data W0
+tune1_note_01B1:
        data tune1_instr_00
        data E3
-tune1_note_011C:
+tune1_note_01B4:
        data tune1_instr_00
        data D♯3
-tune1_note_011F:
+tune1_note_01B7:
        data tune1_instr_04
        data >00BF
-tune1_note_0131:
+tune1_note_01E1:
        data tune1_instr_02
        data >0072
-tune1_note_0122:
+tune1_note_01BA:
        data tune1_instr_06
        data D3
+tune1_note_01BD:
+       data tune1_instr_07
+       data G3
+tune1_note_01C0:
+       data tune1_instr_07
+       data D3
+tune1_note_01C3:
+       data tune1_instr_07
+       data F3
+tune1_note_01E4:
+       data tune1_instr_02
+       data F♯4
+tune1_note_01E7:
+       data tune1_instr_05
+       data G3
+tune1_note_01EA:
+       data tune1_instr_02
+       data >0079
+tune1_note_01ED:
+       data tune1_instr_05
+       data B4
+tune1_note_01C6:
+       data tune1_instr_07
+       data E3
+tune1_note_01C9:
+       data tune1_instr_07
+       data C3
+tune1_note_01F0:
+       data tune1_instr_05
+       data C4
+tune1_note_01F3:
+       data tune1_instr_02
+       data G♯3
+tune1_note_01F6:
+       data tune1_instr_05
+       data A4
+tune1_note_01CC:
+       data tune1_instr_07
+       data E2
+tune1_note_01CF:
+       data tune1_instr_07
+       data G2
+tune1_note_01D2:
+       data tune1_instr_08
+       data B3
+tune1_note_01F9:
+       data tune1_instr_02
+       data >0099
 tune1_instr_00:
        byte T2
        byte 63
@@ -254,3 +511,15 @@ tune1_instr_06:
        byte 63
        byte 1
        data >0000
+tune1_instr_07:
+       byte T2
+       byte 24
+       byte 63
+       byte 8
+       data >0000
+tune1_instr_08:
+       byte T2
+       byte 48
+       byte 63
+       byte 4
+       data ->0001
