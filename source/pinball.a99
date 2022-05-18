@@ -323,11 +323,17 @@ main:
        li   r10,stack                  ; Setup stack pointer
        li   r15,vdpwd
        bl   @one_time_init
+       li   r0,speech_welcome_idx
+       bl   @speak
 ;      bl   @sound_test
 restart_game:
+       li   r0,tune2_module
+       bl   @play_module
        bl   @init_game
        bl   @init_ball
        bl   @intro
+       li   r0,tune1_module
+       bl   @play_module
 restart_ball:
        bl   @init_ball
        clr  @frame
@@ -2435,11 +2441,6 @@ one_time_init:
        clr  @double_buffer_flag
        li   r0,keys_keyboard
        mov  r0,@keys
-*      Play music
-       li   r0,tune1_module
-       bl   @play_module
-       li   r0,speech_welcome_idx
-       bl   @speak
        .endproc
 *// one_time_init
 
@@ -2859,6 +2860,7 @@ normals:
        copy "flippers.a99"
        copy "sound-fx.a99"
        copy "tune1-music.a99"
+       copy "tune2-music.a99"
        copy "chars.a99"
 
 upper_memory_max:

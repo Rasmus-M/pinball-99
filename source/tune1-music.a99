@@ -498,7 +498,7 @@ tune1_instr_04:
        byte 127
        byte 63
        byte 1
-       data >0001
+       data >0000
 tune1_instr_05:
        byte T3
        byte 6
@@ -519,7 +519,7 @@ tune1_instr_07:
        data >0000
 tune1_instr_08:
        byte T2
-       byte 48
+       byte 24
        byte 63
-       byte 4
-       data ->0001
+       byte 8
+       data >0000
