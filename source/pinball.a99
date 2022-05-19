@@ -804,7 +804,10 @@ check_collision_6:
        mov  @special_collision,r0
        jeq  check_collision_7
        bl   @handle_special_collision
+       jmp  check_collision_8
 check_collision_7:
+       clr  @last_special
+check_collision_8:
        .endproc
 *// check_collision
 
@@ -1475,9 +1478,6 @@ launch_from_saucer_3:
        li   r0,>0010
        mov  r0,@vy
        mov  @ay_init,@ay
-       li   r0,60
-       li   r1,reset_last_special
-       bl   @schedule_event
        .endproc
 *// lauch_from_saucer
 
@@ -1494,15 +1494,6 @@ extra_ball:
        inc  @balls
        .endproc
 *// extra_ball
-
-*********************************************************************************
-*
-* Reset last special
-*
-reset_last_special:
-       clr  @last_special
-       rt
-*// reset_last_special
 
 *********************************************************************************
 *
@@ -1669,7 +1660,6 @@ roll_bonus_specials_left_4:
 roll_bonus_specials_left_5:
        dec  r2
        jne  roll_bonus_specials_left_1
-       clr  @last_special
        rt
 *// roll_bonus_specials_left
 
@@ -1712,7 +1702,6 @@ roll_bonus_specials_right_4:
 roll_bonus_specials_right_5:
        dec  r2
        jne  roll_bonus_specials_right_1
-       clr  @last_special
        rt
 *// roll_bonus_specials_right
 
