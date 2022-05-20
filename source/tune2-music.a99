@@ -399,10 +399,10 @@ tune2_instr_06:
        byte 36
        byte 0
        byte 7
-       data ->0002
+       data ->0001
 tune2_instr_07:
        byte T2
        byte 36
        byte 0
        byte 7
-       data >0001
+       data >0000
