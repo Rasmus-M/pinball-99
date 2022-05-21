@@ -225,7 +225,7 @@ special_launch_gate:
        data special_type_gate
        data 199,36,207,43
        data static_launch_gate
-       data special_group_apps_ramp
+       data 0                          ; Group
        data 0                          ; State
        data 0                          ; Misc
 *      Launch pad
@@ -233,6 +233,14 @@ special_launch_pad:
        data special_type_launch
        data 242,487,246,493
        data plunger
+       data 0                          ; Sprite
+       data 0                          ; Group
+       data 0                          ; State
+       data 0                          ; Misc
+*      Left path gate
+special_left_gate:
+       data special_type_gate
+       data 78,42,89,52
        data 0                          ; Sprite
        data 0                          ; Group
        data 0                          ; State

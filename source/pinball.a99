@@ -1502,13 +1502,25 @@ extra_ball:
 * r8 points to special structure
 *
 handle_special_gate:
-       mov  @vx,r0
-       jlt  handle_special_gate_1
        mov  @vy,r0
-       jlt  handle_special_gate_1
+       jgt  handle_special_gate_3
+       mov  @special_state(r8),r0
+       jgt  handle_special_gate_1
+       jlt  handle_special_gate_2
+       jmp  handle_special_gate_4
+handle_special_gate_1:
+*      Right gate
+       mov  @vx,r0
+       jgt  handle_special_gate_3
+       jmp  handle_special_gate_4
+handle_special_gate_2:
+*      Left gate
+       mov  @vx,r0
+       jgt  handle_special_gate_4
+handle_special_gate_3:
        neg  @vx
        neg  @vy
-handle_special_gate_1:
+handle_special_gate_4:
        rt
 *// handle_special_gate
 
@@ -2355,6 +2367,10 @@ init_game_2:
        ai   r1,special_size
        mov  *r1,r0
        jgt  init_game_2
+       li   r1,special_launch_gate
+       inc  @special_state(r1)
+       li   r1,special_left_gate
+       dec  @special_state(r1)
 *      Reset special groups
        li   r1,special_groups
 init_game_3:

@@ -106,6 +106,7 @@ specials_list_bottom_right_bottom:
 specials_list_top_left_top_left:
        data special_rollover_games_end
        data special_target_500_1
+       data special_left_gate
        data 0
 specials_list_top_left_top_right:
        data special_rollover_bonus_t

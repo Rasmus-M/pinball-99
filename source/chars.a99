@@ -1,5 +1,5 @@
 ****************************************
-* Character Patterns                    
+* Character Patterns
 ****************************************
 PAT240 DATA >AA00,>AA00,>AA00,>AA00    ;
 PAT241 DATA >5AF0,>5AF0,>AA00,>AA00    ;
@@ -127,11 +127,11 @@ MD2    DATA >F0F0,>F0F0                ;
 * -- Map Row 50 --                      
        DATA >F0F0,>F0F0                ;
 * -- Map Row 51 --                      
-       DATA >F2F6,>FDF1                ;
+       DATA >F2F6,>F9F1                ;
 * -- Map Row 52 --                      
-       DATA >FAFB,>FDF5                ;
+       DATA >FAFA,>F5F5                ;
 * -- Map Row 53 --                      
-       DATA >F8FB,>F6F4                ;
+       DATA >F8F9,>F6F4                ;
 * -- Map Row 54 --                      
        DATA >F0F0,>F0F0                ;
 * -- Map Row 55 --                      
