@@ -1526,10 +1526,8 @@ launch_from_saucer:
        bl   @schedule_event
 launch_from_saucer_3:
 *      Release ball
-       li   r0,>0020
-       mov  r0,@vx
-       li   r0,>0010
-       mov  r0,@vy
+       clr  @vx
+       clr  @vy
        mov  @ay_init,@ay
        .endproc
 *// lauch_from_saucer
