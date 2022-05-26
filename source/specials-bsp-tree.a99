@@ -114,7 +114,7 @@ specials_list_top_left_top_right:
        data special_rollover_bonus_9_1st
        data 0
 specials_list_top_left_bottom:
-       data special_target_500_1
+       data special_target_500_2
        data special_rollover_games_start
        data special_bumper_20
        data special_bumper_50

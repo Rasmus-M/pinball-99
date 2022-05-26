@@ -15,6 +15,8 @@
 **
 * Constants
 *
+cheat_enabled:
+       equ  0
 screen_width_char:
        equ  32
 screen_height_char:
@@ -332,6 +334,7 @@ restart_game:
        bl   @init_game
        bl   @init_ball
        bl   @intro
+
        li   r0,tune1_module
        bl   @play_module
 restart_ball:
@@ -372,18 +375,32 @@ intro:
        mov  @one,@scroll_dir
 intro_1:
        li   r0,txt_pinball
-       bl   @display_text_center
+       bl   @display_text_north
        li   r0,120
        bl   @pause
        abs  @pause_frames
        jne  intro_2
        li   r0,txt_99
-       bl   @display_text_south
+       bl   @display_text_center
+       li   r0,120
+       bl   @pause
+       abs  @pause_frames
+       jne  intro_2
+       li   r0,txt_hi_score
+       bl   @display_text_north
+       li   r0,120
+       bl   @pause
+       abs  @pause_frames
+       jne  intro_2
+       bl   @display_high_score
        li   r0,120
        bl   @pause
        abs  @pause_frames
        jeq  intro_1
 intro_2:
+       bl   @reset_score_buffer
+       clr  r0
+       bl   @add_score
        .endproc
 *// intro
 
@@ -393,6 +410,17 @@ intro_2:
 *
 game_over:
        .proc
+       c    @score_msw,@high_score_msw
+       jlt  game_over_2
+       jgt  game_over_1
+       c    @score_lsw,@high_score_lsw
+       jlt  game_over_2
+       jeq  game_over_2
+game_over_1:
+       mov  @score_msw,@high_score_msw
+       mov  @score_lsw,@high_score_lsw
+       bl   @display_high_score
+game_over_2:
        li   r0,txt_game
        bl   @display_text_north
        li   r0,60
@@ -631,6 +659,8 @@ user_input_5:
 *      Launch
        neg  r0
        mov  r0,@vy
+       clr  @vx
+       mov  @x_init,@x
        bl   @play_launch
        bl   @display_score_buffer
        jmp  user_input_9
@@ -642,6 +672,8 @@ user_input_6:
        jmp  user_input_9
 *      Cheat
 user_input_7:
+       equ  $
+       .ifeq cheat_enabled,1
        li   r0,KEY_A
        bl   @check_key
        jeq  user_input_8
@@ -658,6 +690,7 @@ user_input_8:
        mov  r0,@vx
        li   r0,->0080                  ; ->0080
        mov  r0,@vy
+       .endif
 user_input_9:
        .endproc
 *// user_input
@@ -1243,6 +1276,7 @@ handle_special_bumper:
        mov  @special_static_sprite(r8),r7
        jeq  handle_special_bumper_1
        mov  @static_score(r7),r0
+       jeq  handle_special_bumper_1
        bl   @add_score
 handle_special_bumper_1:
        bl   @play_bumper
@@ -1281,7 +1315,9 @@ handle_special_rollover_2:
 handle_special_rollover_3:
        mov  @special_static_sprite(r8),r7              ; Get sprite
        mov  @static_score(r7),r0                       ; Get the number of points to add
+       jeq  handle_special_rollover_3a
        bl   @add_score                                 ; Add to score
+handle_special_rollover_3a:
        bl   @play_rollover                             ; Play a sound
 handle_special_rollover_4:
        .endproc
@@ -1339,7 +1375,9 @@ handle_special_group_rollovers_1:
        jmp  handle_special_group_rollovers_3
 handle_special_group_rollovers_2:
        mov  @static_score(r7),r0                       ; Get the number of points to add
+       jeq  handle_special_group_rollovers_2a
        bl   @add_score                                 ; Add to score
+handle_special_group_rollovers_2a:
        bl   @play_rollover                             ; Play a sound
 handle_special_group_rollovers_3:
        .endproc
@@ -1593,10 +1631,11 @@ schedule_reset_special_group:
        li   r0,120
        li   r1,add_score
        bl   @schedule_event
-       mov  @special_group_speech(r9),r0
-       jeq  schedule_reset_special_group_1
-       bl   @speak
 schedule_reset_special_group_1:
+       mov  @special_group_speech(r9),r0
+       jeq  schedule_reset_special_group_2
+       bl   @speak
+schedule_reset_special_group_2:
        .endproc
 *// schedule_reset_special_group
 
@@ -1983,6 +2022,19 @@ calc_signed_product:
 
 *********************************************************************
 *
+* Display high score
+*
+display_high_score:
+       .proc
+       mov  @high_score_msw,r0
+       mov  @high_score_lsw,r1
+       bl   @update_score_buffer
+       bl   @display_score_buffer
+       .endproc
+*// display_high_score
+
+*********************************************************************
+*
 * Add score
 *
 * r0 contains the score to add
@@ -1991,14 +2043,17 @@ calc_signed_product:
 *
 add_score:
        .proc
-       mov  r0,r0
-       jeq  add_score_2
        mpy  @bonus_multiplier,r0
        a    r1,@score_lsw
        jnc  add_score_1
        inc  @score_msw
 add_score_1:
+       mov  @score_msw,r0
+       mov  @score_lsw,r1
        bl   @update_score_buffer
+       mov  @info_panel_view_steps,r0
+       jne  add_score_2
+       bl   @display_score_buffer
 add_score_2:
        .endproc
 *// add_score
@@ -2007,12 +2062,13 @@ add_score_2:
 *
 * Update score buffer
 *
+* r0: msw
+* r1: lsw
+*
 * Modifies r0-r4
 *
 update_score_buffer:
        .proc
-       mov  @score_msw,r0
-       mov  @score_lsw,r1
        li   r2,8                       ; Counter
        li   r3,10                      ; Divisor
        li   r4,score_buffer+7          ; Start backwards
@@ -2029,7 +2085,6 @@ update_score_buffer_1:
        dec  r2                         ; Count down
        jne  update_score_buffer_1      ; Digit loop
 update_score_buffer_2:
-       bl   @display_score_buffer
        .endproc
 *// update_score_buffer
 
@@ -2729,6 +2784,8 @@ keys_joystick:
 
 txt_pinball:
        text 'PINBALL!'
+txt_hi_score:
+       text 'HI SCORE'
 txt_99:
        text ' * 99 * '
 txt_kapow:
@@ -2795,10 +2852,21 @@ ax_init:
 ay_init:
        data >0004
 
+cover_sprites:
+       byte play_field_top-17,0,0,0
+       byte play_field_top-17,0,0,0
+       byte play_field_top-17,0,0,0
+       byte play_field_top-17,0,0,0
+       byte >d0,>00
+
 w_info_panel_map_width:
        data info_panel_map_width
 w_info_panel_char_size:
        data  info_panel_char_size
+
+**
+* Modifiable data
+*
 
 info_panel_buffer:
        byte chr_space,chr_space,chr_space,chr_space
@@ -2840,15 +2908,13 @@ event_queue:
 event_queue_end:
        equ  $
 
-cover_sprites:
-       byte play_field_top-17,0,0,0
-       byte play_field_top-17,0,0,0
-       byte play_field_top-17,0,0,0
-       byte play_field_top-17,0,0,0
-       byte >d0,>00
-
 scroll_dir:
        data 0
+
+high_score_msw:
+       data 0
+high_score_lsw:
+       data 200
 
 ***************************************************************************
 *
