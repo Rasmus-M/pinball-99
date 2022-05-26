@@ -2813,7 +2813,7 @@ txt_99:
 txt_version:
        text 'VERSION:'
 txt_version_no:
-       text '1.0 BETA'
+       text '0.1 BETA'
 txt_hi_score:
        text 'HI SCORE'
 txt_kapow:
