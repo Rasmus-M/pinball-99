@@ -347,6 +347,8 @@ main_loop:
 *      Ball lost
        clr  @vx
        clr  @vy
+       clr  @left_flipper_state
+       clr  @right_flipper_state
        bl   @play_ball_lost
        clr  @scroll_dir
        li   r0,120
@@ -410,14 +412,7 @@ intro_2:
 *
 game_over:
        .proc
-       li   r0,txt_game
-       bl   @display_text_north
-       li   r0,60
-       bl   @pause
-       li   r0,txt_over
-       bl   @display_text_south
-       li   r0,120
-       bl   @pause
+       clr  @new_high_score
        c    @score_msw,@high_score_msw
        jlt  game_over_2
        jgt  game_over_1
@@ -427,11 +422,23 @@ game_over:
 game_over_1:
        mov  @score_msw,@high_score_msw
        mov  @score_lsw,@high_score_lsw
+       inc  @new_high_score
+game_over_2:
+       li   r0,txt_game
+       bl   @display_text_north
+       li   r0,60
+       bl   @pause
+       li   r0,txt_over
+       bl   @display_text_south
+       li   r0,120
+       bl   @pause
+       abs  @new_high_score
+       jeq  game_over_3
        li   r0,txt_hi_score
        bl   @display_text_north
        li   r0,120
        bl   @pause
-game_over_2:
+game_over_3:
        bl   @display_score_buffer
        li   r0,240
        bl   @pause
@@ -1508,6 +1515,7 @@ launch_from_saucer:
        inc  @special_group_state(r9)
        c    @special_group_state(r9),@special_group_n_sprites(r9)
        jne  launch_from_saucer_3
+       inc  @balls
        bl   @schedule_reset_special_group
        li   r0,120
        li   r1,extra_ball
@@ -1532,7 +1540,6 @@ extra_ball:
        bl   @display_text_north
        li   r0,speech_extra_ball_idx
        bl   @speak
-       inc  @balls
        .endproc
 *// extra_ball
 
@@ -2918,6 +2925,8 @@ high_score_msw:
        data 0
 high_score_lsw:
        data 10000
+new_high_score:
+       data 0
 
 ***************************************************************************
 *
