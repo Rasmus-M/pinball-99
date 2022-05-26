@@ -389,6 +389,18 @@ intro_1:
        bl   @pause
        abs  @pause_frames
        jne  intro_2
+       li   r0,txt_version
+       bl   @display_text_north
+       li   r0,120
+       bl   @pause
+       abs  @pause_frames
+       jne  intro_2
+       li   r0,txt_version_no
+       bl   @display_text_center
+       li   r0,120
+       bl   @pause
+       abs  @pause_frames
+       jne  intro_2
        li   r0,txt_hi_score
        bl   @display_text_north
        li   r0,120
@@ -2796,10 +2808,14 @@ keys_joystick:
 
 txt_pinball:
        text 'PINBALL!'
-txt_hi_score:
-       text 'HI SCORE'
 txt_99:
        text ' * 99 * '
+txt_version:
+       text 'VERSION:'
+txt_version_no:
+       text '1.0 BETA'
+txt_hi_score:
+       text 'HI SCORE'
 txt_kapow:
        text ' KAPOW! '
 txt_ball_n:
