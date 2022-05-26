@@ -410,6 +410,14 @@ intro_2:
 *
 game_over:
        .proc
+       li   r0,txt_game
+       bl   @display_text_north
+       li   r0,60
+       bl   @pause
+       li   r0,txt_over
+       bl   @display_text_south
+       li   r0,120
+       bl   @pause
        c    @score_msw,@high_score_msw
        jlt  game_over_2
        jgt  game_over_1
@@ -419,16 +427,11 @@ game_over:
 game_over_1:
        mov  @score_msw,@high_score_msw
        mov  @score_lsw,@high_score_lsw
-       bl   @display_high_score
-game_over_2:
-       li   r0,txt_game
+       li   r0,txt_hi_score
        bl   @display_text_north
-       li   r0,60
-       bl   @pause
-       li   r0,txt_over
-       bl   @display_text_south
        li   r0,120
        bl   @pause
+game_over_2:
        bl   @display_score_buffer
        li   r0,240
        bl   @pause
