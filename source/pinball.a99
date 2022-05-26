@@ -374,7 +374,8 @@ next_ball:
 intro:
        .proc
        inc  @player_status
-       mov  @one,@scroll_dir
+       mov  @two,@scroll_dir
+       mov  @two,@scroll_counter
 intro_1:
        li   r0,txt_pinball
        bl   @display_text_north
@@ -890,6 +891,9 @@ set_scroll_position:
        .proc
        mov  @player_status,r0
        jeq  set_scroll_position_2
+       dec  @scroll_counter
+       jne  set_scroll_position_5
+       inct @scroll_counter
        a    @scroll_dir,@scroll_y
        mov  @two,@play_field_updates
        mov  @scroll_y,r0
@@ -2919,6 +2923,8 @@ event_queue_end:
        equ  $
 
 scroll_dir:
+       data 0
+scroll_counter:
        data 0
 
 high_score_msw:
