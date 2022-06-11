@@ -44,44 +44,44 @@ static_sprites:
        equ  $
 static_bonus_x4:
        data 5
-       byte 140
+       byte 137
        byte 136
        byte 14,14,6,0
        data txt_bonus_x4
        data 0
        data 4
-static_bonus_x3:
-       data 13
-       byte 117
-       byte 132
-       byte 14,14,12,0
-       data txt_bonus_x3
-       data 0
-       data 3
 static_bonus_x6:
-       data 13
-       byte 163
+       data 9
+       byte 159
        byte 140
        byte 14,14,10,0
        data txt_bonus_x6
        data 0
        data 6
-static_bonus_x2:
-       data 29
-       byte 96
-       byte 128
-       byte 14,14,4,0
-       data txt_bonus_x2
+static_bonus_x3:
+       data 12
+       byte 116
+       byte 132
+       byte 14,14,12,0
+       data txt_bonus_x3
        data 0
-       data 2
+       data 3
 static_bonus_x8:
-       data 29
-       byte 184
+       data 24
+       byte 179
        byte 144
        byte 14,14,13,0
        data txt_bonus_x8
        data 0
        data 8
+static_bonus_x2:
+       data 26
+       byte 97
+       byte 128
+       byte 14,14,4,0
+       data txt_bonus_x2
+       data 0
+       data 2
 static_launch_gate:
        data 38
        byte 202
@@ -90,16 +90,24 @@ static_launch_gate:
        data 0
        data 0
        data 0
+static_left_gate:
+       data 40
+       byte 72
+       byte 248
+       byte 14,14,14,0
+       data 0
+       data 0
+       data 0
 static_rollover_bonus_t:
-       data 48
-       byte 103
+       data 54
+       byte 104
        byte 160
        byte 14,14,7,0
        data 0
        data 0
        data 200
 static_rollover_bonus_9_2nd:
-       data 48
+       data 54
        byte 176
        byte 168
        byte 14,14,7,0
@@ -115,7 +123,7 @@ static_game_parsec:
        data speech_game_idx
        data 2500
 static_rollover_bonus_i:
-       data 64
+       data 70
        byte 128
        byte 164
        byte 14,14,7,0
@@ -123,7 +131,7 @@ static_rollover_bonus_i:
        data 0
        data 200
 static_rollover_bonus_9_1st:
-       data 64
+       data 70
        byte 152
        byte 168
        byte 14,14,7,0
