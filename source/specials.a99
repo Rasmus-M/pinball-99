@@ -245,6 +245,35 @@ special_left_gate:
        data 0                          ; Group
        data 0                          ; State
        data 0                          ; Misc
+*      Exit/capture lanes
+special_rollover_left_exit_lane:
+       data special_type_rollover
+       data 11,13,400,408
+       data 0                          ; Sprite
+       data 0                          ; Group
+       data 0                          ; State
+       data 50                         ; Misc
+special_rollover_left_capture_lane:
+       data special_type_rollover
+       data 32,34,400,408
+       data 0                          ; Sprite
+       data 0                          ; Group
+       data 0                          ; State
+       data 100                        ; Misc
+special_rollover_right_capture_lane:
+       data special_type_rollover
+       data 204,206,400,408
+       data 0                          ; Sprite
+       data 0                          ; Group
+       data 0                          ; State
+       data 100                        ; Misc
+special_rollover_right_exit_lane:
+       data special_type_rollover
+       data 224,226,400,408
+       data 0                          ; Sprite
+       data 0                          ; Group
+       data 0                          ; State
+       data 50                         ; Misc
 *      End
        data -1
 
