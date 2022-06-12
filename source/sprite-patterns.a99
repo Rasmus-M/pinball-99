@@ -1,10 +1,10 @@
 ****************************************
 * Sprite Patterns                       
 ****************************************
-SPR0   DATA >071F,>3F77,>63F7,>FFFF    ; Color 14
+SPR0   DATA >071F,>3F77,>6BF7,>FFFF    ; Color 14
        DATA >FFFF,>7F7F,>3C1F,>0700    ; 
        DATA >C0F0,>F8FC,>FCFE,>F6F6    ; 
-       DATA >E6E6,>CC0C,>38F0,>C000    ; 
+       DATA >E6E6,>CC08,>38F0,>C000    ; 
 SPR1   DATA >1F1F,>1F1F,>1F1F,>000F    ; Color 14
        DATA >0F0F,>0F0F,>0F0F,>0F0F    ; 
        DATA >F8C8,>C8C8,>C8C8,>0090    ; 
