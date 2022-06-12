@@ -76,13 +76,11 @@ scroll_when_y_less_than:
 scroll_when_y_greater_than:
        equ  screen_height-48
 scroll_y_max:
-       equ  map_height-play_field_height
+       equ  map_height-play_field_height-2
 sprite_y_offset:
        equ  play_field_top
 ball_radius:
        equ  7
-damping:
-       equ  2
 arm:
        equ  4
 max_flipper_state:
@@ -820,12 +818,12 @@ check_collision_1:
 *      Set velocity to (1 - 2^-damping) * (rx, ry)
        mov  @rx,r0
        mov  r0,r1
-       sra  r1,damping+1
+       sra  r1,3                       ; 1/8
        s    r1,r0
        mov r0,@vx
        mov  @ry,r0
        mov  r0,r1
-       sra  r1,damping
+       sra  r1,2                       ; 1/4
        s    r1,r0
 !      mov r0,@vy
 *      Play sound

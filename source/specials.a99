@@ -240,7 +240,7 @@ special_launch_pad:
 *      Left path gate
 special_left_gate:
        data special_type_gate
-       data 78,42,89,52
+       data 81,37,97,49
        data 0                          ; Sprite
        data 0                          ; Group
        data 0                          ; State
@@ -478,7 +478,7 @@ special_group_apps_statics:
 
 special_rollover_games_start_misc:
        data >0060                      ; vx
-       data ->0400                     ; vy
+       data ->0500                     ; vy
 
 special_rollover_sams_start_misc:
        data >0100                      ; vx
