@@ -51,17 +51,17 @@ special_bumper_20:
        data 0                          ; Group
        data 0                          ; State
        data 0                          ; Misc
-special_bumper_left:
+special_bumper_left_slingshot:
        data special_type_bumper
-       data 48,356,75,406
-       data static_left_bumper
+       data 55,369,68,394
+       data static_left_slingshot
        data 0                          ; Group
        data 0                          ; State
        data 0                          ; Misc
-special_bumper_right:
+special_bumper_right_slingshot:
        data special_type_bumper
-       data 160,356,189,407
-       data static_right_bumper
+       data 167,369,180,394
+       data static_right_slingshot
        data 0                          ; Group
        data 0                          ; State
        data 0                          ; Misc

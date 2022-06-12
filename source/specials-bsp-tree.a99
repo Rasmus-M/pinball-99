@@ -90,7 +90,7 @@ specials_list_bottom_left:
        data special_target_f18a_1
        data special_target_f18a_8
        data special_target_f18a_a
-       data special_bumper_left
+       data special_bumper_left_slingshot
        data 0
 specials_list_bottom_right_top:
        data special_target_32k_3
@@ -101,7 +101,7 @@ specials_list_bottom_right_top:
 specials_list_bottom_right_bottom:
        data special_rollover_sams_start
        data special_launch_pad
-       data special_bumper_right
+       data special_bumper_right_slingshot
        data 0
 specials_list_top_left_top_left:
        data special_rollover_games_end

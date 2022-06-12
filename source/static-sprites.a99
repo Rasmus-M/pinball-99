@@ -35,7 +35,7 @@ static_sprite_index:
 *      320 (y = 304 - 383)
        data static_target_f18a_a
 *      384 (y = 368 - 447)
-       data static_left_bumper
+       data static_left_slingshot
 *      448 (y = 432 - 511)
        data plunger
 
@@ -370,7 +370,7 @@ static_arrow_sams:
        data 0
        data 0
        data 0
-static_left_bumper:
+static_left_slingshot:
        data 395
        byte 44
        byte 252
@@ -378,7 +378,7 @@ static_left_bumper:
        data 0
        data 0
        data 100
-static_right_bumper:
+static_right_slingshot:
        data 395
        byte 177
        byte 252
