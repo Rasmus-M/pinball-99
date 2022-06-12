@@ -605,67 +605,73 @@ set_vdp_regs:
 *
 user_input:
        .proc
+       clr  @left_flipper_activated
+       clr  @left_flipper_dir
+       clr  @right_flipper_activated
+       clr  @right_flipper_dir
        mov  @keys,r13
 *      Left flipper
-       clr  @left_flipper_dir
-       mov  *r13+,r0                   ; Key left
+       mov  @key_left(r13),r0          ; Key left
        bl   @check_key
-       jeq  user_input_1
+       jeq  user_input_2
        mov  @frame,r0
        andi r0,7
-       jne  !
+       jne  user_input_1
        bl   @roll_bonus_specials_left
-!      mov  @left_flipper_state,r0
-       ci   r0,max_flipper_state
-       jeq  user_input_2
-       inc  @left_flipper_state
-       inc  @left_flipper_dir
-       jmp  user_input_2
 user_input_1:
-       mov  @left_flipper_state,r0
-       jeq  user_input_2
-       dec  @left_flipper_state
-       dec  @left_flipper_dir
+       bl   @activate_left_flipper
 user_input_2:
 *      Right flipper
-       clr  @right_flipper_dir
-       mov  *r13+,r0                   ; Key right
+       mov  @key_right(r13),r0         ; Key right
        bl   @check_key
-       jeq  user_input_3
+       jeq  user_input_4
        mov  @frame,r0
        andi r0,7
-       jne  !
+       jne  user_input_3
        bl   @roll_bonus_specials_right
-!      mov  @right_flipper_state,r0
-       ci   r0,max_flipper_state
-       jeq  user_input_4
-       inc  @right_flipper_state
-       inc  @right_flipper_dir
-       jmp  user_input_4
 user_input_3:
-       mov  @right_flipper_state,r0
-       jeq  user_input_4
-       dec  @right_flipper_state
-       dec  @right_flipper_dir
+       bl   @activate_right_flipper
 user_input_4:
-       mov  *r13+,r0                   ; Key launch
+*      Both
+       mov  @key_both(r13),r0          ; Key both
        bl   @check_key
        jeq  user_input_5
-*      Space pressed
+       bl   @activate_left_flipper
+       bl   @activate_right_flipper
+       jmp  user_input_7
+user_input_5:
+       abs  @left_flipper_activated
+       jne  user_input_6
+       mov  @left_flipper_state,r0
+       jeq  user_input_6
+       dec  @left_flipper_state
+       dec  @left_flipper_dir
+user_input_6:
+       abs  @right_flipper_activated
+       jne  user_input_7
+       mov  @right_flipper_state,r0
+       jeq  user_input_7
+       dec  @right_flipper_state
+       dec  @right_flipper_dir
+user_input_7:
+       mov  @key_launch(r13),r0        ; Key launch
+       bl   @check_key
+       jeq  user_input_8
+*      Launch pressed
        mov  @launch_speed,r0
        ci   r0,>0600
-       jgt  user_input_7
+       jgt  user_input_10
 *      Add launch speed
        ai   r0,>0018
        mov  r0,@launch_speed
        srl  r0,7
        ai   r0,plunger_y
        mov  r0,@plunger
-       jmp  user_input_9
-user_input_5:
-*      Space not pressed
+       jmp  user_input_10
+user_input_8:
+*      Launch not pressed
        mov  @launch_speed,r0
-       jeq  user_input_7
+       jeq  user_input_10
        li   r1,plunger_y
        mov  r1,@plunger
        clr  @launch_speed
@@ -673,12 +679,12 @@ user_input_5:
        s    @x_init,r1
        abs  r1
        ci   r1,>0020
-       jgt  user_input_6
+       jgt  user_input_9
        mov  @y_init,r1
        s    @y,r1
        abs  r1
        ci   r1,>0020
-       jgt  user_input_6
+       jgt  user_input_9
 *      Launch
        neg  r0
        mov  r0,@vy
@@ -686,37 +692,67 @@ user_input_5:
        mov  @x_init,@x
        bl   @play_launch
        bl   @display_score_buffer
-       jmp  user_input_9
+       jmp  user_input_12
 *      Nudge
-user_input_6:
+user_input_9:
        ai   r0,->0300
        sra  r0,4
        a    r0,@vx
-       jmp  user_input_9
+       jmp  user_input_12
 *      Cheat
-user_input_7:
+user_input_10:
        equ  $
        .ifeq cheat_enabled,1
        li   r0,KEY_A
        bl   @check_key
-       jeq  user_input_8
+       jeq  user_input_11
        li   r0,->0040                  ; ->0040
        mov  r0,@vx
        li   r0,->0080                  ; ->0080
        mov  r0,@vy
-       jmp  user_input_9
-user_input_8:
+       jmp  user_input_12
+user_input_11:
        li   r0,KEY_K
        bl   @check_key
-       jeq  user_input_9
+       jeq  user_input_12
        li   r0,>0040                   ; >0040
        mov  r0,@vx
        li   r0,->0080                  ; ->0080
        mov  r0,@vy
        .endif
-user_input_9:
+user_input_12:
        .endproc
 *// user_input
+
+*********************************************************************************
+*
+* Activate left flipper
+*
+activate_left_flipper:
+       mov  @left_flipper_state,r0
+       ci   r0,max_flipper_state
+       jeq  activate_left_flipper_1
+       inc  @left_flipper_state
+       inc  @left_flipper_dir
+activate_left_flipper_1:
+       seto @left_flipper_activated
+       rt
+*// activate_left_flipper
+
+*********************************************************************************
+*
+* Activate right flipper
+*
+activate_right_flipper:
+       mov  @right_flipper_state,r0
+       ci   r0,max_flipper_state
+       jeq  activate_right_flipper_1
+       inc  @right_flipper_state
+       inc  @right_flipper_dir
+activate_right_flipper_1:
+       seto @right_flipper_activated
+       rt
+*// activate_right_flipper
 
 *********************************************************************************
 *
@@ -2584,7 +2620,7 @@ vregs2:
        byte >04,pattern_table/>800         ; Pattern table
        byte >05,sprite_attr_table/>80      ; Sprite attribute table
        byte >06,sprite_pattern_table/>800  ; Sprite pattern table
-       byte >07,>0e                        ; Backdrop color
+       byte >07,>01                        ; Backdrop color
        data -1
 *// graphics_mode
 
@@ -2793,17 +2829,21 @@ key_left:
        equ  0
 key_right:
        equ  2
-key_launch:
+key_both:
        equ  4
+key_launch:
+       equ  6
 
 keys_keyboard:
        data KEY_Z
        data KEY_M
+       data KEY_B
        data KEY_SP
 
 keys_joystick:
        data KEY_LF
        data KEY_RG
+       data KEY_UP
        data KEY_FI
 
 txt_pinball:
@@ -2895,6 +2935,11 @@ w_info_panel_char_size:
 **
 * Modifiable data
 *
+
+left_flipper_activated:
+       data 0
+right_flipper_activated:
+       data 0
 
 info_panel_buffer:
        byte chr_space,chr_space,chr_space,chr_space
