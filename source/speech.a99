@@ -20,6 +20,9 @@ speak:
        bl   @delay_12us
 *      Send first 8 bytes
        bl   @send_bytes_to_speech
+*      Lower music/sfx volume
+       li   r0,attenuation_during_speech*256
+       mov  r0,@extra_attenuation
 speak_1:
        .endproc
 *// speak
@@ -62,6 +65,10 @@ send_bytes_to_speech_1:
        dec  r2
        jne  send_bytes_to_speech_1
        mov  r1,@speech_addr            ; Save the new address
+       mov  @speech_counter,r2
+       jgt  send_bytes_to_speech_2
+       clr  @extra_attenuation           ; Normal music/sfx volume
+send_bytes_to_speech_2:
        rt
 *// send_bytes_to_speech
 

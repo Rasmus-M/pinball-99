@@ -46,7 +46,11 @@ play_snd_3:
 *
 * Modifies r0-r4
 *
+extra_attenuation:                     ; Extra attenuation in MSB
+       data >0000
+*
 snd_player:
+       mov  @extra_attenuation,r5
        li   r2,snd_channel_4           ; Start with last channel
 snd_player_1:
        mov  *r2,r3                     ; Get sound address
@@ -81,7 +85,11 @@ snd_player_3:
        ori  r4,>1000                   ; Change operation to attenuation
        movb @snd_channel_attn(r2),r0   ; Get attenuation x 16
        srl  r0,4                       ; Attenuation
-       socb r4,r0                      ; Combine with attenuation operation
+       ab   r5,r0                      ; Attenuation add
+       ci   r0,>0f00                   ; Test against max
+       jlt  !
+       li   r0,>0f00                   ; Set to max
+!      socb r4,r0                      ; Combine with attenuation operation
        movb r0,@sound                  ; Write attenuation
        ab   @snd_attn_step(r3),@snd_channel_attn(r2)    ; Change attenuation
 *      Count down and loop

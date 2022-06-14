@@ -111,7 +111,8 @@ collision_type_right_flipper:
        equ  3
 speech_bank:
        equ  >6034
-
+attenuation_during_speech:
+       equ  6
 info_panel_north_x:
        equ  info_panel_width_char
 info_panel_north_y:
@@ -1604,6 +1605,7 @@ extra_ball:
 * r8 points to special structure
 *
 handle_special_gate:
+       .proc
        mov  @vy,r0
        jgt  handle_special_gate_3
        mov  @special_state(r8),r0
@@ -1622,8 +1624,9 @@ handle_special_gate_2:
 handle_special_gate_3:
        neg  @vx
        neg  @vy
+       bl   @play_hit
 handle_special_gate_4:
-       rt
+       .endproc
 *// handle_special_gate
 
 *********************************************************************************
