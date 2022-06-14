@@ -349,6 +349,10 @@ main_loop:
        clr  @left_flipper_state
        clr  @right_flipper_state
        bl   @play_ball_lost
+       mov  @frame,r0
+       andi r0,3
+       ai   r0,speech_down_the_drain_idx
+       bl   @speak
        clr  @scroll_dir
        li   r0,120
        bl   @pause
@@ -436,6 +440,8 @@ game_over_1:
        mov  @score_lsw,@high_score_lsw
        inc  @new_high_score
 game_over_2:
+       li   r0,speech_game_over_idx
+       bl   @speak
        li   r0,txt_game
        bl   @display_text_north
        li   r0,60
@@ -446,6 +452,8 @@ game_over_2:
        bl   @pause
        abs  @new_high_score
        jeq  game_over_3
+       li   r0,speech_new_high_score_idx
+       bl   @speak
        li   r0,txt_hi_score
        bl   @display_text_north
        li   r0,120

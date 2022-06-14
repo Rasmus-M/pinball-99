@@ -18,3 +18,15 @@ speech_sams_idx:
        equ  9
 speech_welcome_idx:
        equ  10
+speech_down_the_drain_idx:
+       equ  11
+speech_lost_another_one_idx:
+       equ  12
+speech_sorry_mate_idx:
+       equ  13
+speech_yuck_idx:
+       equ  14
+speech_game_over_idx:
+       equ  15
+speech_new_high_score_idx:
+       equ  16
