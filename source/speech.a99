@@ -9,7 +9,7 @@ speak:
        mov  @speech_detected,r1
        jeq  speak_1
        mov  @speech_counter,r2         ; Get counter
-       jne  speak_1                    ; Skip if already speaking
+       jgt  speak_1                    ; Skip if already speaking
        sla  r0,2                       ; index * 4
        ai   r0,>6000
        seto @speech_bank
