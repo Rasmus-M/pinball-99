@@ -227,7 +227,7 @@ special_launch_gate:
        data static_launch_gate
        data 0                          ; Group
        data 0                          ; State
-       data 0                          ; Misc
+       data 1                          ; Misc
 *      Launch pad
 special_launch_pad:
        data special_type_launch
@@ -241,10 +241,10 @@ special_launch_pad:
 special_left_gate:
        data special_type_gate
        data 81,37,97,49
-       data 0                          ; Sprite
+       data static_left_gate
        data 0                          ; Group
        data 0                          ; State
-       data 0                          ; Misc
+       data -1                         ; Misc
 *      Exit/capture lanes
 special_rollover_left_exit_lane:
        data special_type_rollover

@@ -1614,22 +1614,23 @@ extra_ball:
 *
 handle_special_gate:
        .proc
-       mov  @vy,r0
-       jlt  handle_special_gate_4
-       mov  @special_state(r8),r0
+       mov  @special_misc(r8),r0
        jgt  handle_special_gate_1
        jlt  handle_special_gate_2
        jmp  handle_special_gate_4
 handle_special_gate_1:
 *      Right gate
        mov  @vx,r0
-       jgt  handle_special_gate_3
-       jmp  handle_special_gate_4
+       jlt  handle_special_gate_4
+       jmp  handle_special_gate_3
 handle_special_gate_2:
 *      Left gate
        mov  @vx,r0
        jgt  handle_special_gate_4
 handle_special_gate_3:
+       mov  @vy,r0
+       ci   r0,->0080
+       jlt  handle_special_gate_4
        neg  @vx
        neg  @vy
        bl   @play_hit
@@ -2497,10 +2498,6 @@ init_game_2:
        ai   r1,special_size
        mov  *r1,r0
        jgt  init_game_2
-       li   r1,special_launch_gate
-       inc  @special_state(r1)
-       li   r1,special_left_gate
-       dec  @special_state(r1)
 *      Reset special groups
        li   r1,special_groups
 init_game_3:
