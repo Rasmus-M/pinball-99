@@ -34,17 +34,27 @@ speak_1:
 speech_player:
        .proc
        mov  @speech_detected,r0
-       jeq  speech_player_2
+       jeq  speech_player_4
        mov  @speech_counter,r2         ; Get counter
-       jeq  speech_player_2            ; Nothing to do
+       jeq  speech_player_4            ; Nothing to do
 *      Check speech status
        bl   @speech_read_pad
        movb @speech_status,r0
-       coc  @h4000,r0                  ; Is speech buffer half empty?
+       coc  @buffer_low,r0             ; Is speech buffer half empty?
        jne  speech_player_2
 *      Speech buffer low
        bl   @send_bytes_to_speech
+       jmp  speech_player_4
 speech_player_2:
+       movb @speech_status,r0
+       coc  @talking,r0                ; Talking?
+       jne  speech_player_3
+       coc  @buffer_empty,r0           ; Is speech buffer empty?
+       jne  speech_player_4
+speech_player_3
+       clr  @speech_counter
+       clr  @extra_attenuation         ; Normal music/sfx volume
+speech_player_4:
        .endproc
 *// speech_player
 
@@ -173,9 +183,12 @@ copy_speech_read_to_pad_1:
 
 **
 * Constants
-h8000  data >8000
-h4000  data >4000
-h2000  data >2000
+talking:
+       data >8000                      ; Talking
+buffer_low:
+       data >4000                      ; Buffer low
+buffer_empty:
+       data >2000                      ; Buffer empty
 h10    byte >10
 h60    byte >60
 hAA    byte >aa
