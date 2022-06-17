@@ -2787,39 +2787,6 @@ check_key:
 
 ***************************************************************************
 *
-* Sound test
-*
-sound_test:
-       .proc
-       li   r0,60
-       bl   @pause
-       bl   @play_launch
-       li   r0,120
-       bl   @pause
-       bl   @play_target
-       li   r0,120
-       bl   @pause
-       bl   @play_bumper
-       li   r0,120
-       bl   @pause
-       bl   @play_saucer
-       li   r0,120
-       bl   @pause
-       bl   @play_rollover
-       li   r0,120
-       bl   @pause
-       bl   @play_path
-       li   r0,120
-       bl   @pause
-       bl   @play_hit
-       li   r0,120
-       bl   @pause
-       bl   @play_ball_lost
-       .endproc
-*// sound_test
-
-***************************************************************************
-*
 * Program includes
 *
        copy "vdp.a99"
