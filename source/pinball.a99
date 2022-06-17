@@ -344,16 +344,18 @@ main_loop:
        mov  @player_status,r0
        jeq  main_loop
 *      Ball lost
-       clr  @vx
-       clr  @vy
+       clr  @scroll_dir
        clr  @left_flipper_state
        clr  @right_flipper_state
        bl   @play_ball_lost
+       li   r0,16
+       bl   @pause
+       clr  @vx
+       clr  @vy
        mov  @frame,r0
        andi r0,3
        ai   r0,speech_down_the_drain_idx
        bl   @speak
-       clr  @scroll_dir
        li   r0,120
        bl   @pause
        dec  @balls
@@ -378,6 +380,11 @@ intro:
        .proc
        inc  @player_status
        mov  @two,@scroll_dir
+       mov  @scroll_y,r0
+       ci   r0,scroll_y_max
+       jlt  intro_0
+       neg  @scroll_dir
+intro_0:
        mov  @two,@scroll_counter
 intro_1:
        li   r0,txt_pinball
@@ -553,13 +560,20 @@ interrupt_routine:
        bl   @module_player
        bl   @speech_player
        mov  @player_status,r0
-       jne  !
+       jne  interrupt_routine_1
+*      Normal
        bl   @user_input
        bl   @move_ball
        bl   @check_collision
        bl   @move_ball
        bl   @check_collision
-!      bl   @perform_events
+       jmp  interrupt_routine_2
+interrupt_routine_1:
+*      Ball lost
+       bl   @move_ball
+       bl   @move_ball
+interrupt_routine_2:
+       bl   @perform_events
        inc  @frame
        lwpi wrksp                      ; Switch to old workspace
        b    *r11
@@ -779,24 +793,25 @@ move_ball:
        ci   r1,(map_width-ball_radius)*16       ; *16 because of FP 12.4 format
        jgt  move_ball_1
        mov  r1,@x
-       jmp  move_ball_3
+       jmp  move_ball_2
 move_ball_1:
        neg  @vx
-move_ball_3:
+move_ball_2:
 *      Move y
        mov  @vy,r0
        sra  r0,4
        mov  @y,r1
        a    r0,r1
-       jlt  move_ball_2
+       jlt  move_ball_3
        ci   r1,(map_height-ball_radius)*16      ; *16 because of FP 12.4 format
-       jgt  move_ball_2
-       mov  r1,@y
-       jmp  move_ball_4
-move_ball_2:
-       neg  @vy
-       inc  @player_status
+       jlt  move_ball_4
+move_ball_3:
+       mov  @one,@player_status
+       ci   r1,(map_height-ball_radius+16)*16   ; *16 because of FP 12.4 format
+       jgt  move_ball_5
 move_ball_4:
+       mov  r1,@y
+move_ball_5:
        .endproc
 *// move_ball
 
@@ -954,7 +969,7 @@ set_scroll_position:
        mov  @scroll_y,r0
        jeq  set_scroll_position_1
        ci   r0,scroll_y_max
-       jne  set_scroll_position_5
+       jlt  set_scroll_position_5
 set_scroll_position_1:
        neg  @scroll_dir
        jmp  set_scroll_position_5
@@ -980,7 +995,7 @@ set_scroll_position_3:
        mov  @scroll_y,r2
        a    r1,r2
        ci   r2,scroll_y_max
-       jlt  set_scroll_position_4
+       jle  set_scroll_position_4
        li   r2,scroll_y_max
 set_scroll_position_4:
        andi r2,>fffe
@@ -2514,7 +2529,6 @@ init_game_3:
 *
 init_ball:
        .proc
-       clr  @scroll_y
        li   r0,init_values
        mov  *r0+,@x
        mov  *r0+,@y
