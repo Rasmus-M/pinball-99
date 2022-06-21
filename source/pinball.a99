@@ -84,7 +84,7 @@ ball_radius:
 arm:
        equ  4
 max_flipper_state:
-       equ  5
+       equ  11
 coll_map_bank_height:
        equ  32
 coll_map_bank:
@@ -565,6 +565,7 @@ interrupt_routine:
        bl   @user_input
        bl   @move_ball
        bl   @check_collision
+       bl   @move_flippers
        bl   @move_ball
        bl   @check_collision
        jmp  interrupt_routine_2
@@ -777,6 +778,28 @@ activate_right_flipper_1:
 
 *********************************************************************************
 *
+* Move flippers
+*
+move_flippers:
+       mov  @left_flipper_state,r0
+       a    @left_flipper_dir,r0
+       jlt  move_flippers_1
+       ci   r0,max_flipper_state
+       jgt  move_flippers_1
+       mov  r0,@left_flipper_state
+move_flippers_1:
+       mov  @right_flipper_state,r0
+       a    @right_flipper_dir,r0
+       jlt  move_flippers_2
+       ci   r0,max_flipper_state
+       jgt  move_flippers_2
+       mov  r0,@right_flipper_state
+move_flippers_2:
+       rt
+*// move_flippers
+
+*********************************************************************************
+*
 * Move ball
 *
 move_ball:
@@ -879,8 +902,8 @@ check_collision_3:
        s    @left_flipper_center_x,r3
        jlt  check_collision_6
        mov  @left_flipper_state,r1
-       sla  r1,1
-       mov  @left_flipper_normals(r1),r1
+       sla  r1,2
+       ai   r1,left_flipper_normals
        jmp  check_collision_5
 *      Right flipper collision
 check_collision_4:
@@ -897,8 +920,8 @@ check_collision_4:
        a    @right_flipper_center_x,r3
        jlt  check_collision_6
        mov  @right_flipper_state,r1
-       sla  r1,1
-       mov  @right_flipper_normals(r1),r1
+       sla  r1,2
+       ai   r1,right_flipper_normals
 check_collision_5:
        mov  *r1+,@nx
        mov  *r1,@ny
@@ -1174,7 +1197,7 @@ update_flipper_sprites:
        swpb r2
        mov  *r1+,r3                    ; Get flipper x
        swpb r3
-       sla  r0,1                       ; Convert flipper state to word
+       andi r0,>000e                   ; Convert flipper state to word
        a    r0,r1                      ; r1 now points to pointer to sprite list
        mov  *r1,r1                     ; r1 now points to sprite list
        mov  *r1+,r4                    ; get number of sprites
@@ -1887,7 +1910,8 @@ check_flipper_collision_1:
        li   r0,collision_type_left_flipper
        mov  r0,@collision_type
        mov  @left_flipper_state,r0
-       sla  r0,2
+       andi r0,>000e
+       sla  r0,1
        ai   r0,left_flipper_collision_maps
        li   r1,left_flipper_col_map_y
        bl   @get_flipper_collision_map_value
@@ -1901,7 +1925,8 @@ check_flipper_collision_2:
        li   r0,collision_type_right_flipper
        mov  r0,@collision_type
        mov  @right_flipper_state,r0
-       sla  r0,2
+       andi r0,>000e
+       sla  r0,1
        ai   r0,right_flipper_collision_maps
        li   r1,right_flipper_col_map_y
        bl   @get_flipper_collision_map_value

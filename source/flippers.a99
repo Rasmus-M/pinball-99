@@ -68,12 +68,18 @@ left_flipper_center_y:
 left_flipper_bottom_y:
        data 472
 left_flipper_normals:
-       data 0
-       data lfn1
-       data lfn2
-       data lfn3
-       data lfn4
-       data lfn5
+       data >0064,>ff14                ; -23º
+       data >0051,>ff0d                ; -18º
+       data >003d,>ff07                ; -14º
+       data >0028,>ff03                ; -9º
+       data >0014,>ff01                ; -4º
+       data >ffff,>ff00                ; 0º
+       data >ffea,>ff01                ; 5º
+       data >ffd6,>ff03                ; 9º
+       data >ffc2,>ff08                ; 14º
+       data >ffae,>ff0e                ; 19º
+       data >ff9a,>ff15                ; 23º
+       data >ff88,>ff1e                ; 28º
 
 right_flipper:
        equ  $
@@ -130,9 +136,18 @@ right_flipper_center_y:
 right_flipper_bottom_y:
        data 472
 right_flipper_normals:
-       data 0
-       data rfn1
-       data rfn2
-       data rfn3
-       data rfn4
-       data rfn5
+       data >ff9c,>ff14                ; -23º
+       data >ffaf,>ff0d                ; -18º
+       data >ffc3,>ff07                ; -14º
+       data >ffd8,>ff03                ; -9º
+       data >ffec,>ff01                ; -4º
+       data >0001,>ff00                ; 0º
+       data >0016,>ff01                ; 5º
+       data >002a,>ff03                ; 9º
+       data >003e,>ff08                ; 14º
+       data >0052,>ff0e                ; 19º
+       data >0066,>ff15                ; 23º
+       data >0078,>ff1e                ; 28º
+
+
+

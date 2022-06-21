@@ -10,6 +10,28 @@ public class Normal {
             int deg = (int) Math.round(a * 360.0 / (2 * Math.PI));
             System.out.println("       data " + hex(normal.x) + "," + hex(normal.y) + "                ; " + deg + "º");
         }
+
+        System.out.println("left\n");
+
+        for (int pos = 0; pos < 12; pos++) {
+            double deg = -23d + pos / 11d * (28d - -23d);
+            Vec2 normal = new Vec2(0, -50);
+            double a = (2 * Math.PI) * deg / 360d;
+            normal.rotate(-a);
+            normal.normalize();
+            System.out.println("       data " + hex(normal.x) + "," + hex(normal.y) + "                ; " + Math.round(deg) + "º");
+        }
+
+        System.out.println("right\n");
+
+        for (int pos = 0; pos < 12; pos++) {
+            double deg = -23d + pos / 11d * (28d - -23d);
+            Vec2 normal = new Vec2(0, -50);
+            double a = (2 * Math.PI) * deg / 360d;
+            normal.rotate(-a);
+            normal.normalize();
+            System.out.println("       data " + hex(-normal.x) + "," + hex(normal.y) + "                ; " + Math.round(deg) + "º");
+        }
     }
 
     private static String hex(double d) {

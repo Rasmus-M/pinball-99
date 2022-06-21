@@ -1,18 +1,11 @@
        data >0000,>ff00                ; 0º (normal up)
-lfn3:
-       equ  $
-rfn2:
        data >fff3,>ff00                ; 3º
        data >ffe7,>ff01                ; 6º
        data >ffda,>ff03                ; 8º
        data >ffce,>ff05                ; 11º
-lfn4:
-       equ  $
-rfn1:
        data >ffc2,>ff08                ; 14º
        data >ffb5,>ff0b                ; 17º
        data >ffa9,>ff0f                ; 20º
-lfn5:
        data >ff9e,>ff14                ; 23º
        data >ff92,>ff19
        data >ff87,>ff1e
@@ -125,18 +118,11 @@ lfn5:
        data >007f,>ff22
        data >0074,>ff1c
        data >0068,>ff16
-rfn5:
        data >005c,>ff11                ; 339º
        data >0051,>ff0d                ; 342º
        data >0045,>ff09                ; 344º
-lfn1:
-       equ  $
-rfn4:
        data >0038,>ff06                ; 347º
        data >002c,>ff04                ; 350º
        data >001f,>ff02                ; 353º
-lfn2:
-       equ  $
-rfn3:
        data >0013,>ff01                ; 356º
        data >0006,>ff00                ; 359º
