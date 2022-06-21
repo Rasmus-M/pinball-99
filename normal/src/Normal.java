@@ -7,7 +7,8 @@ public class Normal {
             double a = (2 * Math.PI) * (angle / 255d);
             normal.rotate(-a);
             normal.normalize();
-            System.out.println("       data " + hex(normal.x) + "," + hex(normal.y));
+            int deg = (int) Math.round(a * 360.0 / (2 * Math.PI));
+            System.out.println("       data " + hex(normal.x) + "," + hex(normal.y) + "                ; " + deg + "º");
         }
     }
 

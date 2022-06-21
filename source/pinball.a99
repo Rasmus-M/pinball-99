@@ -878,6 +878,9 @@ check_collision_3:
        srl  r3,4
        s    @left_flipper_center_x,r3
        jlt  check_collision_6
+       mov  @left_flipper_state,r1
+       sla  r1,1
+       mov  @left_flipper_normals(r1),r1
        jmp  check_collision_5
 *      Right flipper collision
 check_collision_4:
@@ -893,7 +896,12 @@ check_collision_4:
        neg  r3
        a    @right_flipper_center_x,r3
        jlt  check_collision_6
+       mov  @right_flipper_state,r1
+       sla  r1,1
+       mov  @right_flipper_normals(r1),r1
 check_collision_5:
+       mov  *r1+,@nx
+       mov  *r1,@ny
        sla  r3,arm                     ; Length of flipper arm
 *      Add arm * (nx, ny) to velocity
        mov  @nx,r0
@@ -2846,7 +2854,7 @@ txt_99:
 txt_version:
        text 'VERSION:'
 txt_version_no:
-       text '0.2 BETA'
+       text '0.3 BETA'
 txt_hi_score:
        text 'HI SCORE'
 txt_kapow:

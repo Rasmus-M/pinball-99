@@ -67,6 +67,13 @@ left_flipper_center_y:
        data 464
 left_flipper_bottom_y:
        data 472
+left_flipper_normals:
+       data 0
+       data lfn1
+       data lfn2
+       data lfn3
+       data lfn4
+       data lfn5
 
 right_flipper:
        equ  $
@@ -122,3 +129,10 @@ right_flipper_center_y:
        data 464
 right_flipper_bottom_y:
        data 472
+right_flipper_normals:
+       data 0
+       data rfn1
+       data rfn2
+       data rfn3
+       data rfn4
+       data rfn5

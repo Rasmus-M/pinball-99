@@ -1,12 +1,19 @@
-       data >0000,>ff00
-       data >fff3,>ff00
-       data >ffe7,>ff01
-       data >ffda,>ff03
-       data >ffce,>ff05
-       data >ffc2,>ff08
-       data >ffb5,>ff0b
-       data >ffa9,>ff0f
-       data >ff9e,>ff14
+       data >0000,>ff00                ; 0º (normal up)
+lfn3:
+       equ  $
+rfn2:
+       data >fff3,>ff00                ; 3º
+       data >ffe7,>ff01                ; 6º
+       data >ffda,>ff03                ; 8º
+       data >ffce,>ff05                ; 11º
+lfn4:
+       equ  $
+rfn1:
+       data >ffc2,>ff08                ; 14º
+       data >ffb5,>ff0b                ; 17º
+       data >ffa9,>ff0f                ; 20º
+lfn5:
+       data >ff9e,>ff14                ; 23º
        data >ff92,>ff19
        data >ff87,>ff1e
        data >ff7c,>ff25
@@ -14,7 +21,7 @@
        data >ff67,>ff33
        data >ff5d,>ff3b
        data >ff54,>ff43
-       data >ff4a,>ff4c
+       data >ff4a,>ff4c                ; 45º (normal up-left)
        data >ff42,>ff55
        data >ff3a,>ff5e
        data >ff32,>ff68
@@ -30,7 +37,7 @@
        data >ff03,>ffdc
        data >ff01,>ffe8
        data >ff00,>fff5
-       data >ff00,>0002
+       data >ff00,>0002                ; 90º (normal left)
        data >ff00,>000e
        data >ff01,>001b
        data >ff03,>0027
@@ -46,28 +53,28 @@
        data >ff34,>009a
        data >ff3c,>00a4
        data >ff44,>00ae
-       data >ff4d,>00b7
+       data >ff4d,>00b7                ; 136º (normal down-left)
        data >ff56,>00bf
        data >ff60,>00c7
        data >ff6a,>00cf
        data >ff74,>00d6
        data >ff7f,>00dd
-       data >ff8a,>00e3
-       data >ff95,>00e9
-       data >ffa1,>00ee
-       data >ffac,>00f2
-       data >ffb8,>00f6
-       data >ffc5,>00f9
-       data >ffd1,>00fc
-       data >ffdd,>00fe
-       data >ffea,>00ff
-       data >fff7,>0100
-       data >0003,>0100
-       data >0010,>0100
-       data >001c,>00fe
-       data >0029,>00fd
-       data >0035,>00fa
-       data >0041,>00f7
+       data >ff8a,>00e3                ; 152º
+       data >ff95,>00e9                ; 155º
+       data >ffa1,>00ee                ; 158º
+       data >ffac,>00f2                ; 161º
+       data >ffb8,>00f6                ; 164º
+       data >ffc5,>00f9                ; 167º
+       data >ffd1,>00fc                ; 169º
+       data >ffdd,>00fe                ; 172º
+       data >ffea,>00ff                ; 175º
+       data >fff7,>0100                ; 178º
+       data >0003,>0100                ; 181º (normal down)
+       data >0010,>0100                ; 184º
+       data >001c,>00fe                ; 186º
+       data >0029,>00fd                ; 189º
+       data >0035,>00fa                ; 192º
+       data >0041,>00f7                ; 195º
        data >004e,>00f4
        data >005a,>00f0
        data >0065,>00eb
@@ -78,7 +85,7 @@
        data >009c,>00cb
        data >00a5,>00c3
        data >00af,>00bb
-       data >00b8,>00b2
+       data >00b8,>00b2                ; 226º (normal down-right)
        data >00c0,>00a9
        data >00c8,>009f
        data >00d0,>0095
@@ -94,7 +101,7 @@
        data >00fe,>0021
        data >00ff,>0014
        data >0100,>0008
-       data >0100,>fffb
+       data >0100,>fffb                ; 271º (normal right)
        data >00ff,>ffef
        data >00fe,>ffe2
        data >00fc,>ffd6
@@ -109,7 +116,7 @@
        data >00d2,>ff6d
        data >00ca,>ff63
        data >00c2,>ff59
-       data >00ba,>ff50
+       data >00ba,>ff50                ; 313º (normal up-right)
        data >00b1,>ff47
        data >00a8,>ff3f
        data >009e,>ff37
@@ -118,11 +125,18 @@
        data >007f,>ff22
        data >0074,>ff1c
        data >0068,>ff16
-       data >005c,>ff11
-       data >0051,>ff0d
-       data >0045,>ff09
-       data >0038,>ff06
-       data >002c,>ff04
-       data >001f,>ff02
-       data >0013,>ff01
-       data >0006,>ff00
+rfn5:
+       data >005c,>ff11                ; 339º
+       data >0051,>ff0d                ; 342º
+       data >0045,>ff09                ; 344º
+lfn1:
+       equ  $
+rfn4:
+       data >0038,>ff06                ; 347º
+       data >002c,>ff04                ; 350º
+       data >001f,>ff02                ; 353º
+lfn2:
+       equ  $
+rfn3:
+       data >0013,>ff01                ; 356º
+       data >0006,>ff00                ; 359º
