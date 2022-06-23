@@ -1288,6 +1288,9 @@ check_quit:
        rt
 *      Quit
 quit   clr  @>83c4                     ; Reset user ISR address
+       seto @>6000                     ; Select first ROM bank
+       li   r0,>3280                   ; Reset F18A
+       bl   @vwtr
        blwp @>0000
 *// check_quit
 
@@ -2879,7 +2882,7 @@ txt_99:
 txt_version:
        text 'VERSION:'
 txt_version_no:
-       text '0.3 BETA'
+       text '0.4 BETA'
 txt_hi_score:
        text 'HI SCORE'
 txt_kapow:
