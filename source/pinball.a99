@@ -326,7 +326,6 @@ main:
        bl   @one_time_init
        li   r0,speech_welcome_idx
        bl   @speak
-;      bl   @sound_test
 restart_game:
        li   r0,tune2_module
        bl   @play_module
@@ -2882,7 +2881,7 @@ txt_99:
 txt_version:
        text 'VERSION:'
 txt_version_no:
-       text '0.4 BETA'
+       text '  1.0   '
 txt_hi_score:
        text 'HI SCORE'
 txt_kapow:

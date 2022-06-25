@@ -18,7 +18,8 @@ speak:
 *      Speak external command
        movb @h60,@spchwt
        bl   @delay_12us
-*      Send first 8 bytes
+*      Send first 16 bytes
+       bl   @send_bytes_to_speech
        bl   @send_bytes_to_speech
 *      Lower music/sfx volume
        li   r0,attenuation_during_speech*256
