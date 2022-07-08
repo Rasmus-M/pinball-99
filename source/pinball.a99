@@ -436,11 +436,10 @@ game_over:
        .proc
        clr  @new_high_score
        c    @score_msw,@high_score_msw
-       jlt  game_over_2
-       jgt  game_over_1
+       jl   game_over_2
+       jh   game_over_1
        c    @score_lsw,@high_score_lsw
-       jlt  game_over_2
-       jeq  game_over_2
+       jle  game_over_2
 game_over_1:
        mov  @score_msw,@high_score_msw
        mov  @score_lsw,@high_score_lsw
@@ -2881,7 +2880,7 @@ txt_99:
 txt_version:
        text 'VERSION:'
 txt_version_no:
-       text '  1.0   '
+       text '  1.1   '
 txt_hi_score:
        text 'HI SCORE'
 txt_kapow:
