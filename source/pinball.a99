@@ -324,15 +324,12 @@ main:
        li   r10,stack                  ; Setup stack pointer
        li   r15,vdpwd
        bl   @one_time_init
-       li   r0,speech_welcome_idx
-       bl   @speak
 restart_game:
        li   r0,tune2_module
        bl   @play_module
        bl   @init_game
        bl   @init_ball
        bl   @intro
-
        li   r0,tune1_module
        bl   @play_module
 restart_ball:
@@ -359,6 +356,8 @@ main_loop:
        bl   @pause
        dec  @balls
        jne  next_ball
+       li   r0,60
+       bl   @pause
        bl   @game_over
        jmp  restart_game
 next_ball:
@@ -377,6 +376,9 @@ next_ball:
 *
 intro:
        .proc
+       li   r0,speech_welcome_idx
+       bl   @speak
+       clr  @ay
        inc  @player_status
        mov  @two,@scroll_dir
        mov  @scroll_y,r0
@@ -514,6 +516,7 @@ pause_frames:
 *
 main_loop_body:
        .proc
+       bl   @interrupt_check
        bl   @vsync
        bl   @set_vdp_regs
        bl   @interrupt_routine
@@ -538,7 +541,7 @@ main_loop_body:
 interrupt_check:
        clr  r12
        tb   2                          ; Did an interrupt occur?
-       jne  interrupt_check_1          ; No - jump
+       jne  interrupt_check_1          ; Yes - jump
        rt
 *      Interrupt occurred
 interrupt_check_1:
@@ -573,6 +576,7 @@ interrupt_routine_1:
        bl   @move_ball
 interrupt_routine_2:
        bl   @perform_events
+       bl   @speech_player
        inc  @frame
        lwpi wrksp                      ; Switch to old workspace
        b    *r11
@@ -583,13 +587,15 @@ interrupt_routine_2:
 * Wait for vertical retrace (CRU)
 *
 vsync:
+       .proc
        movb @vdpsta,r12
-       clr  r12
 vsync_1:
+       bl   @speech_player
+       clr  r12
        tb   2                          ; Test CRU bit for VDP interrupt
        jeq  vsync_1
        movb @vdpsta,r12
-       rt
+       .endproc
 *// vsync
 
 *********************************************************************************
@@ -1056,6 +1062,7 @@ draw_info_panel_2:
        li   r2,info_panel_width_char/8
        bl   @vdp_copy_pad
        ai   r1,info_panel_map_width-info_panel_width_char
+       bl   @interrupt_check
        dec  r3
        jne  draw_info_panel_2
 draw_info_panel_3:
@@ -2385,6 +2392,7 @@ display_text_at_1:
 * r6: draw offset
 *
 draw_info_panel_to_map:
+       .proc
        ai   r6,info_panel_map
        li   r4,MD2
        li   r2,info_panel_n_chars
@@ -2405,9 +2413,14 @@ draw_info_panel_to_map_2:
        dec  r3
        jne  draw_info_panel_to_map_2
        ai   r6,-info_panel_height_char*info_panel_map_width+4
+       stwp r0
+       ci   r0,wrksp
+       jne  draw_info_panel_to_map_3
+       bl   @interrupt_check
+draw_info_panel_to_map_3:
        dec  r2
        jne  draw_info_panel_to_map_1
-       rt
+       .endproc
 *// draw_info_panel_to_map
 
 *********************************************************************************
@@ -2880,7 +2893,7 @@ txt_99:
 txt_version:
        text 'VERSION:'
 txt_version_no:
-       text '  1.1   '
+       text '  1.3   '
 txt_hi_score:
        text 'HI SCORE'
 txt_kapow:
@@ -3002,7 +3015,7 @@ event_param:
 event_size:
        equ  6
 n_events:
-       equ  8
+       equ  12
 event_queue:
        bss  event_size*n_events
 event_queue_end:
