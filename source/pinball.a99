@@ -721,6 +721,8 @@ user_input_8:
        jmp  user_input_12
 *      Nudge
 user_input_9:
+       c    @x,@x_launch_lane
+       jhe  user_input_12
        ai   r0,->0300
        sra  r0,4
        a    r0,@vx
@@ -2893,7 +2895,7 @@ txt_99:
 txt_version:
        text 'VERSION:'
 txt_version_no:
-       text '  1.3   '
+       text '  1.4   '
 txt_hi_score:
        text 'HI SCORE'
 txt_kapow:
@@ -2959,6 +2961,9 @@ ax_init:
        data >0000
 ay_init:
        data >0004
+
+x_launch_lane:
+       data >0e80
 
 cover_sprites:
        byte play_field_top-17,0,0,0
