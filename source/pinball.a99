@@ -400,8 +400,9 @@ intro_1:
        bl   @pause
        abs  @pause_frames
        jne  intro_2
+*      Version
        li   r0,txt_version
-       bl   @display_text_north
+       bl   @display_text_west
        li   r0,120
        bl   @pause
        abs  @pause_frames
@@ -412,8 +413,22 @@ intro_1:
        bl   @pause
        abs  @pause_frames
        jne  intro_2
+*      By Rasmus M
+       li   r0,txt_by
+       bl   @display_text_east
+       li   r0,120
+       bl   @pause
+       abs  @pause_frames
+       jne  intro_2
+       li   r0,txt_rasmus_m
+       bl   @display_text_center
+       li   r0,120
+       bl   @pause
+       abs  @pause_frames
+       jne  intro_2
+*      High score
        li   r0,txt_hi_score
-       bl   @display_text_north
+       bl   @display_text_south
        li   r0,120
        bl   @pause
        abs  @pause_frames
@@ -545,6 +560,11 @@ interrupt_check:
        rt
 *      Interrupt occurred
 interrupt_check_1:
+       stwp r12
+       ci   r12,wrksp2                 ; Already in interrupt routine?
+       jne  interrupt_check_2          ; No - continue
+       rt
+interrupt_check_2:
        .proc
        movb @vdpsta,r12
        bl   @interrupt_routine
@@ -813,6 +833,13 @@ move_ball:
 *      Accelerate
        a    @ax,@vx
        a    @ay,@vy
+*      No x movement in lanch lane
+       c    @x,@x_init
+       jne  move_ball_0
+       c    @y,@y_launch_lane
+       jl   move_ball_0
+       clr  @vx
+move_ball_0:
 *      Move x
        mov  @vx,r0
        sra  r0,4
@@ -1702,16 +1729,26 @@ handle_special_gate_4:
 *
 handle_special_launch:
        mov  @collision_type,r0
-       jeq  handle_special_launch_2
+       jne  handle_special_launch_0
+       clr  @special_launch_collision
+       jmp  handle_special_launch_2
+handle_special_launch_0:
+       abs  @special_launch_collision
+       jne  handle_special_launch_2
+       seto @special_launch_collision
        mov  @vy,r0
        sra  r0,1
-       ci   r0,>fff4
+       ci   r0,->0040
        jlt  handle_special_launch_1
        clr  r0
+       mov  @x_init,@x
+       mov  @y_init,@y
 handle_special_launch_1:
        mov  r0,@vy
 handle_special_launch_2:
        rt
+special_launch_collision:
+       data 0
 *// handle_special_launch
 
 *********************************************************************************
@@ -2415,11 +2452,7 @@ draw_info_panel_to_map_2:
        dec  r3
        jne  draw_info_panel_to_map_2
        ai   r6,-info_panel_height_char*info_panel_map_width+4
-       stwp r0
-       ci   r0,wrksp
-       jne  draw_info_panel_to_map_3
        bl   @interrupt_check
-draw_info_panel_to_map_3:
        dec  r2
        jne  draw_info_panel_to_map_1
        .endproc
@@ -2892,10 +2925,14 @@ txt_pinball:
        text 'PINBALL!'
 txt_99:
        text ' * 99 * '
+txt_by:
+       text '   BY   '
+txt_rasmus_m:
+       text 'RASMUS M'
 txt_version:
        text 'VERSION:'
 txt_version_no:
-       text '  1.4   '
+       text '  1.5   '
 txt_hi_score:
        text 'HI SCORE'
 txt_kapow:
@@ -2964,6 +3001,8 @@ ay_init:
 
 x_launch_lane:
        data >0e80
+y_launch_lane:
+       data >0700
 
 cover_sprites:
        byte play_field_top-17,0,0,0
